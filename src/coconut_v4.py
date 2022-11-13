@@ -658,11 +658,11 @@ def main():
     # initialize random seed
     random.seed(1)
     
-    date = '20221104'
+    date = '20221109'
     username = 'wall-e'
-    datasets_dir = '/home/' + username + '/astrobee/coco-api'
+    datasets_dir = '/home/' + username + '/astrobee/COCOpen'
     main_dir = datasets_dir + f'/datasets/{date}'
-    all_wire_dir = '/home/' + username + '/astrobee/coco-api/single_wire'
+    all_wire_dir = '/home/' + username + '/astrobee/COCOpen/single_wire'
 
     num_of_train_images = 25
     num_of_val_easy_images = 8
@@ -696,13 +696,13 @@ def main():
     except: print('Backgrounds folder was already copied!')
     print("Created Directories")
 
-    try: shutil.copy('/home/' + username + '/astrobee/coco-api/export.json', export_json)
+    try: shutil.copy('/home/' + username + '/astrobee/COCOpen/export.json', export_json)
     except: print(f'export.json already exists in {main_dir}')
     
-    dirs = {original: f'/home/{username}/astrobee/coco-api/datasets/{date}/original',
-            val_easy_original: f'/home/{username}/astrobee/coco-api/datasets/{date}/val_easy_original',
-            val: f'/home/{username}/astrobee/coco-api/datasets/{date}/val',
-            val_hard: f'/home/{username}/astrobee/coco-api/datasets/{date}/val_hard'}
+    dirs = {original: f'/home/{username}/astrobee/COCOpen/datasets/{date}/original',
+            val_easy_original: f'/home/{username}/astrobee/COCOpen/datasets/{date}/val_easy_original',
+            val: f'/home/{username}/astrobee/COCOpen/datasets/{date}/val',
+            val_hard: f'/home/{username}/astrobee/COCOpen/datasets/{date}/val_hard'}
     
     export_json_data = json.load(open(export_json))
     export_json_dict = is_reviewed(export_json_data)
