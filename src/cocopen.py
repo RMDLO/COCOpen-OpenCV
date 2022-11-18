@@ -13,34 +13,31 @@ from azure.storage.blob import BlobServiceClient
 # Class for the cocopen object
 class Cocopen:
     # Constructor
-    def __init__(self, date: str, username: str, num_of_train_images: int, num_of_val_easy_images: int) -> None:
+    def __init__(self, root_dir: str, dataset_directory_name: str, num_of_train_images: int, num_of_val_easy_images: int) -> None:
         # Saving all directory names
-        self.date = date
-        self.username = username
-        self.datasets_dir = '/home/' + self.username + '/astrobee/COCOpen'
-        self.main_dir = self.datasets_dir + f'/datasets/{self.date}'
-        self.all_wire_dir = '/home/' + self.username + '/astrobee/COCOpen/single_wire'
-        self.train = self.main_dir + '/train'
-        self.val = self.main_dir + '/val'
-        self.val_hard = self.main_dir + '/val_hard'
-        self.val_easy = self.main_dir + '/val_easy'
-        self.original = self.main_dir + '/original'
-        self.val_easy_original = self.main_dir + '/val_easy_original'
+        self.dataset_directory_name = dataset_directory_name
+        self.dataset_dir = root_dir + f'/datasets/{self.dataset_directory_name}'
+        self.train = self.dataset_dir + '/train'
+        self.val = self.dataset_dir + '/val'
+        self.val_hard = self.dataset_dir + '/val_hard'
+        self.val_easy = self.dataset_dir + '/val_easy'
+        self.original = self.dataset_dir + '/original'
+        self.val_easy_original = self.dataset_dir + '/val_easy_original'
 
         # Saving number of training and val_easy images
         self.num_of_train_images = num_of_train_images
         self.num_of_val_easy_images = num_of_val_easy_images
 
         # Saving export.json file
-        self.export_json = os.path.join(self.main_dir, 'export.json')
+        self.export_json = os.path.join(self.dataset_dir, 'export.json')
 
     # Making new directories
-    def make_new_dirs(self) -> None:
+    def make_new_dirs(self, root_dir: str) -> None:
         '''
         Making new directories for the COCOpen dataset
         '''
-        try: os.mkdir(self.main_dir)
-        except: print(f'{self.main_dir} already exists!') 
+        try: os.mkdir(self.dataset_dir)
+        except: print(f'{self.dataset_dir} already exists!') 
         try: os.mkdir(self.train)
         except: print(f'{self.train} directory already exists!')
         try: os.mkdir(self.val)
@@ -53,12 +50,10 @@ class Cocopen:
         except: print(f'{self.original} directory already exists!')
         try: os.mkdir(self.val_easy_original)
         except: print(f'{self.val_easy_original} directory already exists!')
-        try: shutil.copytree(self.datasets_dir+'/backgrounds',self.main_dir+'/backgrounds')
-        except: print('Backgrounds folder was already copied!')
         print("Created Directories")
 
-        try: shutil.copy('/home/' + self.username + '/astrobee/COCOpen/export.json', self.export_json)
-        except: print(f'export.json already exists in {self.main_dir}')
+        try: shutil.copy(root_dir + '/export.json', self.export_json)
+        except: print(f'export.json already exists in {self.dataset_dir}')
 
     # Sorting data into 'train' and 'val' categories
     def is_reviewed(self, json_data: dict) -> dict:
@@ -203,10 +198,10 @@ class Cocopen:
         Creating the hand labeled validation dataset
         '''
         # Creating directories dictionary mapping name of directory to path of directory
-        dirs = {self.original: f'/home/{self.username}/astrobee/COCOpen/datasets/{self.date}/original',
-            self.val_easy_original: f'/home/{self.username}/astrobee/COCOpen/datasets/{self.date}/val_easy_original',
-            self.val: f'/home/{self.username}/astrobee/COCOpen/datasets/{self.date}/val',
-            self.val_hard: f'/home/{self.username}/astrobee/COCOpen/datasets/{self.date}/val_hard'}
+        dirs = {self.original: f'{self.dataset_dir}/original',
+            self.val_easy_original: f'{self.dataset_dir}/val_easy_original',
+            self.val: f'{self.dataset_dir}/val',
+            self.val_hard: f'{self.dataset_dir}/val_hard'}
 
         # Loading export.json file data
         export_json_data = json.load(open(self.export_json))
@@ -291,10 +286,10 @@ class Cocopen:
                         coco_obj_seg_sem,ann_id_seg_sem = self.object_segment_semantics(coco=coco_obj_seg_sem,ann_id=ann_id_seg_sem,img_id=img_id,file_name=file_name,label=label,class_dict=self.class_dict,final_img=None,category_id=None)
                 img_id += 1
             
-            with open(os.path.join(self.main_dir+'/'+keys[i],f'{keys[i]}_obj_sem.json'), 'w') as outfile:
+            with open(os.path.join(self.dataset_dir+'/'+keys[i],f'{keys[i]}_obj_sem.json'), 'w') as outfile:
                 json.dump(coco_obj_sem, outfile, sort_keys=True, indent=4)
 
-            with open(os.path.join(self.main_dir+'/'+keys[i],f'{keys[i]}_obj_seg_sem.json'), 'w') as outfile:
+            with open(os.path.join(self.dataset_dir+'/'+keys[i],f'{keys[i]}_obj_seg_sem.json'), 'w') as outfile:
                 json.dump(coco_obj_seg_sem, outfile, sort_keys=True, indent=4)
 
         print('finished generating annotation data')
@@ -394,7 +389,7 @@ class Cocopen:
         return frame
 
     # Returning wire information
-    def get_wire_info(self, wire_dir, img):
+    def get_wire_info(self, img):
         '''
         This funciton returns the image array and the mask array
         '''
@@ -531,7 +526,7 @@ class Cocopen:
         return img_new
 
     # Combining foreground and background images
-    def combine(self, main_dir, wire_dir, orig_device_dir, orig_wire_img_lst, background_img_lst, target_dir, num_of_images, categories, class_dict, single_wire_container_client, background_container_client):
+    def combine(self, dataset_dir, orig_device_dir, orig_wire_img_lst, background_img_lst, target_dir, num_of_images, categories, class_dict, single_wire_container_client, background_container_client):
         '''
         Combining foreground and background images
         '''
@@ -553,8 +548,6 @@ class Cocopen:
         enhancer_range = [0.5, 1.5]
         scale_range_standard = [0.8, 1.25]
         scale_range_large = [0.3, 3.0]
-
-        backgrounds = main_dir + '/backgrounds'
         
         wire_lst = orig_wire_img_lst.copy()
         
@@ -630,7 +623,7 @@ class Cocopen:
                 index = int(len(wire_lst) * random.random())
                 # print(index, len(wire_lst))
                 wire = wire_lst[index]
-                wire_img, wire_mask = self.get_wire_info(wire_dir, wire)
+                wire_img, wire_mask = self.get_wire_info(wire)
                 
                 # # check to see if out of frame
                 # contour_count = count_contours(wire_img)
@@ -796,7 +789,6 @@ class Cocopen:
             # add a random background
             randbg = int(random.random()*len(background_img_lst))
             bg = background_img_lst[randbg]
-            bg_path = os.path.join(backgrounds, bg)
             # Download background image from azure
             src = self.download_background_image_from_azure(bg=bg)
             bg_arr = src.astype('uint8')
@@ -833,7 +825,7 @@ class Cocopen:
         '''
         # generate train
         print("Generating 'train' data")
-        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(main_dir = self.main_dir, wire_dir=self.all_wire_dir, orig_device_dir = self.original, orig_wire_img_lst = self.train_wire_lst, background_img_lst = self.train_backgrounds_lst, target_dir = self.train, num_of_images = self.num_of_train_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
+        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(dataset_dir = self.dataset_dir, orig_device_dir = self.original, orig_wire_img_lst = self.train_wire_lst, background_img_lst = self.train_backgrounds_lst, target_dir = self.train, num_of_images = self.num_of_train_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
         f1 = open(self.train + '/train_obj_sem.json', 'w')
         json.dump(coco_new_obj_sem, f1, sort_keys=True, indent=4)
         f1.close()
@@ -847,7 +839,7 @@ class Cocopen:
         Generating val_easy dataset
         '''
         print("Generating 'val_easy' data")
-        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(main_dir = self.main_dir, wire_dir=self.all_wire_dir, orig_device_dir = self.val_easy_original, orig_wire_img_lst = self.val_easy_wire_lst, background_img_lst = self.val_easy_backgrounds_lst, target_dir = self.val_easy, num_of_images = self.num_of_val_easy_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
+        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(dataset_dir = self.dataset_dir, orig_device_dir = self.val_easy_original, orig_wire_img_lst = self.val_easy_wire_lst, background_img_lst = self.val_easy_backgrounds_lst, target_dir = self.val_easy, num_of_images = self.num_of_val_easy_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
         f1 = open(self.val_easy + '/val_easy_obj_sem.json', 'w')
         json.dump(coco_new_obj_sem, f1, sort_keys=True, indent=4)
         f1.close()
@@ -856,16 +848,17 @@ class Cocopen:
         f2.close()
 
     # Delete certain directories
-    def delete_dirs(self) -> None:
-        shutil.rmtree(self.main_dir + '/original')
-        shutil.rmtree(self.main_dir + '/val_easy_original')
-        shutil.rmtree(self.main_dir + '/backgrounds')
+    def delete_dirs(self, root_dir: str) -> None:
+        shutil.rmtree(self.dataset_dir + '/original')
+        shutil.rmtree(self.dataset_dir + '/val_easy_original')
+        os.remove(root_dir + '/image')
+        os.remove(root_dir + '/label')
 
     # Creating zip file of the dataset
-    def zip(self):
+    def zip(self, base_name: str, root_dir: str, base_dir: str, format="zip") -> None:
         '''
         Function which zips all files in a directory
         '''
-        shutil.make_archive(base_dir = self.main_dir, root_dir = self.main_dir, format='zip', base_name=self.main_dir)
-        print(self.date + '.zip file successfully created!')
+        shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir, base_dir=base_dir)
+        print(self.dataset_directory_name + '.zip file successfully created!')
     

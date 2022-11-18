@@ -12,28 +12,27 @@ def main():
     random.seed(1)
     
     # Initialize Cocopen parameters
-
+    # Root director
+    root_dir = '.'
     # Dataset directory name
-    date = '20221109'
-    # System username
-    username = 'wall-e'
+    dataset_directory_name = '20221117'
     # Number of training images
     num_of_train_images = 25
     # Number of val_easy images
     num_of_val_easy_images = 8
 
     # initialize cocopen object
-    cocopen = Cocopen(date=date, username=username, num_of_train_images=num_of_train_images, num_of_val_easy_images=num_of_val_easy_images)
+    cocopen = Cocopen(root_dir=root_dir, dataset_directory_name=dataset_directory_name, num_of_train_images=num_of_train_images, num_of_val_easy_images=num_of_val_easy_images)
     
     # Make new directories
-    cocopen.make_new_dirs()
+    cocopen.make_new_dirs(root_dir=root_dir)
     
     # Creating hand labeled validation dataset
     cocopen.create_val_dataset()
 
     # Initializing Azure connection
-    foreground_image_container = 'single-wire'
-    background_image_container = 'background'
+    foreground_image_container = 'single-wire' # name of the foreground image container on Azure
+    background_image_container = 'background' # name of the background image container on Azure
     cocopen.init_azure(foreground_image_container=foreground_image_container, background_image_container=background_image_container)
 
     # Creating foreground image list
@@ -49,10 +48,10 @@ def main():
     cocopen.generate_val_easy_data()
        
     # Delete certain directories
-    cocopen.delete_dirs()
+    cocopen.delete_dirs(root_dir=root_dir)
 
     # Zip all files
-    cocopen.zip()
+    cocopen.zip(base_name=f'./datasets/zip/{dataset_directory_name}', root_dir=f'./datasets/{dataset_directory_name}')
 
 if __name__ == '__main__':
     main()
