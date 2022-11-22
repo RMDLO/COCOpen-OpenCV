@@ -1,1 +1,1 @@
-python ./src/coconut_v4.py
+python ./src/run.py
