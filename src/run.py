@@ -9,13 +9,13 @@ load_dotenv()
 def main():
     
     # initialize random seed
-    random.seed(1)
+    random.seed(0)
     
     # Initialize Cocopen parameters
     # Root director
     root_dir = '.'
     # Dataset directory name
-    dataset_directory_name = '20221117'
+    dataset_directory_name = '20221123'
     # Number of training images
     num_of_train_images = 25
     # Number of val_easy images
@@ -51,7 +51,7 @@ def main():
     cocopen.delete_dirs(root_dir=root_dir)
 
     # Zip all files
-    cocopen.zip(base_name=f'./datasets/zip/{dataset_directory_name}', root_dir=f'./datasets/{dataset_directory_name}')
+    cocopen.zip(base_name=f'./datasets/zip/{dataset_directory_name}', format='zip', root_dir=f'./datasets/{dataset_directory_name}')
 
 if __name__ == '__main__':
     main()

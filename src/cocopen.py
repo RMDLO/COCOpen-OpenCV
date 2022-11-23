@@ -855,10 +855,10 @@ class Cocopen:
         os.remove(root_dir + '/label')
 
     # Creating zip file of the dataset
-    def zip(self, base_name: str, root_dir: str, base_dir: str, format="zip") -> None:
+    def zip(self, base_name: str, root_dir: str, format="zip") -> None:
         '''
         Function which zips all files in a directory
         '''
-        shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir, base_dir=base_dir)
+        shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir)
         print(self.dataset_directory_name + '.zip file successfully created!')
     
