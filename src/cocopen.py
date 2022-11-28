@@ -398,16 +398,7 @@ class Cocopen:
         median = cv2.medianBlur(src, 9) # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY) # Convert to grayscale
         _, mask = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY) # Threshold step
-        new_mask = self.contour_filter(mask) # blob filtering step
-
-        # # code below was unused
-        # b, g, r = cv2.split(src)
-        # bgra = [b, g, r, new_mask]
-        # wire_png = cv2.merge(bgra, 4) # Create image with transparency from threshold
-
-        # wire_png = cv2.cvtColor(wire_png, cv2.COLOR_BGRA2RGBA) # Convert to RGBA (RGB + transparency)
-        # wire_pil = Image.fromarray(wire_png)
-        # left, upper, right, lower = wire_pil.getbbox() # Get bounding box of wire 
+        new_mask = self.contour_filter(mask) # blob filtering step 
 
         # Encode
         mask_array = np.asarray(new_mask, order="F")
@@ -591,7 +582,7 @@ class Cocopen:
             if os.path.split(orig_device_dir)[1] == 'val_easy_original':
                 coco_data = json.load(open(orig_device_dir + '/val_easy_original_obj_sem.json'))
             
-            # image lst needs to be restored every loop
+            # image list needs to be restored every loop
             device_lst = os.listdir(orig_device_dir)
             device_img_lst = []
             # this list contains a json file
@@ -624,14 +615,6 @@ class Cocopen:
                 # print(index, len(wire_lst))
                 wire = wire_lst[index]
                 wire_img, wire_mask = self.get_wire_info(wire)
-                
-                # # check to see if out of frame
-                # contour_count = count_contours(wire_img)
-                # while contour_count > 1:
-                    # index = int(len(wire_lst) * random.random())
-                    # wire = wire_lst[index]
-                    # wire_img, wire_mask = get_wire_info(wire_dir, wire)
-                    # contour_count = count_contours(wire_img)
                 
                 wire_lst.pop(index)
                 
@@ -757,8 +740,6 @@ class Cocopen:
 
                 # update coco info
                 for mask2 in binary_mask_arr[randint2]:
-                    
-                    # mask2 = binary_mask_arr[randint2][k]s
                     mask2 = mask2 & (~ mask_array_1)
                     mask_array_2.append(mask2)
 
