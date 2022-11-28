@@ -11,7 +11,8 @@ To install dependencies using `conda`, perform the below command in a terminal.
 $ git clone git@github.com:RMDLO/COCOpen.git
 # Install dependencies
 $ cd COCOpen
-$ In the environment.yml file, change `name` to the name you would like for the conda environment
-$ Run conda env create -f environment.yml command
-$ Activate the environment: conda activate <env name>
+# In the environment.yml file, change `name` to the name you would like for the conda environment and run
+$ conda env create -f environment.yml command
+# Activate the environment
+$ conda activate <env name>
 ```
