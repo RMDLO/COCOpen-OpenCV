@@ -15,7 +15,7 @@ def main():
     # Root director
     root_dir = '.'
     # Dataset directory name
-    dataset_directory_name = '20221123'
+    dataset_directory_name = '20221202'
     # Number of training images
     num_of_train_images = 25
     # Number of val_easy images
