@@ -16,8 +16,9 @@ Currently, the repository demonstrates the performance of the UIUC COCOpen libra
 
 ## **Proposed Solution**
 
-![API workflow chart](https://github.com/RMDLO/.github/blob/master/images/lucid_chart_cocopen_1.png)
-<br>
+<p align="center">
+  <img src="https://github.com/RMDLO/.github/blob/master/images/lucid_chart_cocopen_1.png" width="500" title="API workflow chart">
+</p>
 
 1. Reads images of single objects against blank backgrounds from cloud storage uploaded by the user.
 2. Automatically obtains object instance segmentation mask labels using color thresholding and contour detection.
@@ -28,9 +29,7 @@ Currently, the repository demonstrates the performance of the UIUC COCOpen libra
 
 ## **Getting Started**
 ### **Installing Anaconda**
-We will be using an anaconda environment to install all our dependencies.
-
-To get started with installing `conda` please follow [these instructions](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
+COCOpen-OpenCV uses an anaconda environment to manage versions of all dependencies. To get started with installing `conda` please follow [these instructions](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
 
 ### **Cloning COCOpen-OpenCV repository**
 Using the RMDLO COCOpen-OpenCV library requires desktop [configuration of a GitHub SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
@@ -47,22 +46,15 @@ For ease of creating a conda environment we have provided you with an `environme
 
 To create the `conda` environment from the `environment.yml` file run:
 ```bash
-# Cloning conda environment
-$ conda env create -f environment.yml
+# Navigate into the COCOpen directory
+$ cd COCOCpen-OpenCV
+# Clone the conda environment
+COCOCpen-OpenCV$ conda env create -f environment.yml
+# Activate the conda environment
+COCOpen-OpenCV$ conda activate cocopen-env
 ```
 ## **Running the API**
-### **Preliminary setup**
-If you have not already
 
-```bash
-# Move into the COCOpen-OpenCV repository
-$ cd COCOpen-OpenCV
-```
-Create a folder named `datasets` in the root directory
-
-Hit ```ctr + shift + P``` (windows) or ```cmd + shift + P``` (mac) to open the command pallete and click on ```Python: Select Interpreter```.
-
-Here choose 'cocopen-env' (Or whatever you named the Anaconda environment) as the default python interpreter.
 ### **Adjusting parameters**
 Open `src/run.py` file.
 
@@ -70,8 +62,8 @@ Here you can tweak parameters like `dataset_directory_name` (name of your datase
 ### **Running the script**
 To execute the API, run the following command
 ```bash
-# Running the run.py file
-$ python ./src/run.py
+# Run the run.py file
+(cocopen-env) COCOpen-OpenCV$ python ./src/run.py
 ```
 ### **Result**
 You can now find the generated dataset in the `datasets` folder. Furthermore, in `datasets/zip/` you can access a zip file containing the generated dataset.
