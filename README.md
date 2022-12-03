@@ -17,7 +17,7 @@ Currently, the repository demonstrates the performance of the UIUC COCOpen libra
 ## **Proposed Solution**
 
 <p align="center">
-  <img src="https://github.com/RMDLO/.github/blob/master/images/lucid_chart_cocopen_1.png" width="500" title="API workflow chart">
+  <img src="https://github.com/RMDLO/.github/blob/master/images/lucid_chart_cocopen_1.png" width="300" title="API workflow chart">
 </p>
 
 1. Reads images of single objects against blank backgrounds from cloud storage uploaded by the user.
