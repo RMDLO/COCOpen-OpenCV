@@ -13,20 +13,30 @@ from azure.storage.blob import BlobServiceClient
 # Class for the cocopen object
 class Cocopen:
     # Constructor
-    def __init__(self, root_dir: str, dataset_directory_name: str, num_of_train_images: int, num_of_val_easy_images: int) -> None:
+    def __init__(self, root_dir: str, dataset_directory_name: str, num_of_train_images: int, num_of_val_images: int) -> None:
+        # Initializing class dictionary and categories list
+        self.class_dict = {"device": 1,
+                        "ethernet": 2,
+                        "phone": 3,
+                        "power": 4,
+                        "hdmi": 5,
+                        "coaxial": 6}
+        self.categories = [{"supercategory": "device", "id": self.class_dict["device"], "name": "device"},
+                                {"supercategory": "cable", "id": self.class_dict["ethernet"], "name": "ethernet"},
+                                {"supercategory": "cable", "id": self.class_dict["phone"], "name": "phone"},
+                                {"supercategory": "cable", "id": self.class_dict["power"], "name": "power"},
+                                {"supercategory": "cable", "id": self.class_dict["hdmi"], "name": "hdmi"},
+                                {"supercategory": "cable", "id": self.class_dict["coaxial"], "name": "coaxial"}]
+
         # Saving all directory names
         self.dataset_directory_name = dataset_directory_name
         self.dataset_dir = root_dir + f'/datasets/{self.dataset_directory_name}'
         self.train = self.dataset_dir + '/train'
         self.val = self.dataset_dir + '/val'
-        self.val_hard = self.dataset_dir + '/val_hard'
-        self.val_easy = self.dataset_dir + '/val_easy'
-        self.original = self.dataset_dir + '/original'
-        self.val_easy_original = self.dataset_dir + '/val_easy_original'
 
-        # Saving number of training and val_easy images
+        # Saving number of training and val images
         self.num_of_train_images = num_of_train_images
-        self.num_of_val_easy_images = num_of_val_easy_images
+        self.num_of_val_images = num_of_val_images
 
         # Saving export.json file
         self.export_json = os.path.join(self.dataset_dir, 'export.json')
@@ -42,53 +52,7 @@ class Cocopen:
         except: print(f'{self.train} directory already exists!')
         try: os.mkdir(self.val)
         except: print(f'{self.val} directory already exists!')
-        try: os.mkdir(self.val_hard)
-        except: print(f'{self.val_hard} directory already exists!')
-        try: os.mkdir(self.val_easy)
-        except: print(f'{self.val_easy} directory already exists!')
-        try: os.mkdir(self.original)
-        except: print(f'{self.original} directory already exists!')
-        try: os.mkdir(self.val_easy_original)
-        except: print(f'{self.val_easy_original} directory already exists!')
         print("Created Directories")
-
-        try: shutil.copy(root_dir + '/export.json', self.export_json)
-        except: print(f'export.json already exists in {self.dataset_dir}')
-
-    # Sorting data into 'train' and 'val' categories
-    def is_reviewed(self, json_data: dict) -> dict:
-        '''
-        This function reads in Labelbox data from a Labelbox export.json file. 
-        It sorts the data into 'train' and 'val' folders based on image name.
-        Data which have not been reviewed are not sorted (rejected).
-        '''
-        json_dict = {"original": [],
-                    "val_easy_original": [],
-                    "val": [],
-                    "val_hard": []}
-        prefixes = ['a','b','c','d']
-        hard = ['a2.png','a6.png','a9.png','a10.png','a11.png','a12.png','b1.png','b2.png','b3.png','b4.png','b5.png','c1.png','c2.png','c3.png','c4.png','c5.png','c6.png', 'a31.png', 'a30.png', 'a28.png', 'a27.png', 'a13.png', 'a11.png', 'a8.png', 'a5.png', 'a4.png', 'a3.png', 'a1.png']
-        for d in json_data:
-            reviewed = d["Reviews"]
-            if reviewed:
-                if d["External ID"][0] in prefixes:
-                    if d["External ID"] not in hard:        
-                        json_dict["val"].append(d)
-                    else:
-                        json_dict["val_hard"].append(d)
-                else:
-                    try: t = d['Label']['objects'][0]['title']
-                    except: continue
-                    try: l = len(d['Label']['objects'])
-                    except: continue
-                    if t == 'device' and l == 1: 
-                        rand = random.random()
-                        if 0 <= rand < 0.8:
-                            json_dict["original"].append(d)
-                        else:
-                            json_dict["val_easy_original"].append(d)
-
-        return json_dict
 
     # Returning category data given label
     def get_label(self, label, class_dict):
@@ -192,107 +156,6 @@ class Cocopen:
                 ann_id+=1
         return coco, ann_id
 
-    # Creating the hand labeled validation dataset
-    def create_val_dataset(self) -> None:
-        '''
-        Creating the hand labeled validation dataset
-        '''
-        # Creating directories dictionary mapping name of directory to path of directory
-        dirs = {self.original: f'{self.dataset_dir}/original',
-            self.val_easy_original: f'{self.dataset_dir}/val_easy_original',
-            self.val: f'{self.dataset_dir}/val',
-            self.val_hard: f'{self.dataset_dir}/val_hard'}
-
-        # Loading export.json file data
-        export_json_data = json.load(open(self.export_json))
-        export_json_dict = self.is_reviewed(json_data=export_json_data)
-
-        # Keys of directory names
-        keys = ['original', 'val_easy_original', 'val', 'val_hard']
-        
-        # Categories of instances in our images
-        self.class_dict = {"device": 1,
-                        "ethernet": 2,
-                        "phone": 3,
-                        "power": 4,
-                        "hdmi": 5,
-                        "coaxial": 6}
-        self.categories = [{"supercategory": "device", "id": self.class_dict["device"], "name": "device"},
-                                {"supercategory": "cable", "id": self.class_dict["ethernet"], "name": "ethernet"},
-                                {"supercategory": "cable", "id": self.class_dict["phone"], "name": "phone"},
-                                {"supercategory": "cable", "id": self.class_dict["power"], "name": "power"},
-                                {"supercategory": "cable", "id": self.class_dict["hdmi"], "name": "hdmi"},
-                                {"supercategory": "cable", "id": self.class_dict["coaxial"], "name": "coaxial"}]
-
-        # Generating COCO formatted dataset for hand labeled validation dataset
-        for i, dir in enumerate(dirs):
-
-            coco_obj_sem = {"images": [],
-                    "annotations": [],
-                    "categories": self.categories }
-            coco_obj_seg_sem = {"images": [],
-                    "annotations": [],
-                    "categories": self.categories }
-
-            ann_id_sem = 0
-            ann_id_seg_sem = 0
-            img_id = 0
-            
-            new_json_dict = []
-            
-            # try to read device only images
-            if dir == self.original:
-                new_json_dict = export_json_dict['original']
-            elif dir == self.val:
-                new_json_dict = export_json_dict['val']
-            elif dir == self.val_hard:
-                new_json_dict = export_json_dict['val_hard']
-            else:
-                new_json_dict = export_json_dict['val_easy_original']
-            
-            print(f'Generating \'{keys[i]}\' data')
-
-            for idx, data in enumerate(tqdm(iterable = new_json_dict, total = len(new_json_dict))):
-                
-                # Image data
-                id = idx
-                file_name = data["External ID"]
-                file_path = os.path.join(dirs[dir], file_name)
-                img_url = data["Labeled Data"]
-                try:
-                    urllib.request.urlretrieve(img_url, "image")
-                except:
-                    continue
-                img = Image.open("image")
-                
-                # save original image
-                img.save(os.path.join(dir,file_name))
-                width = img.size[0]
-                height = img.size[1]
-
-                image = {"id": id,
-                        "width": width,
-                        "height": height,
-                        "file_name": file_name}
-                coco_obj_sem["images"].append(image)
-                coco_obj_seg_sem["images"].append(image)
-
-                # Segmentation Annotation Data
-                objects = data["Label"].get("objects")
-                if objects:
-                    labels = data["Label"]["objects"]
-                    for label in labels:
-                        coco_obj_sem,ann_id_sem = self.object_semantics(coco=coco_obj_sem,ann_id=ann_id_sem,img_id=img_id,file_name=file_name,label=label,class_dict=self.class_dict,mask=None,category_id=None)
-                        coco_obj_seg_sem,ann_id_seg_sem = self.object_segment_semantics(coco=coco_obj_seg_sem,ann_id=ann_id_seg_sem,img_id=img_id,file_name=file_name,label=label,class_dict=self.class_dict,final_img=None,category_id=None)
-                img_id += 1
-            
-            with open(os.path.join(self.dataset_dir+'/'+keys[i],f'{keys[i]}_obj_sem.json'), 'w') as outfile:
-                json.dump(coco_obj_sem, outfile, sort_keys=True, indent=4)
-
-            with open(os.path.join(self.dataset_dir+'/'+keys[i],f'{keys[i]}_obj_seg_sem.json'), 'w') as outfile:
-                json.dump(coco_obj_seg_sem, outfile, sort_keys=True, indent=4)
-
-        print('finished generating annotation data')
 
     # Initializing Azure connection for for accessing blob storage
     def init_azure(self, foreground_image_container: str, background_image_container: str) -> None:
@@ -310,20 +173,20 @@ class Cocopen:
     # Creating foreground image list
     def create_foreground_image_list(self) -> None:
         '''
-        Creating foreground image list from images on Azure and segregating them into 'train' and 'val_easy' categories
+        Creating foreground image list from images on Azure and segregating them into 'train' and 'val' categories
         '''
         # Creating list of all foreground images
         azure_all_wire_list = self.single_wire_container_client.list_blobs()
 
-        # Segregating images into 'train' and 'val_easy' categories
+        # Segregating images into 'train' and 'val' categories
         self.train_wire_lst = []
-        self.val_easy_wire_lst = []
+        self.val_wire_lst = []
         for blob in azure_all_wire_list:
             rand = random.random()
             if 0 <= rand < 0.8:
                 self.train_wire_lst.append(blob.name)
             else:
-                self.val_easy_wire_lst.append(blob.name)
+                self.val_wire_lst.append(blob.name)
 
     # Creating background image list
     def create_background_image_list(self) -> None:
@@ -333,15 +196,15 @@ class Cocopen:
         # Creating list of all background images
         azure_all_background_list = self.background_container_client.list_blobs()
 
-        # Segregating images into 'train background' and 'val_easy background' categories
+        # Segregating images into 'train background' and 'val background' categories
         self.train_backgrounds_lst = []
-        self.val_easy_backgrounds_lst = []
+        self.val_backgrounds_lst = []
         for blob in azure_all_background_list:
             rand = random.random()
             if 0 <= rand < 0.8:
                 self.train_backgrounds_lst.append(blob.name)
             else:
-                self.val_easy_backgrounds_lst.append(blob.name)
+                self.val_backgrounds_lst.append(blob.name)
 
     # Downloading foreground image from Azure
     def download_single_wire_image_from_azure(self, img):
@@ -517,7 +380,7 @@ class Cocopen:
         return img_new
 
     # Combining foreground and background images
-    def combine(self, dataset_dir, orig_device_dir, orig_wire_img_lst, background_img_lst, target_dir, num_of_images, categories, class_dict, single_wire_container_client, background_container_client):
+    def combine(self, dataset_dir, orig_wire_img_lst, background_img_lst, target_dir, num_of_images, categories, class_dict, single_wire_container_client, background_container_client):
         '''
         Combining foreground and background images
         '''
@@ -541,14 +404,6 @@ class Cocopen:
         scale_range_large = [0.3, 3.0]
         
         wire_lst = orig_wire_img_lst.copy()
-        
-        device_lst = os.listdir(orig_device_dir)
-        device_img_lst = []
-        # this list contains a json file
-        for k in range (0, len(device_lst)):
-            _, extension = os.path.splitext(device_lst[k])
-            if extension == '.png':
-                device_img_lst.append(device_lst[k])
         
         # modified coco_new category id 
         coco_new_obj_sem = {"images": [],
@@ -574,22 +429,6 @@ class Cocopen:
             if large_scale_jittering == True:
                 # large scale jittering, all objects use the same scale factor
                 scale = scale_range_large[0] + random.random()*(scale_range_large[1] - scale_range_large[0])
-            
-            # has to load coco data again for some weird reason
-            coco_data = []
-            if os.path.split(orig_device_dir)[1] == 'original':
-                coco_data = json.load(open(orig_device_dir + '/original_obj_sem.json'))
-            if os.path.split(orig_device_dir)[1] == 'val_easy_original':
-                coco_data = json.load(open(orig_device_dir + '/val_easy_original_obj_sem.json'))
-            
-            # image list needs to be restored every loop
-            device_lst = os.listdir(orig_device_dir)
-            device_img_lst = []
-            # this list contains a json file
-            for k in range (0, len(device_lst)):
-                _, extension = os.path.splitext(device_lst[k])
-                if extension == '.png':
-                    device_img_lst.append(device_lst[k])
                     
             wire_lst = orig_wire_img_lst.copy()
 
@@ -600,11 +439,10 @@ class Cocopen:
             coco_new_obj_sem["images"].append(image)
             coco_new_obj_seg_sem["images"].append(image)
             
-            # determine how many devices and how many cables in each image
-            num_of_devices = int(random.random() * 2) + 1 # 1-2 devices
+            # determine how many cables in each image
             num_of_wires = int(random.random() * 4) + 1 # 1-4 wires
 
-            # arrays storing both wire and device info
+            # arrays storing wire info
             all_img_arr = []
             binary_mask_arr = []
             all_category_ids = []
@@ -642,55 +480,6 @@ class Cocopen:
                 all_img_arr.append(wire_img)
                 binary_mask_arr.append(wire_msk)
                 all_category_ids.append(2)
-        
-            # get device info
-            for j in range (0, num_of_devices):
-                
-                masks = []
-                index = int(len(device_img_lst) * random.random())
-                img = device_img_lst[index]
-                device_img = cv2.imread(os.path.join(orig_device_dir, img), cv2.IMREAD_UNCHANGED)
-                device_img_lst.pop(index)
-                
-                for annotations in coco_data['annotations'][:]:          
-                    if annotations['image_name'] == img: 
-                        masks.append(pycocomask.decode(annotations['segmentation']))
-                
-                # removed scaling for device 5/18/2022
-                # # scaling
-                # if standard_scale_jittering == True or large_scale_jittering == True:
-                #     device_img, masks = scale_image(device_img, masks, scale)
-                # elif individual_standard_scale_jittering == True:
-                #     scale = scale_range_standard[0] + random.random()*(scale_range_standard[1] - scale_range_standard[0])
-                #     device_img, masks = scale_image(device_img, masks, scale)
-                # else:
-                #     scale = scale_range_large[0] + random.random()*(scale_range_large[1] - scale_range_large[0])
-                #     device_img, masks = scale_image(device_img, masks, scale)
-                
-                # color augmentation
-                if individual_color_augmentation == True:
-                    # don't change hue
-                    device_img = self.color_augmentation(device_img, enhancer_range, change_brightness, change_contrast, change_saturation, False)
-                
-                all_img_arr.append(device_img)
-                binary_mask_arr.append(masks)
-                all_category_ids.append(class_dict["device"])
-
-            # perform random flip
-            for m in range (0, num_of_devices + num_of_wires):
-
-                horizontal = int(2*random.random())
-                vertical = int(2*random.random())
-                
-                if horizontal == 1:
-                    all_img_arr[m] = cv2.flip(all_img_arr[m], 1)
-                    for n in range (0, len(binary_mask_arr[m])):
-                        binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 1)
-                    
-                if vertical == 1:
-                    all_img_arr[m] = cv2.flip(all_img_arr[m], 0)
-                    for n in range (0, len(binary_mask_arr[m])):
-                        binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 0)
                 
             # now have a complete list of image arrays and masks, can start combining            
             # choose a random element from the img list
@@ -729,7 +518,7 @@ class Cocopen:
             all_category_ids.pop(randint)
 
             # combine the rest
-            for j in range (1, num_of_devices + num_of_wires):
+            for j in range (1, num_of_wires):
                 
                 # choose the second image
                 randint2 = int(random.random()*len(all_img_arr))
@@ -806,7 +595,7 @@ class Cocopen:
         '''
         # generate train
         print("Generating 'train' data")
-        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(dataset_dir = self.dataset_dir, orig_device_dir = self.original, orig_wire_img_lst = self.train_wire_lst, background_img_lst = self.train_backgrounds_lst, target_dir = self.train, num_of_images = self.num_of_train_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
+        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(dataset_dir = self.dataset_dir, orig_wire_img_lst = self.train_wire_lst, background_img_lst = self.train_backgrounds_lst, target_dir = self.train, num_of_images = self.num_of_train_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
         f1 = open(self.train + '/train_obj_sem.json', 'w')
         json.dump(coco_new_obj_sem, f1, sort_keys=True, indent=4)
         f1.close()
@@ -814,26 +603,19 @@ class Cocopen:
         json.dump(coco_new_obj_seg_sem, f2, sort_keys=True, indent=4)
         f2.close()
 
-    # Generating val_easy dataset
-    def generate_val_easy_data(self) -> None:
+    # Generating val dataset
+    def generate_val_data(self) -> None:
         '''
-        Generating val_easy dataset
+        Generating val dataset
         '''
-        print("Generating 'val_easy' data")
-        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(dataset_dir = self.dataset_dir, orig_device_dir = self.val_easy_original, orig_wire_img_lst = self.val_easy_wire_lst, background_img_lst = self.val_easy_backgrounds_lst, target_dir = self.val_easy, num_of_images = self.num_of_val_easy_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
-        f1 = open(self.val_easy + '/val_easy_obj_sem.json', 'w')
+        print("Generating 'val' data")
+        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(dataset_dir = self.dataset_dir, orig_wire_img_lst = self.val_wire_lst, background_img_lst = self.val_backgrounds_lst, target_dir = self.val, num_of_images = self.num_of_val_images, categories = self.categories, class_dict=self.class_dict, single_wire_container_client=self.single_wire_container_client, background_container_client=self.background_container_client)
+        f1 = open(self.val + '/val_obj_sem.json', 'w')
         json.dump(coco_new_obj_sem, f1, sort_keys=True, indent=4)
         f1.close()
-        f2 = open(self.val_easy + '/val_easy_obj_seg_sem.json', 'w' )
+        f2 = open(self.val + '/val_obj_seg_sem.json', 'w' )
         json.dump(coco_new_obj_seg_sem, f2, sort_keys=True, indent=4)
         f2.close()
-
-    # Delete certain directories
-    def delete_dirs(self, root_dir: str) -> None:
-        shutil.rmtree(self.dataset_dir + '/original')
-        shutil.rmtree(self.dataset_dir + '/val_easy_original')
-        os.remove(root_dir + '/image')
-        os.remove(root_dir + '/label')
 
     # Creating zip file of the dataset
     def zip(self, base_name: str, root_dir: str, format="zip") -> None:
