@@ -4,31 +4,32 @@ from dotenv import load_dotenv
 
 from cocopen import Cocopen
 
+# loading environment variables
 load_dotenv()
 
 def main():
     
     # initialize random seed
-    random.seed(0)
+    random.seed(random.randint(1, 1000))
     
     # Initialize Cocopen parameters
     # Root director
     root_dir = '.'
     # Dataset directory name
-    dataset_directory_name = '20221202'
+    dataset_directory_name = 'new-env-test'
     # Number of training images
     num_of_train_images = 25
-    # Number of val_easy images
-    num_of_val_easy_images = 8
+    # Number of val images
+    num_of_val_images = 8
 
     # initialize cocopen object
-    cocopen = Cocopen(root_dir=root_dir, dataset_directory_name=dataset_directory_name, num_of_train_images=num_of_train_images, num_of_val_easy_images=num_of_val_easy_images)
+    cocopen = Cocopen(root_dir=root_dir, dataset_directory_name=dataset_directory_name, num_of_train_images=num_of_train_images, num_of_val_images=num_of_val_images)
     
     # Make new directories
     cocopen.make_new_dirs(root_dir=root_dir)
     
     # Creating hand labeled validation dataset
-    cocopen.create_val_dataset()
+    # cocopen.create_val_dataset()
 
     # Initializing Azure connection
     foreground_image_container = 'single-wire' # name of the foreground image container on Azure
@@ -44,11 +45,8 @@ def main():
     # Generate training data
     cocopen.generate_train_data()
 
-    # Generate val_easy data
-    cocopen.generate_val_easy_data()
-       
-    # Delete certain directories
-    cocopen.delete_dirs(root_dir=root_dir)
+    # Generate val data
+    cocopen.generate_val_data()
 
     # Zip all files
     cocopen.zip(base_name=f'./datasets/zip/{dataset_directory_name}', format='zip', root_dir=f'./datasets/{dataset_directory_name}')

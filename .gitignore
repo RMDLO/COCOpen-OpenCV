@@ -1,8 +1,4 @@
 .vscode/
-.env
-
 __pycache__
 
 datasets/
-
-old-src/
