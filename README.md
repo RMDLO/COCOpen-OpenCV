@@ -1,11 +1,7 @@
 # **UIUC COCOpen**
 
 ## **Abstract**
-COCOpen is a scalable & open source method of generating a dataset of colored images of any object category automatically labelled
-with unique object instance segmentation masks in the COCO format.
-
-Currently, the repository demonstrates the performance of the UIUC COCOpen library by using it to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices.
-
+The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1]. This repository uses the UIUC COCOpen Library to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices, for training wire object instance segmentation models [2].
 
 ## **Brief Problem Statement**
 - Microsoft’s Common Objects in Context (COCO) dataset which consists of 91 object categories, with 2.5 million labeled instances across 328k images, was labeled manually by workers at AMT.
@@ -16,16 +12,18 @@ Currently, the repository demonstrates the performance of the UIUC COCOpen libra
 
 ## **Proposed Solution**
 
-<p align="center">
-  <img src="https://github.com/RMDLO/.github/blob/master/images/lucid_chart_cocopen_1.png" width="500" title="API workflow chart">
-</p>
+COCOpen performs the following tasks to automatically generate labeled object instance data.
 
-1. Reads images of single objects against blank backgrounds from cloud storage uploaded by the user.
-2. Automatically obtains object instance segmentation mask labels using color thresholding and contour detection.
-3. Masks the original object image and randomly applies color, hue, orientation, and scale jittering augmentations.
-4. It combines the masked object image with other labeled and masked single-object images into a combined image using the Copy-Paste Augmentation technique.
-5. It merges the combined image with a background image.
-6. It saves all image names and annotations to a dictionary file which can be used to load the data to train object detection models.
+1. Read an image of a single object against a blank background from cloud storage uploaded by the user.
+2. Apply color thresholding and contour detection to the image to automatically obtain an object bounding box and instance segmentation mask.
+3. Mask the original object image and randomly apply color, hue, orientation, and scale jittering augmentations.
+4. Combine the masked object image with other labeled and masked single-object images into a single image using the Copy-Paste Augmentation technique [3].
+5. Apply the combined image with to a randomly selected background image.
+6. Save all image names and annotations to a dictionary file which can be used to load the data to train object detection, localization, and instance segmentation models.
+
+<p align="center">
+  <img src="https://github.com/RMDLO/.github/blob/master/images/lucid_chart_cocopen_1.png" width="350" title="API workflow chart">
+</p>
 
 ## **Getting Started**
 ### **Installing Anaconda**
@@ -67,3 +65,13 @@ To execute the API, run the following command
 ```
 ### **Result**
 You can now find the generated dataset in the `datasets` folder. Furthermore, in `datasets/zip/` you can access a zip file containing the generated dataset.
+
+## References
+<a id="1">[1]</a> 
+T. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollár, and C. Lawrence Zitnick, "Microsoft COCO: Common Objects in Context," in Eur. Conf. Comput. Vis. (ECCV), Sep. 2014, pp. 740-755.
+
+<a id="2">[2]</a> 
+K. He, G. Gkioxari, P. Dollár, and R. Girshick, "Mask R-CNN," in IEEE Int. Conf. Comput. Vis. Pattern Recognit. (CVPR), Oct. 2017, pp. 2980-2988.
+
+<a id="3">[3]</a> 
+G. Ghiasi, Y. Cui, A. Srinivas, R. Qian, T. Lin, E. Cubuk, Q. Le, and B. Zoph, "Simple Copy-Paste is a Strong Data Augmentation Method for Instance Segmentation," in IEEE Int. Conf. Comput. Vis. Pattern Recognit. (CVPR), June 2020, pp. 9796-9805.
