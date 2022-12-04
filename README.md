@@ -61,7 +61,7 @@ Here you can tweak parameters like `dataset_directory_name` (name of your datase
 To execute the API, run the following command
 ```bash
 # Run the run.py file
-(cocopen-env) COCOpen-OpenCV$ python ./src/run.py
+(cocopen-env) COCOpen-OpenCV$ bash run.sh
 ```
 ### **Result**
 You can now find the generated dataset in the `datasets` folder. Furthermore, in `datasets/zip/` you can access a zip file containing the generated dataset.
