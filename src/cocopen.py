@@ -69,6 +69,10 @@ class Cocopen:
         Making new directories for the COCOpen dataset
         """
         try:
+            os.mkdir("./datasets")
+        except:
+            print("datasets directory already exists!")
+        try:
             os.mkdir(self.dataset_dir)
         except:
             print(f"{self.dataset_dir} already exists!")

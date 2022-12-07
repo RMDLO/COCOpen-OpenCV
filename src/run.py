@@ -17,7 +17,7 @@ def main():
     # Root director
     root_dir = "."
     # Dataset directory name
-    dataset_directory_name = "new-category-test-2"
+    dataset_directory_name = "new-category-test-3"
     # Number of training images
     num_of_train_images = 25
     # Number of val images
