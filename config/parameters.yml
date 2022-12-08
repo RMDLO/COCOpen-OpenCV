@@ -11,7 +11,7 @@ categories:
 
 # Color Thresholding Values for Each Object Category
 threshold:
-  device: 180
+  device: 50
   wire: 30
   
 # Maximum Number of Instances Per Image for Each Object Category
