@@ -5,6 +5,7 @@ image_params:
 dataset_params:
   num_of_train_images: 25
   num_of_val_images: 8
+  train_split: 0.8
   
 object_categories:
   device: 1

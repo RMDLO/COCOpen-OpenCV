@@ -46,9 +46,7 @@ class Cocopen:
         # Saving number of training and val images
         self.num_of_train_images = parameters["dataset_params"]["num_of_train_images"]
         self.num_of_val_images = parameters["dataset_params"]["num_of_val_images"]
-
-        # Saving export.json file
-        self.export_json = os.path.join(self.dataset_dir, "export.json")
+        self.train_split = parameters["dataset_params"]["train_split"]
 
     # Making new directories
     def make_new_dirs(self, root_dir: str) -> None:
@@ -209,7 +207,7 @@ class Cocopen:
         self.val_wire_lst = []
         for blob in azure_all_wire_list:
             rand = random.random()
-            if 0 <= rand < 0.8:
+            if 0 <= rand < self.train_split:
                 self.train_wire_lst.append(blob.name)
             else:
                 self.val_wire_lst.append(blob.name)
@@ -219,7 +217,7 @@ class Cocopen:
         self.val_device_lst = []
         for blob in azure_all_device_list:
             rand = random.random()
-            if 0 <= rand < 0.8:
+            if 0 <= rand < self.train_split:
                 self.train_device_lst.append(blob.name)
             else:
                 self.val_device_lst.append(blob.name)
@@ -237,7 +235,7 @@ class Cocopen:
         self.val_backgrounds_lst = []
         for blob in azure_all_background_list:
             rand = random.random()
-            if 0 <= rand < 0.8:
+            if 0 <= rand < self.train_split:
                 self.train_backgrounds_lst.append(blob.name)
             else:
                 self.val_backgrounds_lst.append(blob.name)
