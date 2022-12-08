@@ -97,7 +97,6 @@ dependencies:
     - cloudpickle==2.2.0
     - contourpy==1.0.6
     - cryptography==38.0.4
-    - detectron2==0.6
     - filelock==3.8.2
     - fonttools==4.38.0
     - fvcore==0.1.5.post20221122
