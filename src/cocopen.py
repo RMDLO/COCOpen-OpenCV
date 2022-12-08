@@ -35,6 +35,10 @@ class Cocopen:
         self.train = self.dataset_dir + "/train"
         self.val = self.dataset_dir + "/val"
 
+        # Initialize height and width
+        self.height = parameters["shape"]["height"]
+        self.width = parameters["shape"]["width"]
+
     # Making new directories
     def make_new_dirs(self) -> None:
         """
@@ -264,58 +268,65 @@ class Cocopen:
         This function scales the input image and outputs the updated image array and mask array
         """
         # resize image and mask
-        new_img_arr = cv2.resize(img_arr, (int(1920 * scale), int(1080 * scale)))
+        new_img_arr = cv2.resize(
+            img_arr, (int(self.width * scale), int(self.height * scale))
+        )
         new_masks = []
         for mask in masks:
-            new_masks.append(cv2.resize(mask, (int(1920 * scale), int(1080 * scale))))
+            new_masks.append(
+                cv2.resize(mask, (int(self.width * scale), int(self.height * scale)))
+            )
 
-        # depend on if the image is smaller or larger than 1920x1080, perform different actions
+        # depend on if the image is smaller or larger than width x height, perform different actions
         # images directly gotten from labelbox has 4 channels
         if len(img_arr[0][0]) == 4:
-            final_img_arr = np.zeros((1080, 1920, 4)).astype("uint8")
+            final_img_arr = np.zeros((self.height, self.width, 4)).astype("uint8")
         else:
-            final_img_arr = np.zeros((1080, 1920, 3)).astype("uint8")
+            final_img_arr = np.zeros((self.height, self.width, 3)).astype("uint8")
 
         final_masks = []
         for i in range(0, len(new_masks)):
-            final_masks.append(np.zeros((1080, 1920)).astype("uint8"))
+            final_masks.append(np.zeros((self.height, self.width)).astype("uint8"))
 
         # if the scaled image is smaller than original
-        if int(1920 * scale) < 1920 or int(1080 * scale) < 1080:
+        if (
+            int(self.width * scale) < self.width
+            or int(self.height * scale) < self.height
+        ):
             # fisr detemrine the range the upper left corner can take
-            max_h_offset = 1920 - int(1920 * scale)
-            max_v_offset = 1080 - int(1080 * scale)
+            max_h_offset = self.width - int(self.width * scale)
+            max_v_offset = self.height - int(self.height * scale)
             upper_left_x = int(random.random() * max_h_offset)
             upper_left_y = int(random.random() * max_v_offset)
 
             # concat arrays
             for i in range(0, len(final_masks)):
-                for j in range(0, int(1080 * scale)):
+                for j in range(0, int(self.height * scale)):
                     final_img_arr[
                         j + upper_left_y,
-                        upper_left_x : (upper_left_x + int(1920 * scale)),
+                        upper_left_x : (upper_left_x + int(self.width * scale)),
                     ] = new_img_arr[j]
                     final_masks[i][j + upper_left_y][
-                        upper_left_x : (upper_left_x + int(1920 * scale))
+                        upper_left_x : (upper_left_x + int(self.width * scale))
                     ] = new_masks[i][j]
 
         # if the scaled image is larget than original
         else:
             # fisr detemrine the range the upper left corner can take
-            max_h_offset = len(new_img_arr[0]) - 1920
-            max_v_offset = len(new_img_arr) - 1080
+            max_h_offset = len(new_img_arr[0]) - self.width
+            max_v_offset = len(new_img_arr) - self.height
             upper_left_x = int(random.random() * max_h_offset)
             upper_left_y = int(random.random() * max_v_offset)
 
             # concat arrays
             final_img_arr = new_img_arr[
-                upper_left_y : (upper_left_y + 1080),
-                upper_left_x : (upper_left_x + 1920),
+                upper_left_y : (upper_left_y + self.height),
+                upper_left_x : (upper_left_x + self.width),
             ]
             for i in range(0, len(final_masks)):
                 final_masks[i] = new_masks[i][
-                    upper_left_y : (upper_left_y + 1080),
-                    upper_left_x : (upper_left_x + 1920),
+                    upper_left_y : (upper_left_y + self.height),
+                    upper_left_x : (upper_left_x + self.width),
                 ]
 
         return final_img_arr, final_masks
@@ -352,7 +363,7 @@ class Cocopen:
             hsv_img = hsv_img_int.astype("uint8")
 
             # convert back to PIL image
-            new_img_arr = Image.new("HSV", (1920, 1080), (0, 0, 0))
+            new_img_arr = Image.new("HSV", (self.width, self.height), (0, 0, 0))
             new_img_arr = Image.fromarray(hsv_img, mode="HSV")
             new_img_arr = new_img_arr.convert("RGB")
 
@@ -385,7 +396,10 @@ class Cocopen:
         # rotation
         image_center = tuple(np.array(img.shape[1::-1]) / 2)
         rot_mat = cv2.getRotationMatrix2D(
-            image_center, angle, 1920 / (1080 * 1920 / np.sqrt(1920**2 + 1080**2))
+            image_center,
+            angle,
+            self.width
+            / (self.height * self.width / np.sqrt(self.width**2 + self.height**2)),
         )
         img_new = cv2.warpAffine(img, rot_mat, img.shape[1::-1], flags=cv2.INTER_LINEAR)
         # flip
@@ -396,7 +410,7 @@ class Cocopen:
             # vertical flip
             img_new = np.flip(img_new, 0)
         # if fx_scale and fy_scale:
-        #     img_new = cv2.resize(img_new, dsize = (1920,1080), fx=fx_scale, fy=fy_scale)
+        #     img_new = cv2.resize(img_new, dsize = (self.width, self.height), fx=fx_scale, fy=fy_scale)
         return img_new
 
     # Combining foreground and background images
@@ -474,8 +488,8 @@ class Cocopen:
 
             image = {
                 "id": i,  # this can be updated later in a for loop
-                "width": 1920,
-                "height": 1080,
+                "width": self.width,
+                "height": self.height,
                 "file_name": str(i) + ".png",
             }
             coco_new_obj_sem["images"].append(image)
@@ -586,7 +600,7 @@ class Cocopen:
 
                 mask_array_1.append(mask1)
 
-                msk1 = np.zeros((1080, 1920, 3)).astype("uint8")
+                msk1 = np.zeros((self.height, self.width, 3)).astype("uint8")
                 msk1[:, :, 0] = mask1
                 msk1[:, :, 1] = mask1
                 msk1[:, :, 2] = mask1
@@ -628,8 +642,8 @@ class Cocopen:
             for j in range(1, total_num_instances):
 
                 # choose the second image
-                randint2 = int(random.random() * len(all_category_ids))
-                msk2 = np.zeros((1080, 1920, 3)).astype("uint8")
+                randint2 = int(random.random() * len(all_img_arr))
+                msk2 = np.zeros((self.height, self.width, 3)).astype("uint8")
                 mask_array_2 = []
 
                 category_id = all_category_ids[randint2]
@@ -639,7 +653,7 @@ class Cocopen:
                     mask2 = mask2 & (~mask_array_1)
                     mask_array_2.append(mask2)
 
-                    msk2 = np.zeros((1080, 1920, 3)).astype("uint8")
+                    msk2 = np.zeros((self.height, self.width, 3)).astype("uint8")
                     msk2[:, :, 0] = mask2
                     msk2[:, :, 1] = mask2
                     msk2[:, :, 2] = mask2
@@ -690,8 +704,8 @@ class Cocopen:
             bg_flip_v = bool(int(random.random() / 0.5))
             bg_arr = self.random_operations(bg_arr, bg_rot, bg_flip_h, bg_flip_v)
 
-            mask_bg = np.ones((1080, 1920)).astype("uint8")
-            msk_bg = np.zeros((1080, 1920, 3)).astype("uint8")
+            mask_bg = np.ones((self.height, self.width)).astype("uint8")
+            msk_bg = np.zeros((self.height, self.width, 3)).astype("uint8")
             mask_bg = mask_bg & (~mask_array_1)  # & (~ mask_array_2)
 
             msk_bg[:, :, 0] = mask_bg
