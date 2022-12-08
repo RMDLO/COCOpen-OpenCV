@@ -525,6 +525,10 @@ class Cocopen:
                         img, mask = self.get_object_info(
                             image_list[category["name"]][index], category["name"]
                         )
+                        # Raise exception if object image height and width do not match image shape parameter
+                        if img.shape[0:2] != (self.height, self.width):
+                            raise Exception(f"""Object image height and width do not match image shape parameter
+                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})""")
                         image_list[category["name"]].pop(index)
 
                         mask = mask / 255
@@ -697,6 +701,10 @@ class Cocopen:
             # Download background image from azure
             src = self.download_image_from_azure(img=bg, category="background")
             bg_arr = src.astype("uint8")
+            # Raise exception if background image height and width do not match image shape parameter
+            if bg_arr.shape[0:2] != (self.height, self.width):
+                raise Exception(f"""Background image height and width do not match image shape parameter
+                                ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})""")
 
             # background random operations
             bg_rot = random.random() * 360
