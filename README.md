@@ -18,7 +18,7 @@ COCOpen performs the following tasks to automatically generate labeled object in
 2. Apply color thresholding and contour detection to the image to automatically obtain an object bounding box and instance segmentation mask.
 3. Mask the original object image and randomly apply color, hue, orientation, and scale jittering augmentations.
 4. Combine the masked object image with other labeled and masked single-object images into a single image using the Copy-Paste Augmentation technique [3].
-5. Apply the combined image with to a randomly selected background image.
+5. Apply the combined image to a randomly selected background image.
 6. Save all image names and annotations to a dictionary file which can be used to load the data to train object detection, localization, and instance segmentation models.
 
 <p align="center">
