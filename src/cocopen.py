@@ -22,18 +22,7 @@ class Cocopen:
     ) -> None:
 
         # Initializing supercategories dictionary
-        self.categories = [
-            {
-                "supercategory": "device",
-                "id": parameters["categories"]["device"],
-                "name": "device",
-            },
-            {
-                "supercategory": "wire",
-                "id": parameters["categories"]["wire"],
-                "name": "wire",
-            },
-        ]
+        self.categories = []
 
         # Saving all directory names
         self.dataset_directory_name = dataset_directory_name
@@ -64,6 +53,7 @@ class Cocopen:
         except:
             print(f"{self.val} directory already exists!")
         print("Created Directories")
+
 
     # Generating segmentation annotations in object semantics format
     def object_semantics(
@@ -187,7 +177,7 @@ class Cocopen:
     # Creating foreground image list
     def create_foreground_image_list(self) -> None:
         """
-        Creating foreground image list from images on Azure and segregating them into 'train' and 'val' categories
+        Creating foreground image list from images on Azure and splitting the list into 'train' and 'val' sets
         """
         # Creating list of all foreground images of wires
         azure_all_wire_list = self.wire_container_client.list_blobs()
@@ -195,7 +185,7 @@ class Cocopen:
         # Creating list of all foreground images of devices
         azure_all_device_list = self.device_container_client.list_blobs()
 
-        # Segregating wire images into 'train' and 'val' categories
+        # Splitting wire images into 'train' and 'val' sets
         self.train_wire_lst = []
         self.val_wire_lst = []
         for blob in azure_all_wire_list:
@@ -205,7 +195,7 @@ class Cocopen:
             else:
                 self.val_wire_lst.append(blob.name)
 
-        # Segregating device images into 'train' and 'val' categories
+        # Splitting device images into 'train' and 'val' sets
         self.train_device_lst = []
         self.val_device_lst = []
         for blob in azure_all_device_list:
@@ -223,7 +213,7 @@ class Cocopen:
         # Creating list of all background images
         azure_all_background_list = self.background_container_client.list_blobs()
 
-        # Segregating images into 'train background' and 'val background' categories
+        # Splitting images into 'train background' and 'val background' sets
         self.train_backgrounds_lst = []
         self.val_backgrounds_lst = []
         for blob in azure_all_background_list:
@@ -292,6 +282,20 @@ class Cocopen:
         frame = new_frame
 
         return frame
+
+    # Generate super categories, used when an object super category (like "wire") may contain subcategories (like "ethernet")
+    def generate_supercategories(self):
+        """
+        Generate dictionary for super categories based on parameters .yaml file
+        """
+        for key in self.parameters["categories"]:
+            supercategory_dict = {
+                "supercategory": key,
+                "id": self.parameters["categories"][key],
+                "name": key
+            }
+            self.categories.append(supercategory_dict)
+        print("Generated Categories Dictionary from Parameters")
 
     # Returning wire information
     def get_object_info(self, img, category):

@@ -31,6 +31,9 @@ def main():
         parameters=parameters
     )
 
+    # Create categories dictionary from parameters
+    cocopen.generate_supercategories()
+
     # Make new directories
     cocopen.make_new_dirs(root_dir=root_dir)
 
@@ -38,6 +41,9 @@ def main():
     # cocopen.create_val_dataset()
 
     # Initializing Azure connection
+    foreground_image_containers = (
+
+    )
     foreground_image_wire_container = (
         "wire"  # name of the foreground image container on Azure for wire images
     )
