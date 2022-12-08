@@ -30,12 +30,10 @@ COCOpen performs the following tasks to automatically generate labeled object in
 COCOpen-OpenCV uses an anaconda environment to manage versions of all dependencies. To get started with installing `conda` please follow [these instructions](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
 
 ### **Cloning COCOpen-OpenCV repository**
-Using the RMDLO COCOpen-OpenCV library requires desktop [configuration of a GitHub SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
-
 Clone this repository in your desired location by running the following command in a terminal:
 ```bash
 # Clone the repository
-$ git clone git@github.com:RMDLO/COCOpen-OpenCV.git
+$ git clone https://github.com/RMDLO/COCOpen-OpenCV.git
 ```
 ### **Creating Anaconda Environment**
 For ease of creating a conda environment we have provided you with an `environment.yml` file in the root directory of this repository.
