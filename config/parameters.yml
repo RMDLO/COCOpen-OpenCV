@@ -1,13 +1,14 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 25
-  val_images: 8
+  train_images: 5
+  val_images: 3
   train_split: 0.8
   
 # Object Categories and Corresponding Category IDs
 categories:
   device: 1
   wire: 2
+  background: 0
 
 # Color Thresholding Values for Each Object Category
 threshold:
@@ -16,5 +17,12 @@ threshold:
   
 # Maximum Number of Instances Per Image for Each Object Category
 max_instances:
-  devices: 2
-  wires: 4
+  device: 2
+  wire: 4
+
+# User defined parameters
+user_defined:
+  root_dir: "."
+  dataset_directory_name: "cocopen-dataset-3"
+  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
+
