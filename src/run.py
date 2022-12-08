@@ -1,5 +1,6 @@
 # Import libraries
 import random
+import yaml
 from dotenv import load_dotenv
 
 from cocopen import Cocopen
@@ -13,22 +14,21 @@ def main():
     # initialize random seed
     random.seed(random.randint(1, 1000))
 
-    # Initialize Cocopen parameters
     # Root director
     root_dir = "."
+
     # Dataset directory name
-    dataset_directory_name = "new-category-test-3"
-    # Number of training images
-    num_of_train_images = 25
-    # Number of val images
-    num_of_val_images = 8
+    dataset_directory_name = "cocopen-dataset"
+
+    # Load dataset parameters
+    with open("./config/parameters.yml", 'r') as file:
+        parameters = yaml.safe_load(file)
 
     # initialize cocopen object
     cocopen = Cocopen(
         root_dir=root_dir,
         dataset_directory_name=dataset_directory_name,
-        num_of_train_images=num_of_train_images,
-        num_of_val_images=num_of_val_images,
+        parameters=parameters
     )
 
     # Make new directories
@@ -71,7 +71,6 @@ def main():
         format="zip",
         root_dir=f"./datasets/{dataset_directory_name}",
     )
-
 
 if __name__ == "__main__":
     main()

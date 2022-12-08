@@ -1,0 +1,11 @@
+image_params:
+  max_num_wires: 4
+  max_num_devices: 2
+  
+dataset_params:
+  num_of_train_images: 25
+  num_of_val_images: 8
+  
+object_categories:
+  device: 1
+  wire: 2

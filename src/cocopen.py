@@ -1,13 +1,14 @@
 import os
 import shutil
 import json
-import random
+import yaml
 from tqdm import tqdm
-import urllib
+import random
+import numpy as np
 from PIL import Image, ImageEnhance
 import cv2
-import numpy as np
 from pycocotools import mask as pycocomask
+import urllib
 from azure.storage.blob import BlobServiceClient
 
 # Class for the cocopen object
@@ -17,18 +18,12 @@ class Cocopen:
         self,
         root_dir: str,
         dataset_directory_name: str,
-        num_of_train_images: int,
-        num_of_val_images: int,
+        parameters: dict,
     ) -> None:
+
         # Initializing class dictionary and categories list
-        self.class_dict = {
-            "device": 1,
-            "ethernet": 2,
-            "phone": 3,
-            "power": 4,
-            "hdmi": 5,
-            "coaxial": 6,
-        }
+        self.class_dict = parameters["object_categories"]
+
         self.categories = [
             {
                 "supercategory": "device",
@@ -36,17 +31,9 @@ class Cocopen:
                 "name": "device",
             },
             {
-                "supercategory": "cable",
-                "id": self.class_dict["ethernet"],
-                "name": "ethernet",
-            },
-            {"supercategory": "cable", "id": self.class_dict["phone"], "name": "phone"},
-            {"supercategory": "cable", "id": self.class_dict["power"], "name": "power"},
-            {"supercategory": "cable", "id": self.class_dict["hdmi"], "name": "hdmi"},
-            {
-                "supercategory": "cable",
-                "id": self.class_dict["coaxial"],
-                "name": "coaxial",
+                "supercategory": "wire",
+                "id": self.class_dict["wire"],
+                "name": "wire",
             },
         ]
 
@@ -57,8 +44,8 @@ class Cocopen:
         self.val = self.dataset_dir + "/val"
 
         # Saving number of training and val images
-        self.num_of_train_images = num_of_train_images
-        self.num_of_val_images = num_of_val_images
+        self.num_of_train_images = parameters["dataset_params"]["num_of_train_images"]
+        self.num_of_val_images = parameters["dataset_params"]["num_of_val_images"]
 
         # Saving export.json file
         self.export_json = os.path.join(self.dataset_dir, "export.json")
@@ -86,25 +73,6 @@ class Cocopen:
             print(f"{self.val} directory already exists!")
         print("Created Directories")
 
-    # Returning category data given label
-    def get_label(self, label, class_dict):
-        """
-        This function returns category data given a label, reads the image, and performs intensity thresholding.
-        """
-        label_url = label["instanceURI"]
-        try:
-            urllib.request.urlretrieve(label_url, "label")
-        except:
-            return
-        try:
-            category_id = class_dict[label["classifications"][0]["answer"][0]["title"]]
-        except:
-            category_id = class_dict[label["title"]]
-        label_image = cv2.imread("label", cv2.IMREAD_UNCHANGED)
-        gray = cv2.cvtColor(label_image, cv2.COLOR_BGR2GRAY)  # Threshold in grayscale
-
-        return label_image, gray, category_id
-
     # Generating segmentation annotations in object semantics format
     def object_semantics(
         self,
@@ -120,18 +88,9 @@ class Cocopen:
         """
         This function generates segmentation annotations with the object semantics format.
         """
-        if label is not None:
-            # If generating semantics from main loop for "originals" folder
-            # print(label, class_dict)
-            label_image, gray, category_id = self.get_label(label, class_dict)
-            mask = cv2.findNonZero(gray)
-            b, g, r, a = cv2.split(label_image)
-            bitmask = np.asarray(a, order="F")
-        else:
-            # If generating semantics within combine_images()
-            mask = np.asfortranarray(mask)
-            bitmask = mask.astype(np.uint8)
-            file_name = str(img_id) + ".png"
+        mask = np.asfortranarray(mask)
+        bitmask = mask.astype(np.uint8)
+        file_name = str(img_id) + ".png"
 
         segmentation = pycocomask.encode(bitmask)
         segmentation["counts"] = segmentation["counts"].decode("ascii")
@@ -168,17 +127,11 @@ class Cocopen:
         """
         This function generates segmentation annotations with the object segment semantics format.
         """
-        if label is not None:
-            # If generating semantics from main loop for "originals" folder
-            _, gray, category_id = self.get_label(label, class_dict)
-            contours, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            new_frame = np.zeros(gray.shape, np.uint8)
-        else:
-            # If generating semantics within combine_images()
-            gray = cv2.cvtColor(final_img, cv2.COLOR_BGR2GRAY)
-            contours, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            new_frame = np.zeros(gray.shape, np.uint8)
-            file_name = str(img_id) + ".png"
+        # If generating semantics within combine_images()
+        gray = cv2.cvtColor(final_img, cv2.COLOR_BGR2GRAY)
+        contours, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        new_frame = np.zeros(gray.shape, np.uint8)
+        file_name = str(img_id) + ".png"
 
         # for each object segment
         for a, contour in enumerate(contours):
@@ -335,7 +288,7 @@ class Cocopen:
         return src
 
     # Getting contour filters
-    def contour_filter(self, frame, contour_min_area=1000, contour_max_area=2075000):
+    def contour_filter(self, frame, contour_min_area=5000, contour_max_area=2075000):
         contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
@@ -350,33 +303,21 @@ class Cocopen:
         return frame
 
     # Returning wire information
-    def get_wire_info(self, img):
+    def get_object_info(self, img, category):
         """
         This funciton returns the image array and the mask array
         """
-        # Get wire mask
-        src = self.download_single_wire_image_from_azure(img=img)
+        # Get mask
+        if category == "wire":
+            src = self.download_single_wire_image_from_azure(img=img)
+            threshold = 30
+        if category == "device":
+            src = self.download_single_device_image_from_azure(img=img)
+            threshold = 180
         median = cv2.medianBlur(src, 9)  # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
-        _, mask = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY)  # Threshold step
+        _, mask = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)  # Threshold step
         new_mask = self.contour_filter(mask)  # blob filtering step
-
-        # Encode
-        mask_array = np.asarray(new_mask, order="F")
-
-        return src, mask_array
-
-    # Returning device information
-    def get_device_info(self, img):
-        """
-        This funciton returns the image array and the mask array
-        """
-        # Get device mask
-        src = self.download_single_device_image_from_azure(img=img)
-        median = cv2.medianBlur(src, 9)
-        gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
-        _, mask = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY)
-        new_mask = self.contour_filter(mask)
 
         # Encode
         mask_array = np.asarray(new_mask, order="F")
@@ -620,7 +561,7 @@ class Cocopen:
             for j in range(0, num_of_wires):
                 index = int(len(wire_lst) * random.random())
                 wire = wire_lst[index]
-                wire_img, wire_mask = self.get_wire_info(wire)
+                wire_img, wire_mask = self.get_object_info(wire, "wire")
 
                 wire_lst.pop(index)
 
@@ -664,7 +605,7 @@ class Cocopen:
             for j in range(0, num_of_devices):
                 index = int(len(device_lst) * random.random())
                 device = device_lst[index]
-                device_img, device_mask = self.get_device_info(device)
+                device_img, device_mask = self.get_object_info(device, "device")
 
                 device_mask = device_mask / 255
                 device_mask = device_mask.astype("uint8")
