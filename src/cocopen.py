@@ -199,10 +199,10 @@ class Cocopen:
             self.category_to_train_image_list[category["name"]] = train_image_list
             self.category_to_val_image_list[category["name"]] = val_image_list
 
-    # Downloading wire foreground image from Azure
+    # Downloading image from Azure
     def download_image_from_azure(self, img, category):
         """
-        Downloads wire image from Azure blob storage
+        Downloads image from Azure blob storage
         """
         # Get blob and read image data into memory cache
         blob = self.category_to_container_client[category].get_blob_client(img)
