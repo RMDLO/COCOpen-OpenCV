@@ -21,6 +21,7 @@ dependencies:
   - pip=22.2.2=py39h06a4308_0
   - platformdirs=2.5.2=py39h06a4308_0
   - python=3.9.15=h7a1cb2a_2
+  - pyyaml=6.0=py39h7f8727e_1
   - readline=8.2=h5eee18b_0
   - setuptools=65.5.0=py39h06a4308_0
   - sqlite=3.40.0=h5082296_0
@@ -30,6 +31,7 @@ dependencies:
   - tzdata=2022f=h04d1e81_0
   - wheel=0.37.1=pyhd3eb1b0_0
   - xz=5.2.8=h5eee18b_0
+  - yaml=0.2.5=h7b6447c_0
   - zlib=1.2.13=h5eee18b_0
   - pip:
     - azure-core==1.26.1
@@ -60,3 +62,4 @@ dependencies:
     - six==1.16.0
     - tqdm==4.64.1
     - urllib3==1.26.13
+prefix: /home/hollydinkel/miniconda3/envs/cocopen-env
