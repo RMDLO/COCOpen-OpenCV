@@ -45,7 +45,7 @@ To create the `conda` environment from the `environment.yml` file run:
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
 # Clone the conda environment
-COCOCpen-OpenCV$ conda env create -f environment.yml
+COCOCpen-OpenCV$ conda env create -f config/environment.yml
 # Activate the conda environment
 COCOpen-OpenCV$ conda activate cocopen-env
 ```
