@@ -17,9 +17,6 @@ def main():
     # Root director
     root_dir = "."
 
-    # Dataset directory name
-    dataset_directory_name = "cocopen-dataset"
-
     # Load dataset parameters
     with open("./config/parameters.yml", 'r') as file:
         parameters = yaml.safe_load(file)
@@ -27,7 +24,6 @@ def main():
     # initialize cocopen object
     cocopen = Cocopen(
         root_dir=root_dir,
-        dataset_directory_name=dataset_directory_name,
         parameters=parameters
     )
 

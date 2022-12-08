@@ -17,7 +17,6 @@ class Cocopen:
     def __init__(
         self,
         root_dir: str,
-        dataset_directory_name: str,
         parameters: dict,
     ) -> None:
 
@@ -25,7 +24,7 @@ class Cocopen:
         self.categories = []
 
         # Saving all directory names
-        self.dataset_directory_name = dataset_directory_name
+        self.dataset_directory_name = parameters["dataset_name"]
         self.dataset_dir = root_dir + f"/datasets/{self.dataset_directory_name}"
         self.train = self.dataset_dir + "/train"
         self.val = self.dataset_dir + "/val"

@@ -52,9 +52,10 @@ COCOpen-OpenCV$ conda activate cocopen-env
 ## **Running the API**
 
 ### **Adjusting parameters**
-Open `src/run.py` file.
+Open `config/parameters.yml` file.
 
-Here you can tweak parameters like `dataset_directory_name` (name of your dataset), `num_of_train_images` (number of training set images you want to generate) and `num_of_val_images` (number of validation set images you want to generate).
+Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set) and `max_instances` (the maximum number of objects of a particular category per image).
+
 ### **Running the script**
 To execute the API, run the following command
 ```bash
