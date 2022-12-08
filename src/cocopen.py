@@ -21,18 +21,16 @@ class Cocopen:
         parameters: dict,
     ) -> None:
 
-        # Initializing class dictionary and categories list
-        self.class_dict = parameters["object_categories"]
-
+        # Initializing supercategories dictionary
         self.categories = [
             {
                 "supercategory": "device",
-                "id": self.class_dict["device"],
+                "id": parameters["categories"]["device"],
                 "name": "device",
             },
             {
                 "supercategory": "wire",
-                "id": self.class_dict["wire"],
+                "id": parameters["categories"]["wire"],
                 "name": "wire",
             },
         ]
@@ -42,11 +40,7 @@ class Cocopen:
         self.dataset_dir = root_dir + f"/datasets/{self.dataset_directory_name}"
         self.train = self.dataset_dir + "/train"
         self.val = self.dataset_dir + "/val"
-
-        # Saving number of training and val images
-        self.num_of_train_images = parameters["dataset_params"]["num_of_train_images"]
-        self.num_of_val_images = parameters["dataset_params"]["num_of_val_images"]
-        self.train_split = parameters["dataset_params"]["train_split"]
+        self.parameters = parameters
 
     # Making new directories
     def make_new_dirs(self, root_dir: str) -> None:
@@ -125,7 +119,6 @@ class Cocopen:
         """
         This function generates segmentation annotations with the object segment semantics format.
         """
-        # If generating semantics within combine_images()
         gray = cv2.cvtColor(final_img, cv2.COLOR_BGR2GRAY)
         contours, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         new_frame = np.zeros(gray.shape, np.uint8)
@@ -207,7 +200,7 @@ class Cocopen:
         self.val_wire_lst = []
         for blob in azure_all_wire_list:
             rand = random.random()
-            if 0 <= rand < self.train_split:
+            if 0 <= rand < self.parameters["dataset_params"]["train_split"]:
                 self.train_wire_lst.append(blob.name)
             else:
                 self.val_wire_lst.append(blob.name)
@@ -217,7 +210,7 @@ class Cocopen:
         self.val_device_lst = []
         for blob in azure_all_device_list:
             rand = random.random()
-            if 0 <= rand < self.train_split:
+            if 0 <= rand < self.parameters["dataset_params"]["train_split"]:
                 self.train_device_lst.append(blob.name)
             else:
                 self.val_device_lst.append(blob.name)
@@ -235,15 +228,15 @@ class Cocopen:
         self.val_backgrounds_lst = []
         for blob in azure_all_background_list:
             rand = random.random()
-            if 0 <= rand < self.train_split:
+            if 0 <= rand < self.parameters["dataset_params"]["train_split"]:
                 self.train_backgrounds_lst.append(blob.name)
             else:
                 self.val_backgrounds_lst.append(blob.name)
 
     # Downloading wire foreground image from Azure
-    def download_single_wire_image_from_azure(self, img):
+    def download_wire_image_from_azure(self, img):
         """
-        Downloads single_wire images from Azure blob storage
+        Downloads wire image from Azure blob storage
         """
         # Get blob and read image data into memory cache
         blob = self.wire_container_client.get_blob_client(img)
@@ -256,9 +249,9 @@ class Cocopen:
         return src
 
     # Downloading device foreground image from Azure
-    def download_single_device_image_from_azure(self, img):
+    def download_device_image_from_azure(self, img):
         """
-        Downloads single_device images from Azure blob storage
+        Downloads device image from Azure blob storage
         """
         # Get blob and read image data into memory cache
         blob = self.device_container_client.get_blob_client(img)
@@ -307,14 +300,12 @@ class Cocopen:
         """
         # Get mask
         if category == "wire":
-            src = self.download_single_wire_image_from_azure(img=img)
-            threshold = 30
+            src = self.download_wire_image_from_azure(img=img)
         if category == "device":
-            src = self.download_single_device_image_from_azure(img=img)
-            threshold = 180
+            src = self.download_device_image_from_azure(img=img)
         median = cv2.medianBlur(src, 9)  # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
-        _, mask = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)  # Threshold step
+        _, mask = cv2.threshold(gray, self.parameters["threshold"][category], 255, cv2.THRESH_BINARY)  # Threshold step
         new_mask = self.contour_filter(mask)  # blob filtering step
 
         # Encode
@@ -471,7 +462,7 @@ class Cocopen:
         orig_device_img_lst,
         background_img_lst,
         target_dir,
-        num_of_images,
+        num_images,
         categories,
         class_dict,
         wire_container_client,
@@ -520,7 +511,7 @@ class Cocopen:
         ann_id_sem = 0
         ann_id_seg_sem = 0
 
-        for i in tqdm(range(num_of_images)):
+        for i in tqdm(range(num_images)):
 
             scale = 1  # initialization
 
@@ -546,9 +537,9 @@ class Cocopen:
             coco_new_obj_seg_sem["images"].append(image)
 
             # determine how many cables in each image
-            num_of_wires = int(random.random() * 4) + 1  # 1-4 wires
+            num_wires = int(random.random() * self.parameters["max_instances"]["wires"]) + 1  # 1-4 wires
             # determine how many devices in each image
-            num_of_devices = int(random.random() * 2) + 1  # 1-2 devices
+            num_devices = int(random.random() * self.parameters["max_instances"]["devices"]) + 1  # 1-2 devices
 
             # arrays storing wire and device info
             all_img_arr = []
@@ -556,7 +547,7 @@ class Cocopen:
             all_category_ids = []
 
             # get wire mask info
-            for j in range(0, num_of_wires):
+            for j in range(0, num_wires):
                 index = int(len(wire_lst) * random.random())
                 wire = wire_lst[index]
                 wire_img, wire_mask = self.get_object_info(wire, "wire")
@@ -600,7 +591,7 @@ class Cocopen:
                 all_category_ids.append(2)
 
             # get device mask info
-            for j in range(0, num_of_devices):
+            for j in range(0, num_devices):
                 index = int(len(device_lst) * random.random())
                 device = device_lst[index]
                 device_img, device_mask = self.get_object_info(device, "device")
@@ -647,7 +638,7 @@ class Cocopen:
                 all_category_ids.append(1)
 
             # perform random flip
-            for m in range(0, num_of_devices + num_of_wires):
+            for m in range(0, num_devices + num_wires):
 
                 horizontal = int(2 * random.random())
                 vertical = int(2 * random.random())
@@ -719,7 +710,7 @@ class Cocopen:
             all_category_ids.pop(randint)
 
             # combine the rest
-            for j in range(1, num_of_wires + num_of_devices):
+            for j in range(1, num_wires + num_devices):
 
                 # choose the second image
                 randint2 = int(random.random() * len(all_img_arr))
@@ -826,9 +817,9 @@ class Cocopen:
             orig_device_img_lst=self.train_device_lst,
             background_img_lst=self.train_backgrounds_lst,
             target_dir=self.train,
-            num_of_images=self.num_of_train_images,
+            num_images=self.parameters["dataset_params"]["train_images"],
             categories=self.categories,
-            class_dict=self.class_dict,
+            class_dict=self.parameters["categories"],
             wire_container_client=self.wire_container_client,
             background_container_client=self.background_container_client,
         )
@@ -851,9 +842,9 @@ class Cocopen:
             orig_device_img_lst=self.val_device_lst,
             background_img_lst=self.val_backgrounds_lst,
             target_dir=self.val,
-            num_of_images=self.num_of_val_images,
+            num_images=self.parameters["dataset_params"]["val_images"],
             categories=self.categories,
-            class_dict=self.class_dict,
+            class_dict=self.parameters["categories"],
             wire_container_client=self.wire_container_client,
             background_container_client=self.background_container_client,
         )

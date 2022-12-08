@@ -1,12 +1,20 @@
-image_params:
-  max_num_wires: 4
-  max_num_devices: 2
-  
+# Dataset Size and Split Parameters
 dataset_params:
-  num_of_train_images: 25
-  num_of_val_images: 8
+  train_images: 25
+  val_images: 8
   train_split: 0.8
   
-object_categories:
+# Object Categories and Corresponding Category IDs
+categories:
   device: 1
   wire: 2
+
+# Color Thresholding Values for Each Object Category
+threshold:
+  device: 180
+  wire: 30
+  
+# Maximum Number of Instances Per Image for Each Object Category
+max_instances:
+  devices: 2
+  wires: 4
