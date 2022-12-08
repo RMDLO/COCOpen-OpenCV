@@ -28,6 +28,6 @@ max_instances:
 # User defined parameters
 user_defined:
   root_dir: "."
-  dataset_directory_name: "cocopen-dataset-3"
+  dataset_directory_name: "cocopen-dataset-4"
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
 
