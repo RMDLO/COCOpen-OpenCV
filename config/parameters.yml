@@ -3,6 +3,11 @@ dataset_params:
   train_images: 25
   val_images: 8
   train_split: 0.8
+
+# Image Shape
+shape:
+  height: 1080
+  width: 1920
   
 # Object Categories and Corresponding Category IDs
 categories:
