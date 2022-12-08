@@ -157,7 +157,9 @@ class Cocopen:
         Initializing Azure connection for for accessing blob storage
         """
         # Initializing connection with Azure storage account
-        connection_string = self.parameters["user_defined"]["AZURE_STORAGE_CONNECTION_STRING"]
+        connection_string = self.parameters["user_defined"][
+            "AZURE_STORAGE_CONNECTION_STRING"
+        ]
         blob_service_client = BlobServiceClient.from_connection_string(
             conn_str=connection_string
         )
