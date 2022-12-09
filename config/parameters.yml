@@ -25,6 +25,36 @@ max_instances:
   device: 2
   wire: 4
 
+# Parameters for Scale Jittering
+scale_jittering:
+  apply_scale_jittering: true
+
+  # if true, different objects use different scale factors
+  individual_scale_jittering: true
+
+  # scale factor range
+  scale_factor_min: 0.75
+  scale_factor_max: 1.25
+
+# Parameters for Color Augmentation
+color_augmentation:
+  apply_color_augmentation: true
+
+  # if true, different objects use different values
+  individual_color_augmentation: true
+
+  change_saturation: true
+  change_brightness: true
+  change_contrast: true
+  change_hue: true
+
+  # Lower/Upper Limit of Color Augmentation
+  enhancer_min: 0.75
+  enhancer_max: 1.25
+
+  # if true, apply color augmentation again to the combined image
+  color_augmentation_on_combined_image: true
+
 # User defined parameters
 user_defined:
   root_dir: "."

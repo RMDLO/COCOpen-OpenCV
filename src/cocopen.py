@@ -39,6 +39,23 @@ class Cocopen:
         self.height = parameters["shape"]["height"]
         self.width = parameters["shape"]["width"]
 
+        # Initialize scale jittering parameters
+        self.apply_scale_jittering = self.parameters["scale_jittering"]["apply_scale_jittering"]
+        self.individual_scale_jittering = self.parameters["scale_jittering"]["individual_scale_jittering"]
+        self.scale_factor_min = self.parameters["scale_jittering"]["scale_factor_min"]
+        self.scale_factor_max = self.parameters["scale_jittering"]["scale_factor_max"]
+
+        # Initialize color augmentation parameters
+        self.apply_color_augmentation = self.parameters["color_augmentation"]["apply_color_augmentation"]
+        self.individual_color_augmentation = self.parameters["color_augmentation"]["individual_color_augmentation"]
+        self.change_saturation = self.parameters["color_augmentation"]["change_saturation"]
+        self.change_brightness = self.parameters["color_augmentation"]["change_brightness"]
+        self.change_contrast = self.parameters["color_augmentation"]["change_contrast"]
+        self.change_hue = self.parameters["color_augmentation"]["change_hue"]
+        self.enhancer_min = self.parameters["color_augmentation"]["enhancer_min"]
+        self.enhancer_max = self.parameters["color_augmentation"]["enhancer_max"]
+        self.color_augmentation_on_combined_image = self.parameters["color_augmentation"]["color_augmentation_on_combined_image"]
+
     # Making new directories
     def make_new_dirs(self) -> None:
         """
@@ -423,28 +440,10 @@ class Cocopen:
         """
         Combining foreground and background images
         """
-        # different data augmentation methods
-        # scale jittering
-        standard_scale_jittering = False  # different objects use the same scale factor
-        large_scale_jittering = False
-        individual_standard_scale_jittering = (
-            False  # different objects use different scale factor
-        )
-        individual_large_scale_jittering = True
-
-        # color augmentation
-        individual_color_augmentation = (
-            True  # if set to true, different objects use different values
-        )
-        change_saturation = True
-        change_brightness = True
-        change_contrast = True
-        change_hue = True
 
         # this sets the lower/upper limit of color augmentation
-        enhancer_range = [0.5, 1.5]
-        scale_range_standard = [0.8, 1.25]
-        scale_range_large = [0.3, 3.0]
+        enhancer_range = [self.enhancer_min, self.enhancer_max]
+        scale_range = [self.scale_factor_min, self.scale_factor_max]
 
         # Creating a copy of category_to_train_img_list and category_to_val_img_list based on dataset_type
         image_list = {}
@@ -471,20 +470,9 @@ class Cocopen:
         ann_id_seg_sem = 0
 
         for i in tqdm(range(num_images)):
-
-            scale = 1  # initialization
-
-            if standard_scale_jittering == True:
-                # standard scale jittering, all objects use the same scale factor
-                scale = scale_range_standard[0] + random.random() * (
-                    scale_range_standard[1] - scale_range_standard[0]
-                )
-
-            if large_scale_jittering == True:
-                # large scale jittering, all objects use the same scale factor
-                scale = scale_range_large[0] + random.random() * (
-                    scale_range_large[1] - scale_range_large[0]
-                )
+            
+            # scale factor for this image
+            scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
 
             image = {
                 "id": i,  # this can be updated later in a for loop
@@ -538,32 +526,24 @@ class Cocopen:
                         msk.append(mask)
 
                         # scaling
-                        if (
-                            standard_scale_jittering == True
-                            or large_scale_jittering == True
-                        ):
-                            img, msk = self.scale_image(img, msk, scale)
-                        elif individual_standard_scale_jittering == True:
-                            scale = scale_range_standard[0] + random.random() * (
-                                scale_range_standard[1] - scale_range_standard[0]
-                            )
-                            img, msk = self.scale_image(img, msk, scale)
-                        else:
-                            scale = scale_range_large[0] + random.random() * (
-                                scale_range_large[1] - scale_range_large[0]
-                            )
-                            img, msk = self.scale_image(img, msk, scale)
+                        if self.apply_scale_jittering:
+                            if self.individual_scale_jittering:
+                                scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
+                                img, msk = self.scale_image(img, msk, scale)
+                            else:
+                                img, msk = self.scale_image(img, msk, scale)
 
                         # color augmentation
-                        if individual_color_augmentation == True:
-                            img = self.color_augmentation(
-                                img,
-                                enhancer_range,
-                                change_brightness,
-                                change_contrast,
-                                change_saturation,
-                                change_hue,
-                            )
+                        if self.apply_color_augmentation:
+                            if self.individual_color_augmentation:
+                                img = self.color_augmentation(
+                                    img,
+                                    enhancer_range,
+                                    self.change_brightness,
+                                    self.change_contrast,
+                                    self.change_saturation,
+                                    self.change_hue,
+                                )
 
                         # Add the image and mask to the array
                         all_img_arr.append(img)
@@ -725,14 +705,28 @@ class Cocopen:
             final_img = cv2.add(final_img, masked_bg)
 
             # color augmentation
-            final_img = self.color_augmentation(
-                final_img,
-                enhancer_range,
-                change_brightness,
-                change_contrast,
-                change_saturation,
-                False,
-            )
+            if (self.individual_color_augmentation 
+                and self.color_augmentation_on_combined_image
+                and self.apply_color_augmentation):
+                final_img = self.color_augmentation(
+                    final_img,
+                    enhancer_range,
+                    self.change_brightness,
+                    self.change_contrast,
+                    self.change_saturation,
+                    False,
+                )
+            elif (self.apply_color_augmentation 
+                and (not self.individual_color_augmentation)):
+                final_img = self.color_augmentation(
+                    final_img,
+                    enhancer_range,
+                    self.change_brightness,
+                    self.change_contrast,
+                    self.change_saturation,
+                    False,
+                )
+
 
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
 
