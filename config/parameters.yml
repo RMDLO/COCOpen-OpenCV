@@ -11,9 +11,9 @@ shape:
   
 # Object Categories and Corresponding Category IDs
 categories:
+  background: 0
   device: 1
   wire: 2
-  background: 0
 
 # Color Thresholding Values for Each Object Category
 threshold:
@@ -26,8 +26,7 @@ max_instances:
   wire: 4
 
 # User defined parameters
-user_defined:
+directory:
   root_dir: "."
-  dataset_directory_name: "cocopen-dataset-4"
+  dataset_directory_name: "cocopen-dataset"
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
-
