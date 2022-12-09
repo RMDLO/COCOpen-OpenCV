@@ -1,3 +1,4 @@
+# Import libraries
 import os
 import shutil
 import json
@@ -17,13 +18,13 @@ class Cocopen:
     def __init__(
         self,
         parameters: dict,
-    ) -> None:
+        ) -> None:
         # Initializing parameters
         self.parameters = parameters
 
         # Initializing root and destination directory
-        self.root_dir = self.parameters["user_defined"]["root_dir"]
-        self.dataset_directory_name = self.parameters["user_defined"][
+        self.root_dir = self.parameters["directory"]["root_dir"]
+        self.dataset_directory_name = self.parameters["directory"][
             "dataset_directory_name"
         ]
 
@@ -70,7 +71,6 @@ class Cocopen:
         img_id,
         file_name=None,
         label=None,
-        class_dict=None,
         mask=None,
         category_id=None,
     ):
@@ -101,58 +101,6 @@ class Cocopen:
 
         return coco, ann_id
 
-    # Generating segmentation annotations in object segment semantics format
-    def object_segment_semantics(
-        self,
-        coco,
-        ann_id,
-        img_id,
-        file_name=None,
-        label=None,
-        class_dict=None,
-        final_img=None,
-        category_id=None,
-    ):
-        """
-        This function generates segmentation annotations with the object segment semantics format.
-        """
-        gray = cv2.cvtColor(final_img, cv2.COLOR_BGR2GRAY)
-        contours, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        new_frame = np.zeros(gray.shape, np.uint8)
-        file_name = str(img_id) + ".png"
-
-        # for each object segment
-        for a, contour in enumerate(contours):
-            c_area = cv2.contourArea(contour)
-            if 1000 <= c_area:
-                mask = np.zeros(gray.shape, np.uint8)
-                mask = cv2.drawContours(mask, [contour], -1, 255, cv2.FILLED)
-                new_mask = cv2.bitwise_and(gray, mask)
-                pt_frame = cv2.bitwise_or(new_frame, new_mask)
-                points = cv2.findNonZero(pt_frame)
-
-                bitmask = np.asarray(mask, order="F").astype(np.uint8)
-                segmentation = pycocomask.encode(bitmask)
-                area = int(pycocomask.area(segmentation))
-                segmentation["counts"] = segmentation["counts"].decode("ascii")
-                bbox = cv2.boundingRect(points)
-                # file_name = str(img_id) + '.png'
-
-                annotation = {
-                    "category_id": category_id,
-                    "segmentation": segmentation,
-                    "image_id": img_id,
-                    "id": ann_id,
-                    "iscrowd": 0,
-                    "area": area,
-                    "bbox": bbox,
-                    "image_name": file_name,
-                }
-                coco["annotations"].append(annotation)
-
-                ann_id += 1
-        return coco, ann_id
-
     # Initializing Azure connection for for accessing blob storage
     def init_azure(
         self,
@@ -161,7 +109,7 @@ class Cocopen:
         Initializing Azure connection for for accessing blob storage
         """
         # Initializing connection with Azure storage account
-        connection_string = self.parameters["user_defined"][
+        connection_string = self.parameters["directory"][
             "AZURE_STORAGE_CONNECTION_STRING"
         ]
         blob_service_client = BlobServiceClient.from_connection_string(
@@ -460,12 +408,6 @@ class Cocopen:
             "categories": self.categories,
         }
 
-        coco_new_obj_seg_sem = {
-            "images": [],
-            "annotations": [],
-            "categories": self.categories,
-        }
-
         # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
         ann_id_sem = 0
         ann_id_seg_sem = 0
@@ -493,7 +435,6 @@ class Cocopen:
                 "file_name": str(i) + ".png",
             }
             coco_new_obj_sem["images"].append(image)
-            coco_new_obj_seg_sem["images"].append(image)
 
             # create mapping of category name to max_instances for each category
             category_to_num_instances = {}
@@ -610,29 +551,18 @@ class Cocopen:
                 msk1[:, :, 2] = mask1
                 final_img = cv2.bitwise_or(
                     msk1.astype("uint8"), all_img_arr[randint], mask=mask1
-                )
+                    )
 
-                coco_new_obj_seg_sem, ann_id_seg_sem = self.object_segment_semantics(
-                    coco=coco_new_obj_seg_sem,
-                    ann_id=ann_id_seg_sem,
-                    img_id=img_id,
-                    file_name=None,
-                    label=None,
-                    class_dict=None,
-                    final_img=final_img,
-                    category_id=category_id,
-                )
                 coco_new_obj_sem, ann_id_sem = self.object_semantics(
                     coco=coco_new_obj_sem,
                     ann_id=ann_id_sem,
                     img_id=img_id,
                     file_name=None,
                     label=None,
-                    class_dict=None,
                     mask=mask1,
                     category_id=category_id,
-                )
-                # print("Mask1 annid, line 321:",coco_new_o)
+                    )
+
             # save mask1 info for later use
             mask_array_1 = np.dstack(binary_mask_arr[randint])
             mask_array_1 = np.max(mask_array_1, axis=2).astype("uint8")
@@ -663,26 +593,16 @@ class Cocopen:
                     msk2[:, :, 2] = mask2
                     masked_layer = cv2.bitwise_or(
                         msk2.astype("uint8"), all_img_arr[randint2], mask=mask2
-                    )
+                        )
                     final_img = cv2.add(final_img, masked_layer)
 
-                    (
-                        coco_new_obj_seg_sem,
-                        ann_id_seg_sem,
-                    ) = self.object_segment_semantics(
-                        coco_new_obj_seg_sem,
-                        ann_id_seg_sem,
-                        img_id,
-                        final_img=masked_layer,
-                        category_id=category_id,
-                    )
                     coco_new_obj_sem, ann_id_sem = self.object_semantics(
                         coco_new_obj_sem,
                         ann_id_sem,
                         img_id,
                         mask=mask2,
                         category_id=category_id,
-                    )
+                      )
 
                 mask_array_2 = np.dstack(mask_array_2)
                 mask_array_2 = np.max(mask_array_2, axis=2).astype("uint8")
@@ -736,7 +656,7 @@ class Cocopen:
 
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
 
-        return coco_new_obj_sem, coco_new_obj_seg_sem
+        return coco_new_obj_sem
 
     # Generating training dataset
     def generate_train_data(self) -> None:
@@ -745,17 +665,14 @@ class Cocopen:
         """
         # generate train
         print("Generating 'train' data")
-        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(
+        coco_new_obj_sem = self.combine(
             dataset_type="train",
             target_dir=self.train,
             num_images=self.parameters["dataset_params"]["train_images"],
         )
-        f1 = open(self.train + "/train_obj_sem.json", "w")
-        json.dump(coco_new_obj_sem, f1, sort_keys=True, indent=4)
-        f1.close()
-        f2 = open(self.train + "/train_obj_seg_sem.json", "w")
-        json.dump(coco_new_obj_seg_sem, f2, sort_keys=True, indent=4)
-        f2.close()
+        f = open(self.train + "/train_obj_sem.json", "w")
+        json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
+        f.close()
 
     # Generating val dataset
     def generate_val_data(self) -> None:
@@ -763,17 +680,14 @@ class Cocopen:
         Generating val dataset
         """
         print("Generating 'val' data")
-        coco_new_obj_sem, coco_new_obj_seg_sem = self.combine(
+        coco_new_obj_sem = self.combine(
             dataset_type="val",
             target_dir=self.val,
             num_images=self.parameters["dataset_params"]["val_images"],
         )
-        f1 = open(self.val + "/val_obj_sem.json", "w")
-        json.dump(coco_new_obj_sem, f1, sort_keys=True, indent=4)
-        f1.close()
-        f2 = open(self.val + "/val_obj_seg_sem.json", "w")
-        json.dump(coco_new_obj_seg_sem, f2, sort_keys=True, indent=4)
-        f2.close()
+        f = open(self.val + "/val_obj_sem.json", "w")
+        json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
+        f.close()
 
     # Creating zip file of the dataset
     def zip(self, base_name: str, root_dir: str, format="zip") -> None:
