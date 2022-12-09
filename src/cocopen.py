@@ -670,7 +670,7 @@ class Cocopen:
             target_dir=self.train,
             num_images=self.parameters["dataset_params"]["train_images"],
         )
-        f = open(self.train + "/train_obj_sem.json", "w")
+        f = open(self.train + "/train.json", "w")
         json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
         f.close()
 
@@ -685,7 +685,7 @@ class Cocopen:
             target_dir=self.val,
             num_images=self.parameters["dataset_params"]["val_images"],
         )
-        f = open(self.val + "/val_obj_sem.json", "w")
+        f = open(self.val + "/val.json", "w")
         json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
         f.close()
 
