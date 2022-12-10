@@ -62,4 +62,3 @@ dependencies:
     - six==1.16.0
     - tqdm==4.64.1
     - urllib3==1.26.13
-prefix: /home/hollydinkel/miniconda3/envs/cocopen-env

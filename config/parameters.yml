@@ -11,9 +11,9 @@ shape:
   
 # Object Categories and Corresponding Category IDs
 categories:
+  background: 0
   device: 1
   wire: 2
-  background: 0
 
 # Color Thresholding Values for Each Object Category
 threshold:
@@ -25,9 +25,38 @@ max_instances:
   device: 2
   wire: 4
 
-# User defined parameters
-user_defined:
-  root_dir: "."
-  dataset_directory_name: "cocopen-dataset-4"
-  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
+# Parameters for Scale Jittering
+scale_jittering:
+  apply_scale_jittering: true
 
+  # if true, different objects use different scale factors
+  individual_scale_jittering: true
+
+  # scale factor range
+  scale_factor_min: 0.75
+  scale_factor_max: 1.25
+
+# Parameters for Color Augmentation
+color_augmentation:
+  apply_color_augmentation: true
+
+  # if true, different objects use different values
+  individual_color_augmentation: true
+
+  change_saturation: true
+  change_brightness: true
+  change_contrast: true
+  change_hue: true
+
+  # Lower/Upper Limit of Color Augmentation
+  enhancer_min: 0.75
+  enhancer_max: 1.25
+
+  # if true, apply color augmentation again to the combined image
+  color_augmentation_on_combined_image: true
+
+# User defined parameters
+directory:
+  root_dir: "."
+  dataset_directory_name: "cocopen-dataset"
+  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
