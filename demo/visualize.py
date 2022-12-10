@@ -1,10 +1,5 @@
 # Import libraries
-import sys
 import pycocotools.mask as pycocomask
-
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
 import cv2
 import os
 import yaml
@@ -21,7 +16,7 @@ class Demo:
     def __init__(
         self,
         parameters: dict,
-        ) -> None:
+    ) -> None:
         # Initializing parameters
         self.parameters = parameters
 
@@ -30,6 +25,8 @@ class Demo:
         self.dataset_directory_name = self.parameters["directory"][
             "dataset_directory_name"
         ]
+        self.visualization_dir = self.root_dir + "/demo/visualization"
+        self.mask_dir = self.root_dir + "/demo/masks"
 
         # Initializing supercategories dictionary
         self.categories = []
@@ -56,43 +53,49 @@ class Demo:
             }
             self.categories.append(supercategory_dict)
         print("Generated Categories Dictionary from Parameters")
-    
+
     def demo(self):
 
-      register_coco_instances("train", {}, f"{self.train}/train.json", f"{self.train}/")
-      dicts = DatasetCatalog.get("train")
-      metadata = MetadataCatalog.get("train")
-      for d in dicts[:10]:
-        img = cv2.imread(d["file_name"])
-        annos = d["annotations"]
-        _, name = os.path.split(d["file_name"])
-        fig, axs = plt.subplots(1, len(annos), squeeze = False)
-        if len(annos) > 1:
-          fig.set_size_inches(30, 20, forward=True)
-        else:
-          fig.set_size_inches(8, 5, forward=True)
-        for i, anno in enumerate(annos):
-          encoded = anno["segmentation"]
-          mask = pycocomask.decode(encoded)
-          x,y,w,h = anno["bbox"]
-          rect = Rectangle((x,y), w, h, linewidth=1, edgecolor='w', facecolor='None')
-          cat = anno["category_id"]
-          axs[0,i].imshow(mask, cmap=plt.get_cmap('Greys_r'))
-          axs[0,i].add_patch(rect)  
-          axs[0,i].get_xaxis().set_visible(False)
-          axs[0,i].get_yaxis().set_visible(False)
+        register_coco_instances(
+            "train", {}, f"{self.train}/train.json", f"{self.train}/"
+        )
+        dicts = DatasetCatalog.get("train")
+        metadata = MetadataCatalog.get("train")
+        for i, d in enumerate(dicts[:10]):
+            img = cv2.imread(d["file_name"])
+            annos = d["annotations"]
+            mask_list = []
+            for anno in annos:
+                encoded = anno["segmentation"]
+                instance_annotation = pycocomask.decode(encoded) * 255
+                instance_img = cv2.cvtColor(instance_annotation, cv2.COLOR_GRAY2BGR)
+                x, y, w, h = anno["bbox"]
+                mask = cv2.rectangle(instance_img, (x,y), (x+w, y+h), (255,255,255), 2)
+                mask_list.append(mask)
 
-        plt.show()
-        visualizer = Visualizer(img, metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE)
-        out = visualizer.draw_dataset_dict(d)
-        cv2.imshow(out.get_image())
-        cv2.imshow(img)
+            # horizontally concatenate visualization of object instance segmentation masks
+            concatenated_masks = cv2.hconcat(mask_list)
+            
+            # visualize object instance segmentation on cocopen-generated data
+            visualizer = Visualizer(
+                img, metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE
+            )
+            out = visualizer.draw_dataset_dict(d)
+
+            # save masks and visualizations
+            cv2.imwrite(os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image())
+            cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks)
 
 if __name__ == "__main__":
     # Load cocopen parameters
-  with open("./config/parameters.yml", "r") as file:
-      parameters = yaml.safe_load(file)
-  demo = Demo(
+    try:
+        os.mkdir("./demo/visualization")
+    except:
+        print("datasets directory already exists!")
+
+    with open("./config/parameters.yml", "r") as file:
+        parameters = yaml.safe_load(file)
+    demo = Demo(
         parameters=parameters,
-        )
-  demo.demo()
+    )
+    demo.demo()

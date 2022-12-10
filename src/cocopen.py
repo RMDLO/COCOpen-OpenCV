@@ -2,14 +2,12 @@
 import os
 import shutil
 import json
-import yaml
 from tqdm import tqdm
 import random
 import numpy as np
 from PIL import Image, ImageEnhance
 import cv2
 from pycocotools import mask as pycocomask
-import urllib
 from azure.storage.blob import BlobServiceClient
 
 # Class for the cocopen object
@@ -18,7 +16,7 @@ class Cocopen:
     def __init__(
         self,
         parameters: dict,
-        ) -> None:
+    ) -> None:
         # Initializing parameters
         self.parameters = parameters
 
@@ -41,21 +39,35 @@ class Cocopen:
         self.width = parameters["shape"]["width"]
 
         # Initialize scale jittering parameters
-        self.apply_scale_jittering = self.parameters["scale_jittering"]["apply_scale_jittering"]
-        self.individual_scale_jittering = self.parameters["scale_jittering"]["individual_scale_jittering"]
+        self.apply_scale_jittering = self.parameters["scale_jittering"][
+            "apply_scale_jittering"
+        ]
+        self.individual_scale_jittering = self.parameters["scale_jittering"][
+            "individual_scale_jittering"
+        ]
         self.scale_factor_min = self.parameters["scale_jittering"]["scale_factor_min"]
         self.scale_factor_max = self.parameters["scale_jittering"]["scale_factor_max"]
 
         # Initialize color augmentation parameters
-        self.apply_color_augmentation = self.parameters["color_augmentation"]["apply_color_augmentation"]
-        self.individual_color_augmentation = self.parameters["color_augmentation"]["individual_color_augmentation"]
-        self.change_saturation = self.parameters["color_augmentation"]["change_saturation"]
-        self.change_brightness = self.parameters["color_augmentation"]["change_brightness"]
+        self.apply_color_augmentation = self.parameters["color_augmentation"][
+            "apply_color_augmentation"
+        ]
+        self.individual_color_augmentation = self.parameters["color_augmentation"][
+            "individual_color_augmentation"
+        ]
+        self.change_saturation = self.parameters["color_augmentation"][
+            "change_saturation"
+        ]
+        self.change_brightness = self.parameters["color_augmentation"][
+            "change_brightness"
+        ]
         self.change_contrast = self.parameters["color_augmentation"]["change_contrast"]
         self.change_hue = self.parameters["color_augmentation"]["change_hue"]
         self.enhancer_min = self.parameters["color_augmentation"]["enhancer_min"]
         self.enhancer_max = self.parameters["color_augmentation"]["enhancer_max"]
-        self.color_augmentation_on_combined_image = self.parameters["color_augmentation"]["color_augmentation_on_combined_image"]
+        self.color_augmentation_on_combined_image = self.parameters[
+            "color_augmentation"
+        ]["color_augmentation_on_combined_image"]
 
     # Making new directories
     def make_new_dirs(self) -> None:
@@ -87,7 +99,6 @@ class Cocopen:
         ann_id,
         img_id,
         file_name=None,
-        label=None,
         mask=None,
         category_id=None,
     ):
@@ -401,7 +412,7 @@ class Cocopen:
             image_list = self.category_to_val_image_list.copy()
 
         # modified coco_new category id
-        coco_new_obj_sem = {
+        coco_sem = {
             "images": [],
             "annotations": [],
             "categories": self.categories,
@@ -409,10 +420,9 @@ class Cocopen:
 
         # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
         ann_id_sem = 0
-        ann_id_seg_sem = 0
 
         for i in tqdm(range(num_images)):
-            
+
             # scale factor for this image
             scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
 
@@ -422,7 +432,7 @@ class Cocopen:
                 "height": self.height,
                 "file_name": str(i) + ".png",
             }
-            coco_new_obj_sem["images"].append(image)
+            coco_sem["images"].append(image)
 
             # create mapping of category name to max_instances for each category
             category_to_num_instances = {}
@@ -456,8 +466,10 @@ class Cocopen:
                         )
                         # Raise exception if object image height and width do not match image shape parameter
                         if img.shape[0:2] != (self.height, self.width):
-                            raise Exception(f"""Object image height and width do not match image shape parameter
-                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})""")
+                            raise Exception(
+                                f"""Object image height and width do not match image shape parameter
+                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})"""
+                            )
                         image_list[category["name"]].pop(index)
 
                         mask = mask / 255
@@ -469,7 +481,9 @@ class Cocopen:
                         # scaling
                         if self.apply_scale_jittering:
                             if self.individual_scale_jittering:
-                                scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
+                                scale = scale_range[0] + random.random() * (
+                                    scale_range[1] - scale_range[0]
+                                )
                                 img, msk = self.scale_image(img, msk, scale)
                             else:
                                 img, msk = self.scale_image(img, msk, scale)
@@ -531,17 +545,16 @@ class Cocopen:
                 msk1[:, :, 2] = mask1
                 final_img = cv2.bitwise_or(
                     msk1.astype("uint8"), all_img_arr[randint], mask=mask1
-                    )
+                )
 
-                coco_new_obj_sem, ann_id_sem = self.object_semantics(
-                    coco=coco_new_obj_sem,
+                coco_sem, ann_id_sem = self.object_semantics(
+                    coco=coco_sem,
                     ann_id=ann_id_sem,
                     img_id=img_id,
                     file_name=None,
-                    label=None,
                     mask=mask1,
                     category_id=category_id,
-                    )
+                )
 
             # save mask1 info for later use
             mask_array_1 = np.dstack(binary_mask_arr[randint])
@@ -573,16 +586,16 @@ class Cocopen:
                     msk2[:, :, 2] = mask2
                     masked_layer = cv2.bitwise_or(
                         msk2.astype("uint8"), all_img_arr[randint2], mask=mask2
-                        )
+                    )
                     final_img = cv2.add(final_img, masked_layer)
 
-                    coco_new_obj_sem, ann_id_sem = self.object_semantics(
-                        coco_new_obj_sem,
+                    coco_sem, ann_id_sem = self.object_semantics(
+                        coco_sem,
                         ann_id_sem,
                         img_id,
                         mask=mask2,
                         category_id=category_id,
-                      )
+                    )
 
                 mask_array_2 = np.dstack(mask_array_2)
                 mask_array_2 = np.max(mask_array_2, axis=2).astype("uint8")
@@ -603,13 +616,15 @@ class Cocopen:
             bg_arr = src.astype("uint8")
             # Raise exception if background image height and width do not match image shape parameter
             if bg_arr.shape[0:2] != (self.height, self.width):
-                raise Exception(f"""Background image height and width do not match image shape parameter
-                                ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})""")
+                raise Exception(
+                    f"""Background image height and width do not match image shape parameter
+                                ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})"""
+                )
 
             # background random operations
             bg_rot = random.random() * 360
-            bg_flip_h = bool(int(random.random() / 0.5))
-            bg_flip_v = bool(int(random.random() / 0.5))
+            bg_flip_h = bool(random.random() / 0.5)
+            bg_flip_v = bool(random.random() / 0.5)
             bg_arr = self.random_operations(bg_arr, bg_rot, bg_flip_h, bg_flip_v)
 
             mask_bg = np.ones((self.height, self.width)).astype("uint8")
@@ -625,9 +640,11 @@ class Cocopen:
             final_img = cv2.add(final_img, masked_bg)
 
             # color augmentation
-            if (self.individual_color_augmentation 
+            if (
+                self.individual_color_augmentation
                 and self.color_augmentation_on_combined_image
-                and self.apply_color_augmentation):
+                and self.apply_color_augmentation
+            ):
                 final_img = self.color_augmentation(
                     final_img,
                     enhancer_range,
@@ -636,8 +653,9 @@ class Cocopen:
                     self.change_saturation,
                     False,
                 )
-            elif (self.apply_color_augmentation 
-                and (not self.individual_color_augmentation)):
+            elif self.apply_color_augmentation and (
+                not self.individual_color_augmentation
+            ):
                 final_img = self.color_augmentation(
                     final_img,
                     enhancer_range,
@@ -646,11 +664,10 @@ class Cocopen:
                     self.change_saturation,
                     False,
                 )
-
 
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
 
-        return coco_new_obj_sem
+        return coco_sem
 
     # Generating training dataset
     def generate_train_data(self) -> None:
@@ -659,13 +676,13 @@ class Cocopen:
         """
         # generate train
         print("Generating 'train' data")
-        coco_new_obj_sem = self.combine(
+        coco_sem = self.combine(
             dataset_type="train",
             target_dir=self.train,
             num_images=self.parameters["dataset_params"]["train_images"],
         )
         f = open(self.train + "/train.json", "w")
-        json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
+        json.dump(coco_sem, f, sort_keys=True, indent=4)
         f.close()
 
     # Generating val dataset
@@ -674,13 +691,13 @@ class Cocopen:
         Generating val dataset
         """
         print("Generating 'val' data")
-        coco_new_obj_sem = self.combine(
+        coco_sem = self.combine(
             dataset_type="val",
             target_dir=self.val,
             num_images=self.parameters["dataset_params"]["val_images"],
         )
         f = open(self.val + "/val.json", "w")
-        json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
+        json.dump(coco_sem, f, sort_keys=True, indent=4)
         f.close()
 
     # Creating zip file of the dataset

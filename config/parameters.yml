@@ -1,7 +1,7 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 5
-  val_images: 3
+  train_images: 7
+  val_images: 2
   train_split: 0.8
 
 # Image Shape
@@ -9,11 +9,13 @@ shape:
   height: 1080
   width: 1920
   
-# Object Categories and Corresponding Category IDs
+# Object Categories and Corresponding Category IDs. 
+# (int, required): an integer in the range [0, num_categories-1] representing the category label. 
+# The value num_categories is reserved to represent the “background” category, if applicable.
 categories:
-  background: 0
   device: 1
   wire: 2
+  background: 3
 
 # Color Thresholding Values for Each Object Category
 threshold:

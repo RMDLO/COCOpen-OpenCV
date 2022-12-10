@@ -36,11 +36,10 @@ Clone this repository in your desired location by running the following command 
 $ git clone https://github.com/RMDLO/COCOpen-OpenCV.git
 ```
 ### **Creating Anaconda Environment**
-For ease of creating a conda environment we have provided you with an `environment.yml` file in the root directory of this repository.
+For ease of creating a conda environment we have provided you with an `environment.yml` file in the root directory of this repository. The first line of the `environment.yml` file defines the name of the new environment.
 
-> Note : The first line of the yml file sets the new environment's name.
+To create the `conda` environment from the `environment.yml` file, run:
 
-To create the `conda` environment from the `environment.yml` file run:
 ```bash
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
@@ -49,6 +48,7 @@ COCOCpen-OpenCV$ conda env create -f config/environment.yml
 # Activate the conda environment
 COCOpen-OpenCV$ conda activate cocopen-env
 ```
+
 ## **Setting up Azure Storage Container**
 To learn how to set up your dataset on Azure, read [this](README_AZURE.md).
 ## **User configurations**
@@ -62,24 +62,33 @@ user_defined:
   root_dir: "." # ignore
   dataset_directory_name: "cocopen-dataset-4" # ignore
   AZURE_STORAGE_CONNECTION_STRING: '<paste here within single quotes>'
-
-
 ```
+
 ## **Running the API**
 
 ### **Adjusting parameters**
-Open `config/parameters.yml` file.
+Open the `config/parameters.yml` file.
 
-Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (Colour thresholding values (We recommend keeping this to default)), and `max_instances` (the maximum number of objects of a particular category per image).
+Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
 
 ### **Running the script**
-To execute the API, run the following command
+To execute the API, run the following:
+
 ```bash
 # Run the run.py file
 (cocopen-env) COCOpen-OpenCV$ bash run.sh
 ```
+
 ### **Result**
-You can now find the generated dataset in the `datasets` folder. Furthermore, in `datasets/zip/` you can access a zip file containing the generated dataset.
+You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. Example annotations are provided in the images below.
+
+<p align="center">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/demo/visualization/0.png" width="1000" title="Visualization of COCOpen Automatic Instance Segmentation">
+</p>
+
+<p align="center">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/demo/masks/0.png" width="1000" title="Visualization of COCOpen Object Instance Masks">
+</p>
 
 ## References
 <a id="1">[1]</a> 
