@@ -5,6 +5,7 @@ import json
 from tqdm import tqdm
 import random
 import numpy as np
+import copy
 from PIL import Image, ImageEnhance
 import cv2
 from pycocotools import mask as pycocomask
@@ -191,12 +192,12 @@ class Cocopen:
         return src
 
     # Getting contour filters
-    def contour_filter(self, frame, contour_min_area=5000, contour_max_area=2075000):
+    def contour_filter(self, frame, contour_max_area=2075000):
         contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
             c_area = cv2.contourArea(contour)
-            if contour_min_area <= c_area <= contour_max_area:
+            if self.parameters["contour_threshold"] <= c_area <= contour_max_area:
                 mask = np.zeros(frame.shape, np.uint8)
                 cv2.drawContours(mask, contours, i, 255, cv2.FILLED)
                 mask = cv2.bitwise_and(frame, mask)
@@ -229,8 +230,8 @@ class Cocopen:
         median = cv2.medianBlur(src, 9)  # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
         _, mask = cv2.threshold(
-            gray, self.parameters["threshold"][category], 255, cv2.THRESH_BINARY
-        )  # Threshold step
+            gray, self.parameters["color_threshold"][category], 255, cv2.THRESH_BINARY
+        )  # Color threshold step
         new_mask = self.contour_filter(mask)  # blob filtering step
 
         # Encode
@@ -407,15 +408,14 @@ class Cocopen:
         # Creating a copy of category_to_train_img_list and category_to_val_img_list based on dataset_type
         image_list = {}
         if dataset_type == "train":
-            image_list = self.category_to_train_image_list.copy()
+            image_list = copy.deepcopy(self.category_to_train_image_list)
         else:
-            image_list = self.category_to_val_image_list.copy()
+            image_list = copy.deepcopy(self.category_to_val_image_list)
 
         # modified coco_new category id
         coco_sem = {
             "images": [],
             "annotations": [],
-            "categories": self.categories,
         }
 
         # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
@@ -438,13 +438,9 @@ class Cocopen:
             category_to_num_instances = {}
             for category in self.categories:
                 if category["name"] != "background":
-                    category_to_num_instances[category["name"]] = (
-                        int(
-                            random.random()
-                            * self.parameters["max_instances"][category["name"]]
-                        )
-                        + 1
-                    )
+                    category_to_num_instances[category["name"]] = (int(random.random() * self.parameters["max_instances"][category["name"]]) + 1)
+
+            img_list = copy.deepcopy(image_list)
 
             # arrays storing category image info
             all_img_arr = []
@@ -460,17 +456,15 @@ class Cocopen:
                     # get category info
                     for j in range(0, category_to_num_instances[category["name"]]):
                         total_num_instances += 1
-                        index = int(len(image_list[category["name"]]) * random.random())
-                        img, mask = self.get_object_info(
-                            image_list[category["name"]][index], category["name"]
-                        )
+                        index = int(len(img_list[category["name"]]) * random.random())
+                        img, mask = self.get_object_info(img_list[category["name"]][index], category["name"])
                         # Raise exception if object image height and width do not match image shape parameter
                         if img.shape[0:2] != (self.height, self.width):
                             raise Exception(
                                 f"""Object image height and width do not match image shape parameter
                                             ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})"""
                             )
-                        image_list[category["name"]].pop(index)
+                        img_list[category["name"]].pop(index)
 
                         mask = mask / 255
                         mask = mask.astype("uint8")
