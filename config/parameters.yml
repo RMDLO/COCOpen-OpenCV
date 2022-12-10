@@ -1,7 +1,7 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 7
-  val_images: 2
+  train_images: 1000
+  val_images: 200
   train_split: 0.8
 
 # Image Shape
@@ -18,9 +18,12 @@ categories:
   background: 3
 
 # Color Thresholding Values for Each Object Category
-threshold:
+color_threshold:
   device: 50
   wire: 30
+
+# Contur Minimum Area (in pixels) Threshold Value
+contour_threshold: 1000
   
 # Maximum Number of Instances Per Image for Each Object Category
 max_instances:

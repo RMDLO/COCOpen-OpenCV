@@ -191,12 +191,12 @@ class Cocopen:
         return src
 
     # Getting contour filters
-    def contour_filter(self, frame, contour_min_area=5000, contour_max_area=2075000):
+    def contour_filter(self, frame, contour_max_area=2075000):
         contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
             c_area = cv2.contourArea(contour)
-            if contour_min_area <= c_area <= contour_max_area:
+            if self.parameters["contour_threshold"] <= c_area <= contour_max_area:
                 mask = np.zeros(frame.shape, np.uint8)
                 cv2.drawContours(mask, contours, i, 255, cv2.FILLED)
                 mask = cv2.bitwise_and(frame, mask)
@@ -229,8 +229,8 @@ class Cocopen:
         median = cv2.medianBlur(src, 9)  # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
         _, mask = cv2.threshold(
-            gray, self.parameters["threshold"][category], 255, cv2.THRESH_BINARY
-        )  # Threshold step
+            gray, self.parameters["color_threshold"][category], 255, cv2.THRESH_BINARY
+        )  # Color threshold step
         new_mask = self.contour_filter(mask)  # blob filtering step
 
         # Encode
