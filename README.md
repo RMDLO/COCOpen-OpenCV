@@ -1,5 +1,14 @@
 # **UIUC COCOpen**
 
+<p align="center">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/demo/visualization/0.png" width="350" title="Visualization of COCOpen Automatic Instance Segmentation">
+</p>
+
+<p align="center">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/demo/masks/0.png" width="350" title="Visualization of COCOpen Object Instance Masks">
+</p>
+
+
 ## **Abstract**
 The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1]. This repository uses the UIUC COCOpen Library to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices, for training wire object instance segmentation models [2].
 
