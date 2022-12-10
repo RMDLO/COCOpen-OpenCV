@@ -64,37 +64,33 @@ class Demo:
         )
         dicts = DatasetCatalog.get("train")
         metadata = MetadataCatalog.get("train")
-        for d in dicts[:10]:
+        for i, d in enumerate(dicts[:10]):
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
-            _, name = os.path.split(d["file_name"])
-            fig, axs = plt.subplots(1, len(annos), squeeze=False)
-            if len(annos) > 1:
-                fig.set_size_inches(30, 20, forward=True)
-            else:
-                fig.set_size_inches(8, 5, forward=True)
-            for i, anno in enumerate(annos):
+            mask_list = []
+            rect_list = []
+            for anno in annos:
                 encoded = anno["segmentation"]
-                mask = pycocomask.decode(encoded)
+                instance_annotation = pycocomask.decode(encoded) * 255
+                instance_img = cv2.cvtColor(instance_annotation, cv2.COLOR_GRAY2BGR)
                 x, y, w, h = anno["bbox"]
-                rect = Rectangle(
-                    (x, y), w, h, linewidth=1, edgecolor="w", facecolor="None"
-                )
-                cat = anno["category_id"]
-                axs[0, i].imshow(mask, cmap=plt.get_cmap("Greys_r"))
-                axs[0, i].add_patch(rect)
-                axs[0, i].get_xaxis().set_visible(False)
-                axs[0, i].get_yaxis().set_visible(False)
+                mask = cv2.rectangle(instance_img, (x,y), (x+w, y+h), (255,255,255), 2)
+                mask_list.append(mask)
 
-            plt.show()
+                # rect = Rectangle(
+                #     (x, y), w, h, linewidth=1, edgecolor="w", facecolor="None"
+                # )
+                # rect_list.append(rect)
+
+            concatenated_masks = cv2.hconcat(mask_list)
+            
             visualizer = Visualizer(
                 img, metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE
             )
             out = visualizer.draw_dataset_dict(d)
 
             cv2.imwrite(os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image())
-            plt.savefig(os.path.join(self.mask_dir, str(i) + ".png"))
-            # cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), out.get_image())
+            cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks)
 
 if __name__ == "__main__":
     # Load cocopen parameters
