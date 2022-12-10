@@ -1,7 +1,7 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 10000
-  val_images: 1000
+  train_images: 7
+  val_images: 2
   train_split: 0.8
 
 # Image Shape

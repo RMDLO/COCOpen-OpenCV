@@ -85,7 +85,6 @@ class Cocopen:
         ann_id,
         img_id,
         file_name=None,
-        label=None,
         mask=None,
         category_id=None,
     ):
@@ -399,7 +398,7 @@ class Cocopen:
             image_list = self.category_to_val_image_list.copy()
 
         # modified coco_new category id
-        coco_new_obj_sem = {
+        coco_sem = {
             "images": [],
             "annotations": [],
             "categories": self.categories,
@@ -407,7 +406,6 @@ class Cocopen:
 
         # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
         ann_id_sem = 0
-        ann_id_seg_sem = 0
 
         for i in tqdm(range(num_images)):
             
@@ -420,7 +418,7 @@ class Cocopen:
                 "height": self.height,
                 "file_name": str(i) + ".png",
             }
-            coco_new_obj_sem["images"].append(image)
+            coco_sem["images"].append(image)
 
             # create mapping of category name to max_instances for each category
             category_to_num_instances = {}
@@ -531,12 +529,11 @@ class Cocopen:
                     msk1.astype("uint8"), all_img_arr[randint], mask=mask1
                     )
 
-                coco_new_obj_sem, ann_id_sem = self.object_semantics(
-                    coco=coco_new_obj_sem,
+                coco_sem, ann_id_sem = self.object_semantics(
+                    coco=coco_sem,
                     ann_id=ann_id_sem,
                     img_id=img_id,
                     file_name=None,
-                    label=None,
                     mask=mask1,
                     category_id=category_id,
                     )
@@ -574,8 +571,8 @@ class Cocopen:
                         )
                     final_img = cv2.add(final_img, masked_layer)
 
-                    coco_new_obj_sem, ann_id_sem = self.object_semantics(
-                        coco_new_obj_sem,
+                    coco_sem, ann_id_sem = self.object_semantics(
+                        coco_sem,
                         ann_id_sem,
                         img_id,
                         mask=mask2,
@@ -606,8 +603,8 @@ class Cocopen:
 
             # background random operations
             bg_rot = random.random() * 360
-            bg_flip_h = bool(int(random.random() / 0.5))
-            bg_flip_v = bool(int(random.random() / 0.5))
+            bg_flip_h = bool(random.random() / 0.5)
+            bg_flip_v = bool(random.random() / 0.5)
             bg_arr = self.random_operations(bg_arr, bg_rot, bg_flip_h, bg_flip_v)
 
             mask_bg = np.ones((self.height, self.width)).astype("uint8")
@@ -645,10 +642,9 @@ class Cocopen:
                     False,
                 )
 
-
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
 
-        return coco_new_obj_sem
+        return coco_sem
 
     # Generating training dataset
     def generate_train_data(self) -> None:
@@ -657,13 +653,13 @@ class Cocopen:
         """
         # generate train
         print("Generating 'train' data")
-        coco_new_obj_sem = self.combine(
+        coco_sem = self.combine(
             dataset_type="train",
             target_dir=self.train,
             num_images=self.parameters["dataset_params"]["train_images"],
         )
         f = open(self.train + "/train.json", "w")
-        json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
+        json.dump(coco_sem, f, sort_keys=True, indent=4)
         f.close()
 
     # Generating val dataset
@@ -672,13 +668,13 @@ class Cocopen:
         Generating val dataset
         """
         print("Generating 'val' data")
-        coco_new_obj_sem = self.combine(
+        coco_sem = self.combine(
             dataset_type="val",
             target_dir=self.val,
             num_images=self.parameters["dataset_params"]["val_images"],
         )
         f = open(self.val + "/val.json", "w")
-        json.dump(coco_new_obj_sem, f, sort_keys=True, indent=4)
+        json.dump(coco_sem, f, sort_keys=True, indent=4)
         f.close()
 
     # Creating zip file of the dataset
