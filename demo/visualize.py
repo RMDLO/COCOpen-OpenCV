@@ -1,8 +1,5 @@
 # Import libraries
 import pycocotools.mask as pycocomask
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
 import cv2
 import os
 import yaml
@@ -68,7 +65,6 @@ class Demo:
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
             mask_list = []
-            rect_list = []
             for anno in annos:
                 encoded = anno["segmentation"]
                 instance_annotation = pycocomask.decode(encoded) * 255
@@ -77,18 +73,16 @@ class Demo:
                 mask = cv2.rectangle(instance_img, (x,y), (x+w, y+h), (255,255,255), 2)
                 mask_list.append(mask)
 
-                # rect = Rectangle(
-                #     (x, y), w, h, linewidth=1, edgecolor="w", facecolor="None"
-                # )
-                # rect_list.append(rect)
-
+            # horizontally concatenate visualization of object instance segmentation masks
             concatenated_masks = cv2.hconcat(mask_list)
             
+            # visualize object instance segmentation on cocopen-generated data
             visualizer = Visualizer(
                 img, metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE
             )
             out = visualizer.draw_dataset_dict(d)
 
+            # save masks and visualizations
             cv2.imwrite(os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image())
             cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks)
 
