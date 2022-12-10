@@ -2,14 +2,12 @@
 import os
 import shutil
 import json
-import yaml
 from tqdm import tqdm
 import random
 import numpy as np
 from PIL import Image, ImageEnhance
 import cv2
 from pycocotools import mask as pycocomask
-import urllib
 from azure.storage.blob import BlobServiceClient
 
 # Class for the cocopen object
