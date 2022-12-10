@@ -3,7 +3,6 @@ import random
 import yaml
 from cocopen import Cocopen
 
-
 def main():
 
     # initialize random seed
@@ -42,7 +41,6 @@ def main():
         format="zip",
         root_dir=f"./datasets/{cocopen.dataset_directory_name}",
     )
-
 
 if __name__ == "__main__":
     main()
