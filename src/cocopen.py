@@ -16,7 +16,7 @@ class Cocopen:
     def __init__(
         self,
         parameters: dict,
-        ) -> None:
+    ) -> None:
         # Initializing parameters
         self.parameters = parameters
 
@@ -39,21 +39,35 @@ class Cocopen:
         self.width = parameters["shape"]["width"]
 
         # Initialize scale jittering parameters
-        self.apply_scale_jittering = self.parameters["scale_jittering"]["apply_scale_jittering"]
-        self.individual_scale_jittering = self.parameters["scale_jittering"]["individual_scale_jittering"]
+        self.apply_scale_jittering = self.parameters["scale_jittering"][
+            "apply_scale_jittering"
+        ]
+        self.individual_scale_jittering = self.parameters["scale_jittering"][
+            "individual_scale_jittering"
+        ]
         self.scale_factor_min = self.parameters["scale_jittering"]["scale_factor_min"]
         self.scale_factor_max = self.parameters["scale_jittering"]["scale_factor_max"]
 
         # Initialize color augmentation parameters
-        self.apply_color_augmentation = self.parameters["color_augmentation"]["apply_color_augmentation"]
-        self.individual_color_augmentation = self.parameters["color_augmentation"]["individual_color_augmentation"]
-        self.change_saturation = self.parameters["color_augmentation"]["change_saturation"]
-        self.change_brightness = self.parameters["color_augmentation"]["change_brightness"]
+        self.apply_color_augmentation = self.parameters["color_augmentation"][
+            "apply_color_augmentation"
+        ]
+        self.individual_color_augmentation = self.parameters["color_augmentation"][
+            "individual_color_augmentation"
+        ]
+        self.change_saturation = self.parameters["color_augmentation"][
+            "change_saturation"
+        ]
+        self.change_brightness = self.parameters["color_augmentation"][
+            "change_brightness"
+        ]
         self.change_contrast = self.parameters["color_augmentation"]["change_contrast"]
         self.change_hue = self.parameters["color_augmentation"]["change_hue"]
         self.enhancer_min = self.parameters["color_augmentation"]["enhancer_min"]
         self.enhancer_max = self.parameters["color_augmentation"]["enhancer_max"]
-        self.color_augmentation_on_combined_image = self.parameters["color_augmentation"]["color_augmentation_on_combined_image"]
+        self.color_augmentation_on_combined_image = self.parameters[
+            "color_augmentation"
+        ]["color_augmentation_on_combined_image"]
 
     # Making new directories
     def make_new_dirs(self) -> None:
@@ -408,7 +422,7 @@ class Cocopen:
         ann_id_sem = 0
 
         for i in tqdm(range(num_images)):
-            
+
             # scale factor for this image
             scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
 
@@ -452,8 +466,10 @@ class Cocopen:
                         )
                         # Raise exception if object image height and width do not match image shape parameter
                         if img.shape[0:2] != (self.height, self.width):
-                            raise Exception(f"""Object image height and width do not match image shape parameter
-                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})""")
+                            raise Exception(
+                                f"""Object image height and width do not match image shape parameter
+                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})"""
+                            )
                         image_list[category["name"]].pop(index)
 
                         mask = mask / 255
@@ -465,7 +481,9 @@ class Cocopen:
                         # scaling
                         if self.apply_scale_jittering:
                             if self.individual_scale_jittering:
-                                scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
+                                scale = scale_range[0] + random.random() * (
+                                    scale_range[1] - scale_range[0]
+                                )
                                 img, msk = self.scale_image(img, msk, scale)
                             else:
                                 img, msk = self.scale_image(img, msk, scale)
@@ -527,7 +545,7 @@ class Cocopen:
                 msk1[:, :, 2] = mask1
                 final_img = cv2.bitwise_or(
                     msk1.astype("uint8"), all_img_arr[randint], mask=mask1
-                    )
+                )
 
                 coco_sem, ann_id_sem = self.object_semantics(
                     coco=coco_sem,
@@ -536,7 +554,7 @@ class Cocopen:
                     file_name=None,
                     mask=mask1,
                     category_id=category_id,
-                    )
+                )
 
             # save mask1 info for later use
             mask_array_1 = np.dstack(binary_mask_arr[randint])
@@ -568,7 +586,7 @@ class Cocopen:
                     msk2[:, :, 2] = mask2
                     masked_layer = cv2.bitwise_or(
                         msk2.astype("uint8"), all_img_arr[randint2], mask=mask2
-                        )
+                    )
                     final_img = cv2.add(final_img, masked_layer)
 
                     coco_sem, ann_id_sem = self.object_semantics(
@@ -577,7 +595,7 @@ class Cocopen:
                         img_id,
                         mask=mask2,
                         category_id=category_id,
-                      )
+                    )
 
                 mask_array_2 = np.dstack(mask_array_2)
                 mask_array_2 = np.max(mask_array_2, axis=2).astype("uint8")
@@ -598,8 +616,10 @@ class Cocopen:
             bg_arr = src.astype("uint8")
             # Raise exception if background image height and width do not match image shape parameter
             if bg_arr.shape[0:2] != (self.height, self.width):
-                raise Exception(f"""Background image height and width do not match image shape parameter
-                                ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})""")
+                raise Exception(
+                    f"""Background image height and width do not match image shape parameter
+                                ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})"""
+                )
 
             # background random operations
             bg_rot = random.random() * 360
@@ -620,9 +640,11 @@ class Cocopen:
             final_img = cv2.add(final_img, masked_bg)
 
             # color augmentation
-            if (self.individual_color_augmentation 
+            if (
+                self.individual_color_augmentation
                 and self.color_augmentation_on_combined_image
-                and self.apply_color_augmentation):
+                and self.apply_color_augmentation
+            ):
                 final_img = self.color_augmentation(
                     final_img,
                     enhancer_range,
@@ -631,8 +653,9 @@ class Cocopen:
                     self.change_saturation,
                     False,
                 )
-            elif (self.apply_color_augmentation 
-                and (not self.individual_color_augmentation)):
+            elif self.apply_color_augmentation and (
+                not self.individual_color_augmentation
+            ):
                 final_img = self.color_augmentation(
                     final_img,
                     enhancer_range,
