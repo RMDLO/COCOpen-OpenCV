@@ -3,3 +3,4 @@ __pycache__
 
 datasets/
 detectron2/
+src/detectron2.py
