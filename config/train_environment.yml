@@ -1,4 +1,4 @@
-name: cocopen-env
+name: cocopen-train
 channels:
   - pytorch
   - conda-forge
