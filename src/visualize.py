@@ -2,9 +2,7 @@
 import pycocotools.mask as pycocomask
 import cv2
 import os
-import yaml
 
-import detectron2
 from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
