@@ -48,7 +48,6 @@ class Demo:
             os.mkdir(self.mask_dir)
         except:
             print("Masks directory already exists!")
-        
 
     def demo(self):
         
@@ -64,7 +63,7 @@ class Demo:
             )
             dicts = DatasetCatalog.get("val")
             metadata = MetadataCatalog.get("val")
-            
+
         for i, d in enumerate(dicts[:self.parameters["dataset_verification"]["number_of_images"]-1]):
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
