@@ -1,4 +1,4 @@
-name: cocopen-env
+name: cocopen-demo
 channels:
   - pytorch
   - conda-forge
