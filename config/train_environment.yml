@@ -246,4 +246,3 @@ dependencies:
     - tomli==2.0.1
     - werkzeug==2.2.2
     - yacs==0.1.8
-prefix: /home/hollydinkel/miniconda3/envs/cocopen-env
