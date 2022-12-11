@@ -2,7 +2,6 @@
 import random
 import yaml
 from cocopen import COCOpen
-import visualize
 
 def main(parameters):
 
@@ -41,6 +40,7 @@ def main(parameters):
 
     # Run the demo
     if parameters["run_demo"]:
+        import visualize
         example = visualize.Demo(parameters=parameters)
         example.make_new_dirs()
         example.demo()
