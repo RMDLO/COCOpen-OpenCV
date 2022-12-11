@@ -193,6 +193,9 @@ class COCOpen:
 
     # Getting contour filters
     def contour_filter(self, frame, contour_max_area=2075000):
+        """
+        Perform contour filtering
+        """
         contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
@@ -223,7 +226,7 @@ class COCOpen:
     # Returning wire information
     def get_object_info(self, img, category):
         """
-        This funciton returns the image array and the mask array
+        This function returns the image array and the mask array
         """
         # Get mask
         src = self.download_image_from_azure(img=img, category=category)
@@ -431,8 +434,8 @@ class COCOpen:
                 "width": self.width,
                 "height": self.height,
                 "file_name": str(i) + ".png",
+                "source": [], # list of source images used
             }
-            coco_sem["images"].append(image)
 
             # create mapping of category name to max_instances for each category
             category_to_num_instances = {}
@@ -457,6 +460,10 @@ class COCOpen:
                     for j in range(0, category_to_num_instances[category["name"]]):
                         total_num_instances += 1
                         index = int(len(img_list[category["name"]]) * random.random())
+
+                        # Record source image path (category + filename)
+                        image["source"].append(os.path.join(category["name"], img_list[category["name"]][index]))
+
                         img, mask = self.get_object_info(img_list[category["name"]][index], category["name"])
                         # Raise exception if object image height and width do not match image shape parameter
                         if img.shape[0:2] != (self.height, self.width):
@@ -660,6 +667,7 @@ class COCOpen:
                 )
 
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
+            coco_sem["images"].append(image)
 
         return coco_sem
 
