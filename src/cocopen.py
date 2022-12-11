@@ -12,7 +12,7 @@ from pycocotools import mask as pycocomask
 from azure.storage.blob import BlobServiceClient
 
 # Class for the cocopen object
-class Cocopen:
+class COCOpen:
     # Constructor
     def __init__(
         self,
@@ -401,9 +401,11 @@ class Cocopen:
         Combining foreground and background images
         """
 
-        # this sets the lower/upper limit of color augmentation
-        enhancer_range = [self.enhancer_min, self.enhancer_max]
-        scale_range = [self.scale_factor_min, self.scale_factor_max]
+        coco_sem = {
+            "images": [],
+            "annotations": [],
+            "categories": self.categories,
+        }
 
         # Creating a copy of category_to_train_img_list and category_to_val_img_list based on dataset_type
         image_list = {}
@@ -411,12 +413,10 @@ class Cocopen:
             image_list = copy.deepcopy(self.category_to_train_image_list)
         else:
             image_list = copy.deepcopy(self.category_to_val_image_list)
-
-        # modified coco_new category id
-        coco_sem = {
-            "images": [],
-            "annotations": [],
-        }
+        
+        # this sets the lower/upper limit of color augmentation
+        enhancer_range = [self.enhancer_min, self.enhancer_max]
+        scale_range = [self.scale_factor_min, self.scale_factor_max]
 
         # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
         ann_id_sem = 0

@@ -25,43 +25,46 @@ class Demo:
         self.dataset_directory_name = self.parameters["directory"][
             "dataset_directory_name"
         ]
-        self.visualization_dir = self.root_dir + "/demo/visualization"
-        self.mask_dir = self.root_dir + "/demo/masks"
-
-        # Initializing supercategories dictionary
-        self.categories = []
 
         # Saving all directory names
         self.dataset_dir = self.root_dir + f"/datasets/{self.dataset_directory_name}"
         self.train = self.dataset_dir + "/train"
         self.val = self.dataset_dir + "/val"
 
-        # Initialize height and width
-        self.height = parameters["shape"]["height"]
-        self.width = parameters["shape"]["width"]
-
-    # Generate super categories, used when an object super category (like "wire") may contain subcategories (like "ethernet")
-    def generate_supercategories(self):
-        """
-        Generate dictionary for super categories based on parameters .yaml file
-        """
-        for key in self.parameters["categories"]:
-            supercategory_dict = {
-                "supercategory": key,
-                "id": self.parameters["categories"][key],
-                "name": key,
-            }
-            self.categories.append(supercategory_dict)
-        print("Generated Categories Dictionary from Parameters")
+        self.demo_dir = self.root_dir + "/demo"
+        self.visualization_dir = self.demo_dir + "/visualization"
+        self.mask_dir = self.demo_dir + "/masks"
+    
+    def make_new_dirs(self):
+        try:
+            os.mkdir(self.demo_dir)
+        except:
+            print("Demo directory already exists!")
+        try:
+            os.mkdir(self.visualization_dir)
+        except:
+            print("Visualization directory already exists!")
+        try:
+            os.mkdir(self.mask_dir)
+        except:
+            print("Masks directory already exists!")
 
     def demo(self):
+        
+        if self.parameters["dataset_verification"]["which_dataset"] == "train":
+            register_coco_instances(
+                "train", {}, f"{self.train}/train.json", f"{self.train}/"
+            )
+            dicts = DatasetCatalog.get("train")
+            metadata = MetadataCatalog.get("train")
+        elif self.parameters["dataset_verification"]["which_dataset"] == "val":
+            register_coco_instances(
+                "val", {}, f"{self.val}/val.json", f"{self.val}/"
+            )
+            dicts = DatasetCatalog.get("val")
+            metadata = MetadataCatalog.get("val")
 
-        register_coco_instances(
-            "train", {}, f"{self.train}/train.json", f"{self.train}/"
-        )
-        dicts = DatasetCatalog.get("train")
-        metadata = MetadataCatalog.get("train")
-        for i, d in enumerate(dicts[:10]):
+        for i, d in enumerate(dicts[:self.parameters["dataset_verification"]["number_of_images"]-1]):
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
             mask_list = []
@@ -85,17 +88,3 @@ class Demo:
             # save masks and visualizations
             cv2.imwrite(os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image())
             cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks)
-
-if __name__ == "__main__":
-    # Load cocopen parameters
-    try:
-        os.mkdir("./demo/visualization")
-    except:
-        print("datasets directory already exists!")
-
-    with open("./config/parameters.yml", "r") as file:
-        parameters = yaml.safe_load(file)
-    demo = Demo(
-        parameters=parameters,
-    )
-    demo.demo()
