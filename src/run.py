@@ -1,19 +1,16 @@
 # Import libraries
 import random
 import yaml
-from cocopen import Cocopen
+from cocopen import COCOpen
+import visualize
 
-def main():
+def main(parameters):
 
     # initialize random seed
     random.seed(random.randint(1, 1000))
 
-    # Load cocopen parameters
-    with open("./config/parameters.yml", "r") as file:
-        parameters = yaml.safe_load(file)
-
     # initialize cocopen object
-    cocopen = Cocopen(
+    cocopen = COCOpen(
         parameters=parameters,
     )
 
@@ -42,5 +39,14 @@ def main():
         root_dir=f"./datasets/{cocopen.dataset_directory_name}",
     )
 
+    # Run the demo
+    if parameters["run_demo"]:
+        example = visualize.Demo(parameters=parameters)
+        example.make_new_dirs()
+        example.demo()
+
 if __name__ == "__main__":
-    main()
+    # Load cocopen parameters
+    with open("./config/parameters.yml", "r") as file:
+        parameters = yaml.safe_load(file)
+    main(parameters)
