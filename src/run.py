@@ -40,8 +40,8 @@ def main(parameters):
 
     # Run the demo
     if parameters["run_demo"]:
-        import visualize
-        example = visualize.Demo(parameters=parameters)
+        from visualize import Demo
+        example = Demo(parameters=parameters)
         example.make_new_dirs()
         example.demo()
 
