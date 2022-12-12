@@ -6,7 +6,6 @@ from tqdm import tqdm
 import random
 import numpy as np
 import copy
-from PIL import Image, ImageEnhance
 import cv2
 from pycocotools import mask as pycocomask
 from azure.storage.blob import BlobServiceClient
@@ -322,17 +321,12 @@ class COCOpen:
         change_hue,
     ):
         """
-        This function takes np.ndarray as input, performs color augmentation using PIL, then output the new np.ndarray
+        This function takes np.ndarray as input, performs color augmentation, then output the new np.ndarray
         """
-        new_img_arr = Image.fromarray(img_arr)
 
         # this step is extremely slow
         if change_hue == True:
-            rgb_img = cv2.cvtColor(img_arr, cv2.COLOR_BGR2RGB)
-            hsv_img = Image.fromarray(rgb_img)
-            hsv_img = hsv_img.convert("HSV")
-            # convert back to np array for operations
-            hsv_img = np.array(hsv_img)
+            hsv_img = cv2.cvtColor(img_arr, cv2.COLOR_BGR2HSV)
 
             # randomly change hue
             rand_value = int(random.random() * 255 * 2) - 255
@@ -342,31 +336,23 @@ class COCOpen:
             hsv_img_int[:, :, 0] = hsv_img_int[:, :, 0] % 255
             hsv_img = hsv_img_int.astype("uint8")
 
-            # convert back to PIL image
-            new_img_arr = Image.new("HSV", (self.width, self.height), (0, 0, 0))
-            new_img_arr = Image.fromarray(hsv_img, mode="HSV")
-            new_img_arr = new_img_arr.convert("RGB")
+            # convert back to BGR
+            img_arr = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2BGR)
 
         if change_brightness == True:
-            modifier = ImageEnhance.Brightness(new_img_arr)
-            new_img_arr = modifier.enhance(
-                enhancer_range[0]
-                + random.random() * (enhancer_range[1] - enhancer_range[0])
-            )
+            factor = enhancer_range[0] + random.random() * (enhancer_range[1] - enhancer_range[0])
+            img_arr = cv2.addWeighted(img_arr, factor, np.zeros_like(img_arr), 1-factor, 0.0)
         if change_contrast == True:
-            modifier = ImageEnhance.Contrast(new_img_arr)
-            new_img_arr = modifier.enhance(
-                enhancer_range[0]
-                + random.random() * (enhancer_range[1] - enhancer_range[0])
-            )
+            factor = enhancer_range[0] + random.random() * (enhancer_range[1] - enhancer_range[0])
+            mean = np.uint8(cv2.mean(cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY))[0])
+            img_arr = cv2.addWeighted(img_arr, factor, np.ones_like(img_arr) * mean, 1-factor, 0.0)
         if change_saturation == True:
-            modifier = ImageEnhance.Color(new_img_arr)
-            new_img_arr = modifier.enhance(
-                enhancer_range[0]
-                + random.random() * (enhancer_range[1] - enhancer_range[0])
-            )
+            factor = enhancer_range[0] + random.random() * (enhancer_range[1] - enhancer_range[0])
+            # Convert BGR to grayscale, then represent grayscale image back in 3-channel BGR
+            gray = cv2.cvtColor(cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2BGR)
+            img_arr = cv2.addWeighted(img_arr, factor, gray, 1-factor, 0.0)
 
-        return np.array(new_img_arr)
+        return img_arr
 
     # Random operations on image data
     def random_operations(self, img, angle, flip_h, flip_v):
