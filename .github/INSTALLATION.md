@@ -1,6 +1,14 @@
 # **Installation**
 This notebook contains all installation and setup related information.
 
+### **Environment**
+> Below are details of environment we used to execute COCOpen.
+- Operating System: Ubuntu 20.04.5 LTS
+- Kernel: Linux 5.15.0-56-generic
+- Architecture: x86-64
+- Python: 3.9.15
+
+For any other details regarding dependencies please see [here](config/environment.yml)
 ## **Cloning COCOpen-OpenCV repository**
 Clone this repository in your desired location by running the following command in a terminal:
 ```bash

@@ -24,6 +24,9 @@ See [installation instructions](.github/INSTALLATION.md)
 ## **Getting Started**
 See [getting started with COCOpen](.github/GETTING_STARTED.md) to learn about the basic usage.
 
+## **Example Run**
+See [example run](.github/EXAMPLE_RUN.md) to see a demo of us generating the UIUC wires dataset in COCO format.
+
 ## References
 <a id="1">[1]</a> 
 T. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollár, and C. Lawrence Zitnick, "Microsoft COCO: Common Objects in Context," in Eur. Conf. Comput. Vis. (ECCV), Sep. 2014, pp. 740-755.
