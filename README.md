@@ -13,16 +13,16 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
 </p>
 
 ## **Learn more about COCOpen**
-To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/.github/docs/LEARN_MORE.md).
+To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/LEARN_MORE.md).
 
 ## **Installation / Setup**
-See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/.github/docs/INSTALLATION.md)
+See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537684537e431bb86307620198819353348b9898689/.github/docs/INSTALLATION.md)
 
 ## **Getting Started**
-See [getting started with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/.github/docs/GETTING_STARTED.md) to learn about the basic usage.
+See [getting started with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/GETTING_STARTED.md) to learn about the basic usage.
 
 ## **Example Run**
-See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/.github/docs/EXAMPLE_RUN.md) to see a demo of us generating the UIUC wires dataset in COCO format.
+See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/EXAMPLE_RUN.md) to see a demo of us generating the UIUC wires dataset in COCO format.
 
 ## References
 <a id="1">[1]</a> 
