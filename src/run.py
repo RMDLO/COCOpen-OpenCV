@@ -40,13 +40,13 @@ def main(parameters):
 
     # Run the demo
     if parameters["run_demo"]:
-        import visualize
-        example = visualize.Demo(parameters=parameters)
+        from visualize import Demo
+        example = Demo(parameters=parameters)
         example.make_new_dirs()
         example.demo()
 
 if __name__ == "__main__":
     # Load cocopen parameters
-    with open("./config/parameters.yml", "r") as file:
+    with open("./config/parameters.yaml", "r") as file:
         parameters = yaml.safe_load(file)
     main(parameters)
