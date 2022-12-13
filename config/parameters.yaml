@@ -62,6 +62,9 @@ color_augmentation:
 # Flag to designate whether the demo is performed
 run_demo: False
 
+# Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
+train_detectron2: True
+
 # Parameters for which dataset to visualize and how many annotated images from the dataset to visualize.
 # Options: "train" and "val"
 dataset_verification:
