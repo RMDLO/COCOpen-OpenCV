@@ -78,9 +78,12 @@ class Train:
         print("Trained models directory already exists!")
 
   def register_dataset(self):
-    register_coco_instances("train", {}, f"./datasets/{self.name}/train/train.json", f"./datasets/{self.name}/train/")
-    register_coco_instances("val", {}, f"./datasets/{self.name}/val/val.json", f"./datasets/{self.name}/val/")
-
+    try:
+      register_coco_instances("train", {}, f"./datasets/{self.name}/train/train.json", f"./datasets/{self.name}/train/")
+      register_coco_instances("val", {}, f"./datasets/{self.name}/val/val.json", f"./datasets/{self.name}/val/")
+    except:
+      print("train and val datasets already registered!")
+      
   def train(self):
     cfg = get_cfg()
     point_rend.add_pointrend_config(cfg)
