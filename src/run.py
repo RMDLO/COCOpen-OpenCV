@@ -47,6 +47,6 @@ def main(parameters):
 
 if __name__ == "__main__":
     # Load cocopen parameters
-    with open("./config/parameters.yml", "r") as file:
+    with open("./config/parameters.yaml", "r") as file:
         parameters = yaml.safe_load(file)
     main(parameters)
