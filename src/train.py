@@ -2,7 +2,6 @@ import torch
 torch.cuda.empty_cache()
 import os
 import shutil
-import yaml
 import wget
 
 # from detectron2.utils.logger import setup_logger
@@ -38,7 +37,6 @@ class Train:
 
       # COCO Dataset Loading
       self.name = parameters["directory"]["dataset_directory_name"]
-      self.semantics = "obj_sem"
       self.pr = "pr"
       self.model = "pointrend_rcnn_R_50_FPN_3x_coco"
       self.class_dict = {1: "device",
@@ -48,7 +46,8 @@ class Train:
       self.train_dir = "./train/"
       self.config_dir = "./train/config"
       self.events_dir = "./train/events/"
-      self.model_dir = f"./train/events/{self.name}_{self.model}_{self.semantics}_{self.pr}"
+      self.model_dir = f"./train/events/{self.name}_{self.model}_{self.pr}"
+      self.trained_models_dir = "./train/trained-models"
 
   def make_new_dirs(self):
     try: 
@@ -72,6 +71,11 @@ class Train:
       os.mkdir(prediction_directory)
     except: 
       print("Test and prediction directories already exists!")
+    if self.train_detectron2:
+      try:
+        os.mkdir(self.trained_models_dir)
+      except:
+        print("Trained models directory already exists!")
 
   def register_dataset(self):
     register_coco_instances("train", {}, f"./datasets/{self.name}/train/train.json", f"./datasets/{self.name}/train/")
@@ -101,7 +105,7 @@ class Train:
       cfg.DATALOADER.NUM_WORKERS = 1
       cfg.MODEL.WEIGHTS = weights_dir  # Let training initialize from model zoo
       cfg.SOLVER.BASE_LR = 0.00025
-      cfg.SOLVER.MAX_ITER = 1000
+      cfg.SOLVER.MAX_ITER = 20000
       cfg.SOLVER.CHECKPOINT_PERIOD = 5000 # limit this number- AstrobeeBumble only has 15GB of storage available and each checkpoint takes up ~0.5GB
       # cfg.SOLVER.STEPS = (20,100,500)
       # cfg.SOLVER.STEPS = (20, 10000, 20000)
@@ -118,6 +122,5 @@ class Train:
       trainer.train()
 
     if self.train_detectron2:
-      os.mkdir("./train/trained-models/")
-      shutil.move(self.events_dir + "/model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
+      shutil.move(self.events_dir + f"{self.name}_{self.model}_{self.pr}/model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
       print(f"Training complete! Model saved in ./train/trained-models/{self.name}_{self.model}_{self.pr}.pth!")
