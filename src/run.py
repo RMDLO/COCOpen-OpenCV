@@ -39,8 +39,8 @@ def main(parameters):
     )
 
     # Run the demo
-    if parameters["run_demo"]:
-        from visualize import Demo
+    if parameters["demo_dataset"]:
+        from demo import Demo
         example = Demo(parameters=parameters)
         example.make_new_dirs()
         example.demo()
