@@ -38,7 +38,7 @@ def main(parameters):
             base_name=f"./datasets/zip/{cocopen.dataset_directory_name}",
             format="zip",
             root_dir=f"./datasets/{cocopen.dataset_directory_name}",
-        )
+            )
 
     # Run the demo
     if parameters["demo_dataset"]:
