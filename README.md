@@ -13,7 +13,7 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
 </p>
 
 ## **Learn more about COCOpen**
-To learn more about COCOpen, click [here](.github/LEARN_MORE.md).
+To learn more about COCOpen, click [here](.github/docs/LEARN_MORE.md).
 
 ## **Installation / Setup**
 See [installation instructions](.github/docs/INSTALLATION.md)
