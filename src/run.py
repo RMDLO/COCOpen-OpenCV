@@ -38,7 +38,7 @@ def main(parameters):
             base_name=f"./datasets/zip/{cocopen.dataset_directory_name}",
             format="zip",
             root_dir=f"./datasets/{cocopen.dataset_directory_name}",
-        )
+            )
 
     # Run the demo
     if parameters["demo_dataset"]:
@@ -54,6 +54,12 @@ def main(parameters):
         trainer.make_new_dirs()
         trainer.register_dataset()
         trainer.train()
+
+    if parameters["predict"]:
+        from predict import Predict
+        predictor = Predict(parameters=parameters)
+        predictor.register_dataset()
+        predictor.predict()
 
 if __name__ == "__main__":
     # Load cocopen parameters

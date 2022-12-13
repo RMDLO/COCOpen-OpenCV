@@ -60,7 +60,7 @@ color_augmentation:
   color_augmentation_on_combined_image: true
 
 # Flag to designate whether to generate a new dataset
-generate_dataset: True
+generate_dataset: False
 
 # Flag to designate whether the demo is performed
 demo_dataset: False
@@ -68,11 +68,17 @@ demo_dataset: False
 # Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
 train_detectron2: False
 
+# Flag to designate whether to perform prediction using a trained model
+predict: True
+
 # Parameters for which dataset to visualize and how many annotated images from the dataset to visualize.
 # Options: "train" and "val"
 dataset_verification:
   which_dataset: "val"
   number_of_images: 2
+
+dataset_prediction:
+  number_of_images: 5
 
 # User defined parameters
 directory:

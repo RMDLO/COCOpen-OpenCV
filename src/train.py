@@ -7,19 +7,8 @@ import wget
 # from detectron2.utils.logger import setup_logger
 # setup_logger()
 from detectron2.config import get_cfg
-from detectron2.modeling import build_model
-from detectron2.utils.visualizer import Visualizer
-from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.engine import DefaultTrainer
-from detectron2.utils.visualizer import ColorMode
 from detectron2.projects import point_rend
-from detectron2.evaluation import COCOEvaluator, inference_on_dataset
-from detectron2.data import build_detection_test_loader
-from detectron2 import model_zoo
-from detectron2.modeling.roi_heads import fast_rcnn
-from detectron2.checkpoint import PeriodicCheckpointer, DetectionCheckpointer
-from detectron2.engine import DefaultPredictor
-from detectron2.evaluation import DatasetEvaluator
 from detectron2.data.datasets import register_coco_instances
 
 # Class for the demo object
