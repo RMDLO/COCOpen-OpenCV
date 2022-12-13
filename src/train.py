@@ -119,5 +119,5 @@ class Train:
 
     if self.train_detectron2:
       os.mkdir("./train/trained-models/")
-      shutil.move(self.events_dir + "/model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
+      shutil.move(self.events_dir + "model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
       print(f"Training complete! Model saved in ./train/trained-models/{self.name}_{self.model}_{self.pr}.pth!")
