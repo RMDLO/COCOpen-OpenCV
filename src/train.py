@@ -49,6 +49,7 @@ class Train:
       self.config_dir = "./train/config"
       self.events_dir = "./train/events/"
       self.model_dir = f"./train/events/{self.name}_{self.model}_{self.semantics}_{self.pr}"
+      self.trained_models_dir = "./train/trained-models"
 
   def make_new_dirs(self):
     try: 
@@ -72,6 +73,8 @@ class Train:
       os.mkdir(prediction_directory)
     except: 
       print("Test and prediction directories already exists!")
+    if self.train_detectron2:
+      os.mkdir(self.trained_models_dir)
 
   def register_dataset(self):
     register_coco_instances("train", {}, f"./datasets/{self.name}/train/train.json", f"./datasets/{self.name}/train/")
@@ -101,7 +104,7 @@ class Train:
       cfg.DATALOADER.NUM_WORKERS = 1
       cfg.MODEL.WEIGHTS = weights_dir  # Let training initialize from model zoo
       cfg.SOLVER.BASE_LR = 0.00025
-      cfg.SOLVER.MAX_ITER = 1000
+      cfg.SOLVER.MAX_ITER = 10
       cfg.SOLVER.CHECKPOINT_PERIOD = 5000 # limit this number- AstrobeeBumble only has 15GB of storage available and each checkpoint takes up ~0.5GB
       # cfg.SOLVER.STEPS = (20,100,500)
       # cfg.SOLVER.STEPS = (20, 10000, 20000)
@@ -118,6 +121,5 @@ class Train:
       trainer.train()
 
     if self.train_detectron2:
-      os.mkdir("./train/trained-models/")
       shutil.move(self.events_dir + "model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
       print(f"Training complete! Model saved in ./train/trained-models/{self.name}_{self.model}_{self.pr}.pth!")
