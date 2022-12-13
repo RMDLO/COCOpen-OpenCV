@@ -29,31 +29,42 @@ resume_training = False
 unzip = False
 
 # COCO Dataset Loading
-with open("./config/parameters.yml", "r") as file:
+with open("./config/parameters.yaml", "r") as file:
     parameters = yaml.safe_load(file)
-name = parameters["directory"]["dataset_directory_name"]
+# name = parameters["directory"]["dataset_directory_name"]
+name = "cocopen-dataset"
 semantics = "obj_sem"
 pr = "pr"
 model = "pointrend_rcnn_R_50_FPN_3x_coco"
-events_dir = f"./detectron2/events/{name}"+f"_{model}_{semantics}_{pr}"
-try: os.mkdir(events_dir)
-except: print("Directory already exists!")
-try: os.mkdir("./demo/train/config")
+events_dir = f"./demo/train/events/{name}_{model}_{semantics}_{pr}"
+
+try: 
+  os.mkdir("./demo/train/")
+  os.mkdir("./demo/train/events/")
+  os.mkdir("./demo/train/config")
+  os.mkdir(events_dir)
+  url_config = f'https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{model}.yaml?raw=true'
+  base_config = 'https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true'
+  url_model = f'https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{model}/164955410/model_final_edd263.pkl?raw=true'
+
+  wget.download(url_config, f'./demo/train/config/{model}.yaml')
+  wget.download(url_model, f'./demo/train/config/{model}.pkl')
+  wget.download(base_config, f'./demo/train/config/Base-PointRend-RCNN-FPN.yaml')
 except: print("Train directory already exists!")
+
+# if len(os.path("./demo/train")) == 0:
+# try: os.mkdir("./demo/train/events/")
+# except: print("Train events directory already exists!")
+# try: os.mkdir("./demo/train/config")
+# except: print("Train config directory already exists!")
+# try: os.mkdir(events_dir)
+# except: print(f"{name}_{model}_{semantics}_{pr} directory already exists!")
 
 class_dict = {1: "device",
              2: "cable"}
 
 register_coco_instances("train", {}, f"./datasets/{name}/train/train.json", f"./datasets/{name}/train/")
 register_coco_instances("val", {}, f"./datasets/{name}/val/val.json", f"./datasets/{name}/val/")
-
-url_config = f'https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{model}.yaml?raw=true'
-base_config = 'https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true'
-url_model = f'https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{model}/164955410/model_final_edd263.pkl?raw=true'
-
-wget.download(url_config, f'./demo/train/config/{model}.yaml')
-wget.download(url_model, f'./demo/train/config/{model}.pkl')
-wget.download(base_config, f'./demo/train/config/Base-PointRend-RCNN-FPN.yaml')
 
 cfg = get_cfg()
 point_rend.add_pointrend_config(cfg)
@@ -78,7 +89,7 @@ if train:
   cfg.DATALOADER.NUM_WORKERS = 1
   cfg.MODEL.WEIGHTS = weights_dir  # Let training initialize from model zoo
   cfg.SOLVER.BASE_LR = 0.00025
-  cfg.SOLVER.MAX_ITER = 10
+  cfg.SOLVER.MAX_ITER = 1000
   cfg.SOLVER.CHECKPOINT_PERIOD = 5000 # limit this number- AstrobeeBumble only has 15GB of storage available and each checkpoint takes up ~0.5GB
   # cfg.SOLVER.STEPS = (20,100,500)
   # cfg.SOLVER.STEPS = (20, 10000, 20000)
