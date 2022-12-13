@@ -74,7 +74,10 @@ class Train:
     except: 
       print("Test and prediction directories already exists!")
     if self.train_detectron2:
-      os.mkdir(self.trained_models_dir)
+      try:
+        os.mkdir(self.trained_models_dir)
+      except:
+        print("Trained models directory already exists!")
 
   def register_dataset(self):
     register_coco_instances("train", {}, f"./datasets/{self.name}/train/train.json", f"./datasets/{self.name}/train/")
@@ -121,5 +124,5 @@ class Train:
       trainer.train()
 
     if self.train_detectron2:
-      shutil.move(self.events_dir + "model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
+      shutil.move(self.events_dir + f"{self.name}_{self.model}_{self.pr}/model_final.pth", f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth")
       print(f"Training complete! Model saved in ./train/trained-models/{self.name}_{self.model}_{self.pr}.pth!")
