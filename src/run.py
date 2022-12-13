@@ -1,42 +1,44 @@
 # Import libraries
 import random
 import yaml
-from cocopen import COCOpen
 
 def main(parameters):
 
     # initialize random seed
     random.seed(random.randint(1, 1000))
 
-    # initialize cocopen object
-    cocopen = COCOpen(
-        parameters=parameters,
-    )
+    # Generate a new COCO-formatted dataset
+    if parameters["generate_dataset"]:
+        from cocopen import COCOpen
+        # initialize cocopen object
+        cocopen = COCOpen(
+            parameters=parameters,
+        )
 
-    # Create categories dictionary from parameters
-    cocopen.generate_supercategories()
+        # Create categories dictionary from parameters
+        cocopen.generate_supercategories()
 
-    # Make new directories
-    cocopen.make_new_dirs()
+        # Make new directories
+        cocopen.make_new_dirs()
 
-    # Initializing Azure connection
-    cocopen.init_azure()
+        # Initializing Azure connection
+        cocopen.init_azure()
 
-    # Creating foreground and background image list
-    cocopen.create_image_list()
+        # Creating foreground and background image list
+        cocopen.create_image_list()
 
-    # Generate training data
-    cocopen.generate_train_data()
+        # Generate training data
+        cocopen.generate_train_data()
 
-    # Generate val data
-    cocopen.generate_val_data()
+        # Generate val data
+        cocopen.generate_val_data()
 
-    # Zip all files
-    cocopen.zip(
-        base_name=f"./datasets/zip/{cocopen.dataset_directory_name}",
-        format="zip",
-        root_dir=f"./datasets/{cocopen.dataset_directory_name}",
-    )
+        # Zip all files
+        cocopen.zip(
+            base_name=f"./datasets/zip/{cocopen.dataset_directory_name}",
+            format="zip",
+            root_dir=f"./datasets/{cocopen.dataset_directory_name}",
+        )
 
     # Run the demo
     if parameters["demo_dataset"]:
@@ -45,6 +47,7 @@ def main(parameters):
         example.make_new_dirs()
         example.demo()
 
+    # Train a new detectron2 model
     if parameters["train_detectron2"]:
         from train import Train
         trainer = Train(parameters=parameters)
