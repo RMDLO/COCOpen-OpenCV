@@ -38,7 +38,6 @@ class Train:
 
       # COCO Dataset Loading
       self.name = parameters["directory"]["dataset_directory_name"]
-      self.semantics = "obj_sem"
       self.pr = "pr"
       self.model = "pointrend_rcnn_R_50_FPN_3x_coco"
       self.class_dict = {1: "device",
@@ -48,7 +47,7 @@ class Train:
       self.train_dir = "./train/"
       self.config_dir = "./train/config"
       self.events_dir = "./train/events/"
-      self.model_dir = f"./train/events/{self.name}_{self.model}_{self.semantics}_{self.pr}"
+      self.model_dir = f"./train/events/{self.name}_{self.model}_{self.pr}"
       self.trained_models_dir = "./train/trained-models"
 
   def make_new_dirs(self):
