@@ -45,6 +45,13 @@ def main(parameters):
         example.make_new_dirs()
         example.demo()
 
+    if parameters["train_detectron2"]:
+        from train import Train
+        trainer = Train(parameters=parameters)
+        trainer.make_new_dirs()
+        trainer.register_dataset()
+        trainer.train()
+
 if __name__ == "__main__":
     # Load cocopen parameters
     with open("./config/parameters.yaml", "r") as file:
