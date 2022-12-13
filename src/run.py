@@ -55,6 +55,12 @@ def main(parameters):
         trainer.register_dataset()
         trainer.train()
 
+    if parameters["predict"]:
+        from predict import Predict
+        predictor = Predict(parameters=parameters)
+        predictor.register_dataset()
+        predictor.predict()
+
 if __name__ == "__main__":
     # Load cocopen parameters
     with open("./config/parameters.yaml", "r") as file:

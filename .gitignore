@@ -1,7 +1,14 @@
-.vscode/
 __pycache__
 
-datasets/
-train/
+# Ignore unused file extensions
+.vscode/
 *.swp
 *.pyc
+
+# Ignore generated datasets folder
+datasets/
+
+# Ignore generated models
+train/trained-models
+train/events
+train/config
