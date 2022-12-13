@@ -2,7 +2,6 @@ import torch
 torch.cuda.empty_cache()
 import os
 import shutil
-import yaml
 import wget
 
 # from detectron2.utils.logger import setup_logger
@@ -106,7 +105,7 @@ class Train:
       cfg.DATALOADER.NUM_WORKERS = 1
       cfg.MODEL.WEIGHTS = weights_dir  # Let training initialize from model zoo
       cfg.SOLVER.BASE_LR = 0.00025
-      cfg.SOLVER.MAX_ITER = 10
+      cfg.SOLVER.MAX_ITER = 20000
       cfg.SOLVER.CHECKPOINT_PERIOD = 5000 # limit this number- AstrobeeBumble only has 15GB of storage available and each checkpoint takes up ~0.5GB
       # cfg.SOLVER.STEPS = (20,100,500)
       # cfg.SOLVER.STEPS = (20, 10000, 20000)
