@@ -1,7 +1,7 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 25
-  val_images: 10
+  train_images: 1
+  val_images: 1
   train_split: 0.8
 
 # Image Shape
@@ -60,7 +60,7 @@ color_augmentation:
   color_augmentation_on_combined_image: true
 
 # Flag to designate whether the demo is performed
-run_demo: True
+run_demo: False
 
 # Parameters for which dataset to visualize and how many annotated images from the dataset to visualize.
 # Options: "train" and "val"
@@ -71,5 +71,5 @@ dataset_verification:
 # User defined parameters
 directory:
   root_dir: "."
-  dataset_directory_name: "cocopen-dataset"
+  dataset_directory_name: "test"
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'

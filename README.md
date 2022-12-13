@@ -1,5 +1,5 @@
 <p align="left">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/demo/visualization/uiuc_logo.png" title="UIUC logo">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/.github/images/uiuc_logo.png" title="UIUC logo">
 </p>
 
 # **UIUC COCOpen**
