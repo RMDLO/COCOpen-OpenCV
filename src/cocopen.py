@@ -241,8 +241,8 @@ class COCOpen:
         # currently only fill holes for devices
         if category == "device":
             new_mask_cpy = new_mask.copy()
-            floodfill_mask = np.zeros((self.height+2, self.width+2), np.uint8)
-            cv2.floodFill(new_mask_cpy, floodfill_mask, (0,0), 255)
+            floodfill_mask = np.zeros((self.height + 2, self.width + 2), np.uint8)
+            cv2.floodFill(new_mask_cpy, floodfill_mask, (0, 0), 255)
             new_mask_cpy = cv2.bitwise_not(new_mask_cpy)
             filled_mask = new_mask | new_mask_cpy
 

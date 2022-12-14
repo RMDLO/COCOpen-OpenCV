@@ -2,6 +2,7 @@
 import random
 import yaml
 
+
 def main(parameters):
 
     # initialize random seed
@@ -11,6 +12,7 @@ def main(parameters):
     # Generate a new COCO-formatted dataset
     if parameters["generate_dataset"]:
         from cocopen import COCOpen
+
         # initialize cocopen object
         cocopen = COCOpen(
             parameters=parameters,
@@ -39,11 +41,12 @@ def main(parameters):
             base_name=f"./datasets/zip/{cocopen.dataset_directory_name}",
             format="zip",
             root_dir=f"./datasets/{cocopen.dataset_directory_name}",
-            )
+        )
 
     # Run the demo
     if parameters["demo_dataset"]:
         from demo import Demo
+
         example = Demo(parameters=parameters)
         example.make_new_dirs()
         example.demo()
@@ -51,6 +54,7 @@ def main(parameters):
     # Train a new detectron2 model
     if parameters["train_detectron2"]:
         from train import Train
+
         trainer = Train(parameters=parameters)
         trainer.make_new_dirs()
         trainer.register_dataset()
@@ -58,9 +62,11 @@ def main(parameters):
 
     if parameters["predict"]:
         from predict import Predict
+
         predictor = Predict(parameters=parameters)
         predictor.register_dataset()
         predictor.predict()
+
 
 if __name__ == "__main__":
     # Load cocopen parameters

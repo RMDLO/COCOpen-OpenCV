@@ -8,10 +8,6 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/demo/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
 </p>
 
-<p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/demo/masks/0.png?raw=true" title="Visualization of COCOpen Object Instance Masks">
-</p>
-
 ## **Learn more about COCOpen**
 To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/LEARN_MORE.md).
 
