@@ -1,6 +1,14 @@
-.vscode/
 __pycache__
 
+# Ignore unused file extensions
+.vscode/
+*.swp
+*.pyc
+
+# Ignore generated datasets folder
 datasets/
-detectron2/
-src/detectron2.py
+
+# Ignore generated models
+train/trained-models
+train/events
+train/config
