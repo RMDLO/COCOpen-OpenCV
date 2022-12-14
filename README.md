@@ -4,21 +4,23 @@
 
 The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1]. This repository uses the UIUC COCOpen Library to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices, for training wire object instance segmentation models [2].
 
+
+
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/demo/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/demo/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>
 
 ## **Learn more about COCOpen**
-To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/LEARN_MORE.md).
+To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/LEARN_MORE.md).
 
 ## **Installation / Setup**
-See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/cb34585ebbb376df6c73e58293dda42ba5b92f12/.github/docs/INSTALLATION.md)
+See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/INSTALLATION.md)
 
 ## **Getting Started**
-See [getting started with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/GETTING_STARTED.md) to learn about the basic usage.
+See [getting started with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/GETTING_STARTED.md) to learn about the basic usage.
 
 ## **Example Run**
-See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/EXAMPLE_RUN.md) to see a demo of us generating the UIUC wires dataset in COCO format.
+See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/EXAMPLE_RUN.md) to see a demo of us generating the UIUC wires dataset in COCO format.
 
 ## References
 <a id="1">[1]</a> 
