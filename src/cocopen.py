@@ -342,11 +342,11 @@ class COCOpen:
             hsv_img = cv2.cvtColor(img_arr, cv2.COLOR_BGR2HSV)
 
             # randomly change hue
-            rand_value = int(random.random() * 255 * 2) - 255
+            rand_value = int(random.random() * 180 * 2) - 180
 
             hsv_img_int = hsv_img.astype("int32")
-            hsv_img_int[:, :, 0] += rand_value + 255
-            hsv_img_int[:, :, 0] = hsv_img_int[:, :, 0] % 255
+            hsv_img_int[:, :, 0] += rand_value + 180
+            hsv_img_int[:, :, 0] = hsv_img_int[:, :, 0] % 180
             hsv_img = hsv_img_int.astype("uint8")
 
             # convert back to BGR
