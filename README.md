@@ -16,7 +16,7 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
 To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/LEARN_MORE.md).
 
 ## **Installation / Setup**
-See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537684537e431bb86307620198819353348b9898689/.github/docs/INSTALLATION.md)
+See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/cb34585ebbb376df6c73e58293dda42ba5b92f12/.github/docs/INSTALLATION.md)
 
 ## **Getting Started**
 See [getting started with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/684537e431bb86307620198819353348b9898689/.github/docs/GETTING_STARTED.md) to learn about the basic usage.
