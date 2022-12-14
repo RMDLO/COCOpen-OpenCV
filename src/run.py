@@ -6,6 +6,7 @@ def main(parameters):
 
     # initialize random seed
     random.seed(random.randint(1, 1000))
+    # random.seed(2)
 
     # Generate a new COCO-formatted dataset
     if parameters["generate_dataset"]:
