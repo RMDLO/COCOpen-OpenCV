@@ -340,17 +340,29 @@ class COCOpen:
             img_arr = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2BGR)
 
         if change_brightness == True:
-            factor = enhancer_range[0] + random.random() * (enhancer_range[1] - enhancer_range[0])
-            img_arr = cv2.addWeighted(img_arr, factor, np.zeros_like(img_arr), 1-factor, 0.0)
+            factor = enhancer_range[0] + random.random() * (
+                enhancer_range[1] - enhancer_range[0]
+            )
+            img_arr = cv2.addWeighted(
+                img_arr, factor, np.zeros_like(img_arr), 1 - factor, 0.0
+            )
         if change_contrast == True:
-            factor = enhancer_range[0] + random.random() * (enhancer_range[1] - enhancer_range[0])
+            factor = enhancer_range[0] + random.random() * (
+                enhancer_range[1] - enhancer_range[0]
+            )
             mean = np.uint8(cv2.mean(cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY))[0])
-            img_arr = cv2.addWeighted(img_arr, factor, np.ones_like(img_arr) * mean, 1-factor, 0.0)
+            img_arr = cv2.addWeighted(
+                img_arr, factor, np.ones_like(img_arr) * mean, 1 - factor, 0.0
+            )
         if change_saturation == True:
-            factor = enhancer_range[0] + random.random() * (enhancer_range[1] - enhancer_range[0])
+            factor = enhancer_range[0] + random.random() * (
+                enhancer_range[1] - enhancer_range[0]
+            )
             # Convert BGR to grayscale, then represent grayscale image back in 3-channel BGR
-            gray = cv2.cvtColor(cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2BGR)
-            img_arr = cv2.addWeighted(img_arr, factor, gray, 1-factor, 0.0)
+            gray = cv2.cvtColor(
+                cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2BGR
+            )
+            img_arr = cv2.addWeighted(img_arr, factor, gray, 1 - factor, 0.0)
 
         return img_arr
 
@@ -379,37 +391,152 @@ class COCOpen:
         #     img_new = cv2.resize(img_new, dsize = (self.width, self.height), fx=fx_scale, fy=fy_scale)
         return img_new
 
-    # Combining foreground and background images
-    def combine(
+    # Get mask info for each category
+    def get_mask_info(
         self,
-        dataset_type: str,
-        target_dir,
-        num_images,
+        category_to_num_instances,
+        img_list,
+        image,
+        scale_range,
+        enhancer_range,
+        scale,
+        total_num_instances,
+        all_img_arr,
+        binary_mask_arr,
+        all_category_ids,
     ):
         """
-        Combining foreground and background images
+        This function gets the mask info for each category
         """
+        for category in self.categories:
+            if category["name"] != "background":
+                # get category info
+                for j in range(0, category_to_num_instances[category["name"]]):
+                    total_num_instances += 1
+                    index = int(len(img_list[category["name"]]) * random.random())
 
-        coco_sem = {
-            "images": [],
-            "annotations": [],
-            "categories": self.categories,
-        }
+                    # Record source image path (category + filename)
+                    image["source"].append(
+                        os.path.join(
+                            category["name"], img_list[category["name"]][index]
+                        )
+                    )
 
-        # Creating a copy of category_to_train_img_list and category_to_val_img_list based on dataset_type
-        image_list = {}
-        if dataset_type == "train":
-            image_list = copy.deepcopy(self.category_to_train_image_list)
-        else:
-            image_list = copy.deepcopy(self.category_to_val_image_list)
-        
-        # this sets the lower/upper limit of color augmentation
-        enhancer_range = [self.enhancer_min, self.enhancer_max]
-        scale_range = [self.scale_factor_min, self.scale_factor_max]
+                    img, mask = self.get_object_info(
+                        img_list[category["name"]][index], category["name"]
+                    )
+                    # Raise exception if object image height and width do not match image shape parameter
+                    if img.shape[0:2] != (self.height, self.width):
+                        raise Exception(
+                            f"""Object image height and width do not match image shape parameter
+                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})"""
+                        )
+                    img_list[category["name"]].pop(index)
 
-        # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
-        ann_id_sem = 0
+                    mask = mask / 255
+                    mask = mask.astype("uint8")
 
+                    msk = []
+                    msk.append(mask)
+
+                    # scaling
+                    if self.apply_scale_jittering:
+                        if self.individual_scale_jittering:
+                            scale = scale_range[0] + random.random() * (
+                                scale_range[1] - scale_range[0]
+                            )
+                            img, msk = self.scale_image(img, msk, scale)
+                        else:
+                            img, msk = self.scale_image(img, msk, scale)
+
+                    # color augmentation
+                    if self.apply_color_augmentation:
+                        if self.individual_color_augmentation:
+                            img = self.color_augmentation(
+                                img,
+                                enhancer_range,
+                                self.change_brightness,
+                                self.change_contrast,
+                                self.change_saturation,
+                                self.change_hue,
+                            )
+
+                    # Add the image and mask to the array
+                    all_img_arr.append(img)
+                    binary_mask_arr.append(msk)
+                    all_category_ids.append(category["id"])
+
+        return total_num_instances, scale
+
+    # Perform random flips
+    def random_flip(self, total_num_instances, all_img_arr, binary_mask_arr):
+        """
+        Random flips
+        """
+        for m in range(0, total_num_instances):
+
+            horizontal = int(2 * random.random())
+            vertical = int(2 * random.random())
+
+            if horizontal == 1:
+                all_img_arr[m] = cv2.flip(all_img_arr[m], 1)
+                for n in range(0, len(binary_mask_arr[m])):
+                    binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 1)
+
+            if vertical == 1:
+                all_img_arr[m] = cv2.flip(all_img_arr[m], 0)
+                for n in range(0, len(binary_mask_arr[m])):
+                    binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 0)
+
+    # Add random background
+    def add_random_background(self, image_list, mask_array_1):
+        """
+        Add random background
+        """
+        randbg = int(random.random() * len(image_list["background"]))
+        bg = image_list["background"][randbg]
+        # Download background image from azure
+        src = self.download_image_from_azure(img=bg, category="background")
+        bg_arr = src.astype("uint8")
+        # Raise exception if background image height and width do not match image shape parameter
+        if bg_arr.shape[0:2] != (self.height, self.width):
+            raise Exception(
+                f"""Background image height and width do not match image shape parameter
+                            ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})"""
+            )
+
+        # background random operations
+        bg_rot = random.random() * 360
+        bg_flip_h = bool(random.random() / 0.5)
+        bg_flip_v = bool(random.random() / 0.5)
+        bg_arr = self.random_operations(bg_arr, bg_rot, bg_flip_h, bg_flip_v)
+
+        mask_bg = np.ones((self.height, self.width)).astype("uint8")
+        msk_bg = np.zeros((self.height, self.width, 3)).astype("uint8")
+        mask_bg = mask_bg & (~mask_array_1)  # & (~ mask_array_2)
+
+        msk_bg[:, :, 0] = mask_bg
+        msk_bg[:, :, 1] = mask_bg
+        msk_bg[:, :, 2] = mask_bg
+
+        masked_bg = cv2.bitwise_or(msk_bg.astype("uint8"), bg_arr, mask=mask_bg)
+
+        return masked_bg
+
+    # Perform combine operations
+    def combine_operations(
+        self,
+        num_images,
+        scale_range,
+        image_list,
+        enhancer_range,
+        target_dir,
+        ann_id_sem,
+        coco_sem,
+    ):
+        """
+        Perform combine operations
+        """
         for i in tqdm(range(num_images)):
 
             # scale factor for this image
@@ -420,14 +547,20 @@ class COCOpen:
                 "width": self.width,
                 "height": self.height,
                 "file_name": str(i) + ".png",
-                "source": [], # list of source images used
+                "source": [],  # list of source images used
             }
 
             # create mapping of category name to max_instances for each category
             category_to_num_instances = {}
             for category in self.categories:
                 if category["name"] != "background":
-                    category_to_num_instances[category["name"]] = (int(random.random() * self.parameters["max_instances"][category["name"]]) + 1)
+                    category_to_num_instances[category["name"]] = (
+                        int(
+                            random.random()
+                            * self.parameters["max_instances"][category["name"]]
+                        )
+                        + 1
+                    )
 
             img_list = copy.deepcopy(image_list)
 
@@ -440,75 +573,27 @@ class COCOpen:
             total_num_instances = 0
 
             # get mask info for each category
-            for category in self.categories:
-                if category["name"] != "background":
-                    # get category info
-                    for j in range(0, category_to_num_instances[category["name"]]):
-                        total_num_instances += 1
-                        index = int(len(img_list[category["name"]]) * random.random())
-
-                        # Record source image path (category + filename)
-                        image["source"].append(os.path.join(category["name"], img_list[category["name"]][index]))
-
-                        img, mask = self.get_object_info(img_list[category["name"]][index], category["name"])
-                        # Raise exception if object image height and width do not match image shape parameter
-                        if img.shape[0:2] != (self.height, self.width):
-                            raise Exception(
-                                f"""Object image height and width do not match image shape parameter
-                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})"""
-                            )
-                        img_list[category["name"]].pop(index)
-
-                        mask = mask / 255
-                        mask = mask.astype("uint8")
-
-                        msk = []
-                        msk.append(mask)
-
-                        # scaling
-                        if self.apply_scale_jittering:
-                            if self.individual_scale_jittering:
-                                scale = scale_range[0] + random.random() * (
-                                    scale_range[1] - scale_range[0]
-                                )
-                                img, msk = self.scale_image(img, msk, scale)
-                            else:
-                                img, msk = self.scale_image(img, msk, scale)
-
-                        # color augmentation
-                        if self.apply_color_augmentation:
-                            if self.individual_color_augmentation:
-                                img = self.color_augmentation(
-                                    img,
-                                    enhancer_range,
-                                    self.change_brightness,
-                                    self.change_contrast,
-                                    self.change_saturation,
-                                    self.change_hue,
-                                )
-
-                        # Add the image and mask to the array
-                        all_img_arr.append(img)
-                        binary_mask_arr.append(msk)
-                        all_category_ids.append(category["id"])
+            total_num_instances, scale = self.get_mask_info(
+                category_to_num_instances=category_to_num_instances,
+                img_list=img_list,
+                image=image,
+                scale_range=scale_range,
+                enhancer_range=enhancer_range,
+                scale=scale,
+                total_num_instances=total_num_instances,
+                all_img_arr=all_img_arr,
+                binary_mask_arr=binary_mask_arr,
+                all_category_ids=all_category_ids,
+            )
 
             # perform random flip
-            for m in range(0, total_num_instances):
+            self.random_flip(
+                total_num_instances=total_num_instances,
+                all_img_arr=all_img_arr,
+                binary_mask_arr=binary_mask_arr,
+            )
 
-                horizontal = int(2 * random.random())
-                vertical = int(2 * random.random())
-
-                if horizontal == 1:
-                    all_img_arr[m] = cv2.flip(all_img_arr[m], 1)
-                    for n in range(0, len(binary_mask_arr[m])):
-                        binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 1)
-
-                if vertical == 1:
-                    all_img_arr[m] = cv2.flip(all_img_arr[m], 0)
-                    for n in range(0, len(binary_mask_arr[m])):
-                        binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 0)
-
-            # now have a complete list of image arrays and masks, can start combining
+            # Now have a complete list of image arrays and masks, can start combining
             # choose a random element from the img list
             final_img = []
 
@@ -595,34 +680,10 @@ class COCOpen:
                 binary_mask_arr.pop(randint2)
                 all_category_ids.pop(randint2)
 
-            # add a random background
-            randbg = int(random.random() * len(image_list["background"]))
-            bg = image_list["background"][randbg]
-            # Download background image from azure
-            src = self.download_image_from_azure(img=bg, category="background")
-            bg_arr = src.astype("uint8")
-            # Raise exception if background image height and width do not match image shape parameter
-            if bg_arr.shape[0:2] != (self.height, self.width):
-                raise Exception(
-                    f"""Background image height and width do not match image shape parameter
-                                ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})"""
-                )
-
-            # background random operations
-            bg_rot = random.random() * 360
-            bg_flip_h = bool(random.random() / 0.5)
-            bg_flip_v = bool(random.random() / 0.5)
-            bg_arr = self.random_operations(bg_arr, bg_rot, bg_flip_h, bg_flip_v)
-
-            mask_bg = np.ones((self.height, self.width)).astype("uint8")
-            msk_bg = np.zeros((self.height, self.width, 3)).astype("uint8")
-            mask_bg = mask_bg & (~mask_array_1)  # & (~ mask_array_2)
-
-            msk_bg[:, :, 0] = mask_bg
-            msk_bg[:, :, 1] = mask_bg
-            msk_bg[:, :, 2] = mask_bg
-
-            masked_bg = cv2.bitwise_or(msk_bg.astype("uint8"), bg_arr, mask=mask_bg)
+            # Add a random background
+            masked_bg = self.add_random_background(
+                image_list=image_list, mask_array_1=mask_array_1
+            )
 
             final_img = cv2.add(final_img, masked_bg)
 
@@ -654,6 +715,47 @@ class COCOpen:
 
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
             coco_sem["images"].append(image)
+
+    # Combining foreground and background images
+    def combine(
+        self,
+        dataset_type: str,
+        target_dir,
+        num_images,
+    ):
+        """
+        Combining foreground and background images
+        """
+        coco_sem = {
+            "images": [],
+            "annotations": [],
+            "categories": self.categories,
+        }
+
+        # Creating a copy of category_to_train_img_list and category_to_val_img_list based on dataset_type
+        image_list = {}
+        if dataset_type == "train":
+            image_list = copy.deepcopy(self.category_to_train_image_list)
+        else:
+            image_list = copy.deepcopy(self.category_to_val_image_list)
+
+        # this sets the lower/upper limit of color augmentation
+        enhancer_range = [self.enhancer_min, self.enhancer_max]
+        scale_range = [self.scale_factor_min, self.scale_factor_max]
+
+        # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
+        ann_id_sem = 0
+
+        # Perform combine operations for num_images
+        self.combine_operations(
+            num_images=num_images,
+            scale_range=scale_range,
+            image_list=image_list,
+            enhancer_range=enhancer_range,
+            target_dir=target_dir,
+            ann_id_sem=ann_id_sem,
+            coco_sem=coco_sem,
+        )
 
         return coco_sem
 
