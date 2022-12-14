@@ -236,8 +236,21 @@ class COCOpen:
         )  # Color threshold step
         new_mask = self.contour_filter(mask)  # blob filtering step
 
-        # Encode
-        mask_array = np.asarray(new_mask, order="F")
+        # fill holes in the binary mask
+        # max(new_mask) = 255
+        # currently only fill holes for devices
+        if category == "device":
+            new_mask_cpy = new_mask.copy()
+            floodfill_mask = np.zeros((self.height + 2, self.width + 2), np.uint8)
+            cv2.floodFill(new_mask_cpy, floodfill_mask, (0, 0), 255)
+            new_mask_cpy = cv2.bitwise_not(new_mask_cpy)
+            filled_mask = new_mask | new_mask_cpy
+
+            # Encode
+            mask_array = np.asarray(filled_mask, order="F")
+        else:
+            # Encode
+            mask_array = np.asarray(new_mask, order="F")
 
         return src, mask_array
 
@@ -329,11 +342,11 @@ class COCOpen:
             hsv_img = cv2.cvtColor(img_arr, cv2.COLOR_BGR2HSV)
 
             # randomly change hue
-            rand_value = int(random.random() * 255 * 2) - 255
+            rand_value = int(random.random() * 180 * 2) - 180
 
             hsv_img_int = hsv_img.astype("int32")
-            hsv_img_int[:, :, 0] += rand_value + 255
-            hsv_img_int[:, :, 0] = hsv_img_int[:, :, 0] % 255
+            hsv_img_int[:, :, 0] += rand_value + 180
+            hsv_img_int[:, :, 0] = hsv_img_int[:, :, 0] % 180
             hsv_img = hsv_img_int.astype("uint8")
 
             # convert back to BGR

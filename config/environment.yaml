@@ -1,5 +1,6 @@
 name: cocopen
 channels:
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
@@ -30,6 +31,7 @@ dependencies:
   - expat=2.5.0=h27087fc_0
   - ffmpeg=5.1.2=gpl_h13415ed_104
   - fftw=3.3.10=nompi_hf0379b8_106
+  - flake8=6.0.0=pyhd8ed1ab_0
   - font-ttf-dejavu-sans-mono=2.37=hab24e00_0
   - font-ttf-inconsolata=3.000=h77eed37_0
   - font-ttf-source-code-pro=2.038=h77eed37_0
@@ -126,6 +128,7 @@ dependencies:
   - libzlib=1.2.13=h166bdaf_4
   - lz4-c=1.9.3=h9c3ff4c_1
   - matplotlib-base=3.6.2=py39hf9fd14e_0
+  - mccabe=0.7.0=pyhd3eb1b0_0
   - mpg123=1.31.1=h27087fc_0
   - msrest=0.7.1=pyhd8ed1ab_0
   - munkres=1.1.4=pyh9f0ad1d_0
@@ -151,7 +154,9 @@ dependencies:
   - pulseaudio=16.1=h126f2b6_0
   - py-opencv=4.6.0=py39hcca971b_6
   - pycocotools=2.0.6=py39h2ae25f5_1
+  - pycodestyle=2.10.0=pyhd8ed1ab_0
   - pycparser=2.21=pyhd8ed1ab_0
+  - pyflakes=3.0.1=pyhd8ed1ab_0
   - pyjwt=2.6.0=pyhd8ed1ab_0
   - pyopenssl=22.1.0=pyhd8ed1ab_0
   - pyparsing=3.0.9=pyhd8ed1ab_0
