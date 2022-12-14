@@ -7,7 +7,7 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
 
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/demo/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/33508f34add96075eed5fcb7780c8ef0c3d55cce/demo/cocopen-dataset-review/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>
 
 ## **Learn more about COCOpen**

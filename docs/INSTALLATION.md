@@ -36,4 +36,4 @@ COCOpen-OpenCV$ conda activate cocopen
 ```
 
 ## **Setting up Azure Storage Container**
-To learn how to set up your dataset on Azure, read [this](./README_AZURE.md).
+To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/README_AZURE.md).
