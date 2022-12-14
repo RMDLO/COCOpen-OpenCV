@@ -30,6 +30,7 @@ class Demo:
         self.val = self.dataset_dir + "/val"
 
         self.demo_dir = self.root_dir + "/demo"
+        self.demo_dataset_dir = self.demo_dir + f"/{self.dataset_directory_name}"
         self.visualization_dir = self.demo_dir + "/visualization"
         self.mask_dir = self.demo_dir + "/masks"
     
