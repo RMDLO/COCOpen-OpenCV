@@ -9,7 +9,7 @@ Installation and execution of COCOpen was verified with the below environment.
 - Architecture: x86-64
 - Python: 3.9.15
 
-For details regarding package dependencies, please see [here](config/environment.yml).
+For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/3dec8c36087c0ba8033d62a987ae7738475e161f/config/environment.yaml).
 
 ## **Cloning COCOpen-OpenCV repository**
 Clone this repository in your desired location by running the following command in a terminal:
@@ -49,7 +49,7 @@ $ python -m pip install detectron2 -f \
   https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
 ```
 
-To train an object detection model, we provide a `train_environment.yml` file which contains an installation of PyTorch 1.10 with CUDA 11.3. We use the [detectron2](https://github.com/facebookresearch/detectron2) library to train detection models. To set up a conda enviornment to use the `src/train.py` file to train and predict on a dataset, please run:
+To train an object detection model, we provide a `train_environment.yml` file which contains an installation of PyTorch 1.10 with CUDA 11.3. We also use the detectron2 library to train detection models. To set up a conda enviornment to use the `src/train.py` file to train and predict on a dataset, please run:
 
 ```bash
 # Navigate into the COCOpen directory
@@ -64,4 +64,4 @@ $ python -m pip install detectron2 -f \
 ```
 
 ## **Setting up Azure Storage Container**
-To learn how to set up your dataset on Azure, read [this](./docs/README_AZURE.md).
+To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/3dec8c36087c0ba8033d62a987ae7738475e161f/docs/README_AZURE.md).
