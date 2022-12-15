@@ -89,16 +89,16 @@ class COCOpen:
         try:
             os.mkdir(self.dataset_dir)
         except FileExistsError:
-            print(f"{self.dataset_dir} already exists!")
+            print(f"{self.dataset_dir_name} already exists!")
         try:
             os.mkdir(self.train)
         except FileExistsError:
-            print(f"{self.train} directory already exists!")
+            print(f"train directory already exists!")
         try:
             os.mkdir(self.val)
         except FileExistsError:
-            print(f"{self.val} directory already exists!")
-        print("Created Directories")
+            print(f"val directory already exists!")
+        print("created directories.")
 
     def object_semantics(
         self,
@@ -219,7 +219,6 @@ class COCOpen:
                 "name": key,
             }
             self.categories.append(supercategory_dict)
-        print("Generated Categories Dictionary from param")
 
     def get_object_info(self, img, category):
         """
@@ -763,10 +762,10 @@ class COCOpen:
 
     def generate_train_data(self) -> None:
         """
-        Generating training dataset
+        Generate training dataset
         """
         # generate train
-        print("Generating 'train' data")
+        print("generating train data...")
         coco_sem = self.combine(
             dataset_type="train",
             target_dir=self.train,
@@ -778,9 +777,9 @@ class COCOpen:
 
     def generate_val_data(self) -> None:
         """
-        Generating val dataset
+        Generate val dataset
         """
-        print("Generating 'val' data")
+        print("generating val data...")
         coco_sem = self.combine(
             dataset_type="val",
             target_dir=self.val,
@@ -795,4 +794,4 @@ class COCOpen:
         Function which zips all files in a directory
         """
         shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir)
-        print(self.dataset_dir_name + ".zip file successfully created!")
+        print(f"created {self.dataset_dir_name}.zip!")
