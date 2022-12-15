@@ -1,7 +1,7 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 20
-  val_images: 5
+  train_images: 1
+  val_images: 1
   train_split: 0.8
 
 # Image Shape
@@ -26,16 +26,16 @@ color_threshold:
 contour_threshold: 1000
   
 # Maximum Number of Instances Per Image for Each Object Category
-max_instances:
+max_inst:
   device: 2
   wire: 4
 
 # Parameters for Scale Jittering
 scale_jittering:
-  apply_scale_jittering: true
+  apply_scale_jittering: True
 
-  # if true, different objects use different scale factors
-  individual_scale_jittering: true
+  # if True, different objects use different scale factors
+  individual_scale_jittering: True
 
   # scale factor range
   scale_factor_min: 0.75
@@ -43,27 +43,27 @@ scale_jittering:
 
 # Parameters for Color Augmentation
 color_augmentation:
-  apply_color_augmentation: true
+  apply_color_augmentation: True
 
-  # if true, different objects use different values
-  individual_color_augmentation: true
-  change_saturation: true
-  change_brightness: true
-  change_contrast: true
-  change_hue: true
+  # if True, different objects use different values
+  individual_color_augmentation: True
+  saturation: True
+  brightness: True
+  contrast: True
+  hue: True
 
   # Lower/Upper Limit of Color Augmentation
   enhancer_min: 0.75
   enhancer_max: 1.25
 
-  # if true, apply color augmentation again to the combined image
-  color_augmentation_on_combined_image: true
+  # if True, apply color augmentation again to the combined image
+  color_augment_combined: True
 
 # Flag to designate whether to generate a new dataset
 generate_dataset: True
 
 # Flag to designate whether the demo is performed
-demo_dataset: False
+demo_dataset: True
 
 # Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
 train_detectron2: False
@@ -83,5 +83,5 @@ dataset_prediction:
 # User defined parameters
 directory:
   root_dir: "."
-  dataset_directory_name: "cocopen-dataset-test-5"
+  dataset_directory_name: "cocopen-dataset"
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
