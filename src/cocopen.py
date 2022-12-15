@@ -1,4 +1,9 @@
-# Import libraries
+"""
+Library for automatic object dataset generation and annotation
+for object detection, localization, classification, and instance
+segmentation applications.
+"""
+
 import os
 import shutil
 import json

@@ -1,5 +1,6 @@
 __pycache__
 .pytest_cache/
+src/__init__.py
 
 # Ignore unused file extensions
 .vscode/
@@ -13,3 +14,7 @@ datasets/
 train/trained-models/
 train/events/
 train/config/
+train/opencv/
+
+# Ignore run file which includes black and flake8-black calls before run.py
+test.sh

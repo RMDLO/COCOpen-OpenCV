@@ -1,11 +1,1 @@
-black ./src/cocopen.py
-black ./src/demo.py
-black ./src/predict.py
-black ./src/run.py
-black ./src/train.py
-flake8 ./src/cocopen.py
-flake8 ./src/demo.py
-flake8 ./src/predict.py
-flake8 ./src/run.py
-flake8 ./src/train.py
 python ./src/run.py
