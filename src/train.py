@@ -71,24 +71,24 @@ class Train:
         try:
             os.mkdir(self.train_dir)
         except FileExistsError:
-            print("Train directory already exists!")
+            print("train directory already exists!")
         try:
             os.mkdir(self.config_dir)
         except FileExistsError:
-            print("Training config directory already exists!")
+            print("training config directory already exists!")
         try:
             os.mkdir(self.events_dir)
         except FileExistsError:
-            print("Training events directory already exists!")
+            print("training events directory already exists!")
         try:
             os.mkdir(self.model_dir)
         except FileExistsError:
-            print("Training models directory already exists!")
+            print("training models directory already exists!")
         if self.train_detectron2:
             try:
                 os.mkdir(self.trained_models)
             except FileExistsError:
-                print("Trained models directory already exists!")
+                print("trained models directory already exists!")
                 pass
 
     def download_models(self):
@@ -115,7 +115,6 @@ class Train:
         corresponding annotations in COCO format
         """
         for data in ["train", "val"]:
-            print(f"./datasets/{self.name}/{data}/{data}.json")
             try:
                 register_coco_instances(
                     data,
@@ -123,7 +122,7 @@ class Train:
                     f"./datasets/{self.name}/{data}/{data}.json",
                     f"./datasets/{self.name}/{data}/",
                 )
-            except:
+            except Exception:
                 pass
 
     def train(self):

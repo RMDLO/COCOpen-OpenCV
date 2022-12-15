@@ -25,26 +25,26 @@ class Demo:
         self.dataset_dir = self.root_dir + f"/datasets/{self.data_dir_name}"
         self.demo_dir = self.root_dir + "/demo"
         self.demo_dataset_dir = self.demo_dir + f"/{self.data_dir_name}"
-        self.visualization_dir = self.demo_dataset_dir + "/visualization"
+        self.vis_dir = self.demo_dataset_dir + "/visualization"
         self.mask_dir = self.demo_dataset_dir + "/masks"
 
     def make_new_dirs(self):
         try:
             os.mkdir(self.demo_dir)
         except FileExistsError:
-            print("Demo directory already exists!")
+            print("demo directory already exists!")
         try:
             os.mkdir(self.demo_dataset_dir)
         except FileExistsError:
-            print("Demo dataset directory already exists!")
+            print("demo dataset directory already exists!")
         try:
-            os.mkdir(self.visualization_dir)
+            os.mkdir(self.vis_dir)
         except FileExistsError:
-            print("Visualization directory already exists!")
+            print("visualization directory already exists!")
         try:
             os.mkdir(self.mask_dir)
         except FileExistsError:
-            print("Masks directory already exists!")
+            print("masks directory already exists!")
 
     def demo(self):
 
@@ -80,12 +80,10 @@ class Demo:
 
             # visualize object instance segmentation on cocopen-generated data
             visualizer = Visualizer(
-                img, metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE
+                img, metadata, scale=0.5, instance_mode=ColorMode.IMAGE
             )
             out = visualizer.draw_dataset_dict(d)
 
             # save masks and visualizations
-            cv2.imwrite(
-                os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image()
-            )
-            cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), cat_masks)
+            cv2.imwrite(f"{self.vis_dir}/{str(i)}.png", out.get_image())
+            cv2.imwrite(f"{self.mask_dir}/{str(i)}.png", cat_masks)

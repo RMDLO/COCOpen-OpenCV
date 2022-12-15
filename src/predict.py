@@ -58,33 +58,28 @@ class Predict:
             test_directory = "./train/opencv/"
             os.mkdir(test_directory)
         except FileExistsError:
-            print("Test directory already exists!")
+            print("test directory already exists!")
         try:
             prediction_directory = f"./train/opencv/{self.name}_{self.model}"
             os.mkdir(prediction_directory)
         except FileExistsError:
-            print("Prediction directory already exists!")
+            print("prediction directory already exists!")
 
     def register_dataset(self):
         """
         Register the dataset given a folder of images and their
         corresponding annotations in COCO format
         """
-        try:
-            register_coco_instances(
-                "train",
-                {},
-                f"./datasets/{self.name}/train/train.json",
-                f"./datasets/{self.name}/train/",
-            )
-            register_coco_instances(
-                "val",
-                {},
-                f"./datasets/{self.name}/val/val.json",
-                f"./datasets/{self.name}/val/",
-            )
-        except FileExistsError:
-            print("train and val datasets already registered!")
+        for data in ["train", "val"]:
+            try:
+                register_coco_instances(
+                    data,
+                    {},
+                    f"./datasets/{self.name}/{data}/{data}.json",
+                    f"./datasets/{self.name}/{data}/",
+                )
+            except Exception:
+                pass
 
     def predict(self):
         """
