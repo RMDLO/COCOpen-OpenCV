@@ -74,6 +74,7 @@ def main(params):
     if params["predict"]:
         predictor = Predict(parameters=params)
         predictor.register_dataset()
+        predictor.make_new_dirs()
         predictor.predict()
 
 

@@ -54,7 +54,7 @@ class Train:
         except FileExistsError:
             print("Train directory already exists!")
         try:
-            test_directory = f"./train/opencv/"
+            test_directory = "./train/opencv/"
             prediction_directory = f"./train/opencv/{self.name}_{self.model}_{self.pr}"
             os.mkdir(test_directory)
             os.mkdir(prediction_directory)

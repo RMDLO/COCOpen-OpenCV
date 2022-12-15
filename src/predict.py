@@ -42,6 +42,18 @@ class Predict:
         except FileExistsError:
             print("train and val datasets already registered!")
 
+    def make_new_dirs(self):
+        try:
+            test_directory = "./train/opencv/"
+            os.mkdir(test_directory)
+        except FileExistsError:
+            print("Test directory already exists!")
+        try:
+            prediction_directory = f"./train/opencv/{self.name}_{self.model}_{self.pr}"
+            os.mkdir(prediction_directory)
+        except FileExistsError:
+            print("Prediction directory already exists!")
+
     def predict(self):
 
         cfg = get_cfg()
@@ -59,17 +71,15 @@ class Predict:
 
         dicts = DatasetCatalog.get("val")
         metadata = MetadataCatalog.get("val")
-
+        print(f"./train/opencv/{self.name}_{self.model}_{self.pr}")
         for i, d in enumerate(
-            dicts[: self.parameters["dataset_prediction"]["number_of_images"] - 1]
+            dicts[: self.parameters["dataset_prediction"]["number_of_images"]]
         ):
             im = cv2.imread(d["file_name"])
-            print(d["file_name"])
             outputs = predictor(im)
-            v = Visualizer(im, metadata=metadata, instance_mode=ColorMode.IMAGE)
+            v = Visualizer(im, metadata, instance_mode=ColorMode.IMAGE)
             out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
             save_directory = os.path.join(
                 f"./train/opencv/{self.name}_{self.model}_{self.pr}",
-                os.path.basename(d["file_name"]),
-            )
+                os.path.basename(d["file_name"]))
             cv2.imwrite(save_directory, out.get_image())
