@@ -10,9 +10,8 @@ from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.utils.visualizer import ColorMode
 
 
-# Class for the demo object
+# Class for the predict object
 class Predict:
-    # Constructor
     def __init__(
         self,
         parameters: dict,
@@ -40,7 +39,7 @@ class Predict:
                 f"./datasets/{self.name}/val/val.json",
                 f"./datasets/{self.name}/val/",
             )
-        except:
+        except FileExistsError:
             print("train and val datasets already registered!")
 
     def predict(self):
@@ -53,7 +52,6 @@ class Predict:
             f"./train/trained-models/{self.name}_{self.model}_{self.pr}.pth"
         )
         cfg.MODEL.DEVICE = "cuda:0"
-        # cfg.MODEL.DEVICE = "cpu"
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2
         cfg.MODEL.POINT_HEAD.NUM_CLASSES = 2
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
@@ -62,15 +60,12 @@ class Predict:
         dicts = DatasetCatalog.get("val")
         metadata = MetadataCatalog.get("val")
 
-        mask_list = []
         for i, d in enumerate(
             dicts[: self.parameters["dataset_prediction"]["number_of_images"] - 1]
         ):
             im = cv2.imread(d["file_name"])
             print(d["file_name"])
-            outputs = predictor(
-                im
-            )  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+            outputs = predictor(im)
             v = Visualizer(im, metadata=metadata, instance_mode=ColorMode.IMAGE)
             out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
             save_directory = os.path.join(
@@ -78,7 +73,3 @@ class Predict:
                 os.path.basename(d["file_name"]),
             )
             cv2.imwrite(save_directory, out.get_image())
-
-            # save masks and visualizations
-            # cv2.imwrite(os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image())
-            # cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks)

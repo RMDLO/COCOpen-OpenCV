@@ -50,20 +50,20 @@ class Train:
 
             wget.download(url_config, f"./train/config/{self.model}.yaml")
             wget.download(url_model, f"./train/config/{self.model}.pkl")
-            wget.download(base_config, f"./train/config/Base-PointRend-RCNN-FPN.yaml")
-        except:
+            wget.download(base_config, "./train/config/Base-PointRend-RCNN-FPN.yaml")
+        except FileExistsError:
             print("Train directory already exists!")
         try:
             test_directory = f"./train/opencv/"
             prediction_directory = f"./train/opencv/{self.name}_{self.model}_{self.pr}"
             os.mkdir(test_directory)
             os.mkdir(prediction_directory)
-        except:
+        except FileExistsError:
             print("Test and prediction directories already exists!")
         if self.train_detectron2:
             try:
                 os.mkdir(self.trained_models_dir)
-            except:
+            except FileExistsError:
                 print("Trained models directory already exists!")
 
     def register_dataset(self):

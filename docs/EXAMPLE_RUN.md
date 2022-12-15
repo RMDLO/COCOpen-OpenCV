@@ -12,8 +12,8 @@ $ cd COCOCpen-OpenCV
 ## **2. User configurations**
 a. The provided `config/parameters.yml` file already contains an Azure connection string that's ready to generate data from the UIUC wires dataset.
 
-```bash
-# User defined parameters
+```yaml
+# Pointer to raw input imagery and directory structuring
 user_defined:
   root_dir: "." # ignore
   dataset_directory_name: "cocopen-dataset-4" # ignore
@@ -96,12 +96,6 @@ run_demo: True
 dataset_verification:
   which_dataset: "val"
   number_of_images: 2
-
-# Pointer to raw input imagery and directory structuring
-directory:
-  root_dir: "."
-  dataset_directory_name: "cocopen-dataset"
-  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
 ```
 
 ## **4. Running the script**
@@ -109,7 +103,7 @@ To execute the API, run the following:
 
 ```bash
 # Run the run.py file
-(cocopen-env) COCOpen-OpenCV$ bash run.sh
+$ bash run.sh
 ```
 
 ## **5. Result**
