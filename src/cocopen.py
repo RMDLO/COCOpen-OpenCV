@@ -65,7 +65,9 @@ class COCOpen:
         self.hue = self.param["color_augmentation"]["hue"]
         self.enhancer_min = self.param["color_augmentation"]["enhancer_min"]
         self.enhancer_max = self.param["color_augmentation"]["enhancer_max"]
-        self.color_agument_combined = self.param["color_augmentation"]["color_augment_combined"]
+        self.color_agument_combined = self.param["color_augmentation"][
+            "color_augment_combined"
+        ]
 
         self.category_to_container_client = {}
         self.category_to_train_list = {}
@@ -364,7 +366,7 @@ class COCOpen:
             )
             # Convert BGR image to grayscale, then represent grayscale image back in 3-channel BGR
             gray_1D = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
-            gray = np.stack((gray_1D,)*3, axis=-1)
+            gray = np.stack((gray_1D,) * 3, axis=-1)
             img_arr = cv2.addWeighted(img_arr, factor, gray, 1 - factor, 0.0)
 
         return img_arr
@@ -765,7 +767,7 @@ class COCOpen:
             target_dir=self.train,
             num_images=self.param["dataset_params"]["train_images"],
         )
-        with open(self.train + "/train.json", 'w') as file:
+        with open(self.train + "/train.json", "w") as file:
             json.dump(coco_sem, file, sort_keys=True, indent=4)
             file.close()
 
@@ -779,7 +781,7 @@ class COCOpen:
             target_dir=self.val,
             num_images=self.param["dataset_params"]["val_images"],
         )
-        with open(self.val + "/val.json", 'w') as file:
+        with open(self.val + "/val.json", "w") as file:
             json.dump(coco_sem, file, sort_keys=True, indent=4)
             file.close()
 
