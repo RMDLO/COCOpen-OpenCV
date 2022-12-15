@@ -17,10 +17,10 @@ To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenC
 See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/INSTALLATION.md)
 
 ## **Getting Started**
-See [getting started with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/GETTING_STARTED.md) to learn about the basic usage.
+See [Dataset Configuration with COCOpen](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/GETTING_STARTED.md) to learn about dataset setup before running COCOpen.
 
 ## **Example Run**
-See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/EXAMPLE_RUN.md) to see a demo of us generating the UIUC wires dataset in COCO format.
+See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/EXAMPLE_RUN.md) to see a demo automatically generating a simple dataset of ethernet cables and ethernet devices with category, bounding box, and instance segmentation mask annotations in the COCO format.
 
 ## References
 <a id="1">[1]</a> 

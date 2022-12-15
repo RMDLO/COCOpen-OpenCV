@@ -80,7 +80,7 @@ dataset_verification:
 dataset_prediction:
   number_of_images: 5
 
-# User defined parameters
+# Pointer to raw input imagery and directory structuring
 directory:
   root_dir: "."
   dataset_directory_name: "cocopen-dataset-review2"

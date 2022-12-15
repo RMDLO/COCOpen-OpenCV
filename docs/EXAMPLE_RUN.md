@@ -26,7 +26,7 @@ Open the `config/parameters.yml` file.
 Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
 
 Set it to these default values:
-```bash
+```yaml
 # Dataset Size and Split Parameters
 dataset_params:
   train_images: 25
@@ -61,10 +61,10 @@ max_instances:
 
 # Parameters for Scale Jittering
 scale_jittering:
-  apply_scale_jittering: true
+  apply_scale_jittering: True
 
-  # if true, different objects use different scale factors
-  individual_scale_jittering: true
+  # if True, different objects use different scale factors
+  individual_scale_jittering: True
 
   # scale factor range
   scale_factor_min: 0.75
@@ -72,21 +72,21 @@ scale_jittering:
 
 # Parameters for Color Augmentation
 color_augmentation:
-  apply_color_augmentation: true
+  apply_color_augmentation: True
 
-  # if true, different objects use different values
-  individual_color_augmentation: true
-  change_saturation: true
-  change_brightness: true
-  change_contrast: true
-  change_hue: true
+  # if True, different objects use different values
+  individual_color_augmentation: t
+  change_saturation: True
+  change_brightness: True
+  change_contrast: True
+  change_hue: True
 
   # Lower/Upper Limit of Color Augmentation
   enhancer_min: 0.75
   enhancer_max: 1.25
 
-  # if true, apply color augmentation again to the combined image
-  color_augmentation_on_combined_image: true
+  # if True, apply color augmentation again to the combined image
+  color_augmentation_on_combined_image: True
 
 # Flag to designate whether the demo is performed
 run_demo: True
@@ -97,7 +97,7 @@ dataset_verification:
   which_dataset: "val"
   number_of_images: 2
 
-# User defined parameters
+# Pointer to raw input imagery and directory structuring
 directory:
   root_dir: "."
   dataset_directory_name: "cocopen-dataset"
