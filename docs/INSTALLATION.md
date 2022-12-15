@@ -30,9 +30,9 @@ To create the `conda` environment from the `environment.yaml` file, run:
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
 # Clone the conda environment
-COCOCpen-OpenCV$ conda env create -f config/environment.yaml
+$ conda env create -f config/environment.yaml
 # Activate the conda environment
-COCOpen-OpenCV$ conda activate cocopen
+$ conda activate cocopen
 ```
 
 ## **Setting up Azure Storage Container**

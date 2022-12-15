@@ -12,8 +12,8 @@ $ cd COCOCpen-OpenCV
 ## **2. User configurations**
 a. The provided `config/parameters.yml` file already contains an Azure connection string that's ready to generate data from the UIUC wires dataset.
 
-```bash
-# User defined parameters
+```yaml
+# Pointer to raw input imagery and directory structuring
 user_defined:
   root_dir: "." # ignore
   dataset_directory_name: "cocopen-dataset-4" # ignore
@@ -26,7 +26,7 @@ Open the `config/parameters.yml` file.
 Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
 
 Set it to these default values:
-```bash
+```yaml
 # Dataset Size and Split Parameters
 dataset_params:
   train_images: 25
@@ -61,10 +61,10 @@ max_instances:
 
 # Parameters for Scale Jittering
 scale_jittering:
-  apply_scale_jittering: true
+  apply_scale_jittering: True
 
-  # if true, different objects use different scale factors
-  individual_scale_jittering: true
+  # if True, different objects use different scale factors
+  individual_scale_jittering: True
 
   # scale factor range
   scale_factor_min: 0.75
@@ -72,21 +72,21 @@ scale_jittering:
 
 # Parameters for Color Augmentation
 color_augmentation:
-  apply_color_augmentation: true
+  apply_color_augmentation: True
 
-  # if true, different objects use different values
-  individual_color_augmentation: true
-  change_saturation: true
-  change_brightness: true
-  change_contrast: true
-  change_hue: true
+  # if True, different objects use different values
+  individual_color_augmentation: t
+  change_saturation: True
+  change_brightness: True
+  change_contrast: True
+  change_hue: True
 
   # Lower/Upper Limit of Color Augmentation
   enhancer_min: 0.75
   enhancer_max: 1.25
 
-  # if true, apply color augmentation again to the combined image
-  color_augmentation_on_combined_image: true
+  # if True, apply color augmentation again to the combined image
+  color_augmentation_on_combined_image: True
 
 # Flag to designate whether the demo is performed
 run_demo: True
@@ -96,12 +96,6 @@ run_demo: True
 dataset_verification:
   which_dataset: "val"
   number_of_images: 2
-
-# User defined parameters
-directory:
-  root_dir: "."
-  dataset_directory_name: "cocopen-dataset"
-  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
 ```
 
 ## **4. Running the script**
@@ -109,7 +103,7 @@ To execute the API, run the following:
 
 ```bash
 # Run the run.py file
-(cocopen-env) COCOpen-OpenCV$ bash run.sh
+$ bash run.sh
 ```
 
 ## **5. Result**

@@ -22,7 +22,7 @@ class Train:
         # Initializing parameters
         self.parameters = parameters
         self.train_detectron2 = True
-        self.resume_training = False
+        self.resume_training = True
         self.unzip = False
 
         # COCO Dataset Loading
@@ -48,22 +48,16 @@ class Train:
             base_config = "https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true"
             url_model = f"https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{self.model}/164955410/model_final_edd263.pkl?raw=true"
 
-            wget.download(url_config, f"./train/config/{self.model}.yaml")
-            wget.download(url_model, f"./train/config/{self.model}.pkl")
-            wget.download(base_config, f"./train/config/Base-PointRend-RCNN-FPN.yaml")
-        except:
+            wget.download(url_config, f"{self.config_dir}/{self.model}.yaml")
+            wget.download(url_model, f"{self.config_dir}/{self.model}.pkl")
+            wget.download(base_config, f"{self.config_dir}/Base-PointRend-RCNN-FPN.yaml")
+        except FileExistsError:
             print("Train directory already exists!")
-        try:
-            test_directory = f"./train/opencv/"
-            prediction_directory = f"./train/opencv/{self.name}_{self.model}_{self.pr}"
-            os.mkdir(test_directory)
-            os.mkdir(prediction_directory)
-        except:
-            print("Test and prediction directories already exists!")
+
         if self.train_detectron2:
             try:
                 os.mkdir(self.trained_models_dir)
-            except:
+            except FileExistsError:
                 print("Trained models directory already exists!")
 
     def register_dataset(self):
@@ -80,7 +74,7 @@ class Train:
                 f"./datasets/{self.name}/val/val.json",
                 f"./datasets/{self.name}/val/",
             )
-        except:
+        except KeyError:
             print("train and val datasets already registered!")
 
     def train(self):
@@ -96,6 +90,10 @@ class Train:
         # reproducibility but does not guarantee fully deterministic behavior.
         # Disabling all parallelism further increases reproducibility.
         cfg.SEED = -1
+        if not self.resume_training:
+            self.make_new_dirs()
+        else:
+            pass
 
         self.resume = False
         if self.train_detectron2:
@@ -107,8 +105,8 @@ class Train:
             cfg.DATALOADER.NUM_WORKERS = 1
             cfg.MODEL.WEIGHTS = weights_dir  # Let training initialize from model zoo
             cfg.SOLVER.BASE_LR = 0.00025
-            cfg.SOLVER.MAX_ITER = 50000
-            cfg.SOLVER.CHECKPOINT_PERIOD = 5000  # limit this number- AstrobeeBumble only has 15GB of storage available and each checkpoint takes up ~0.5GB
+            cfg.SOLVER.MAX_ITER = 100000
+            cfg.SOLVER.CHECKPOINT_PERIOD = 5000
             # cfg.SOLVER.STEPS = (20,100,500)
             # cfg.SOLVER.STEPS = (20, 10000, 20000)
             # cfg.SOLVER.gamma = 0.5

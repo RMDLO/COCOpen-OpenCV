@@ -14,7 +14,7 @@ class Demo:
     def __init__(
         self,
         parameters: dict,
-    ) -> None:
+        ) -> None:
         # Initializing parameters
         self.parameters = parameters
 
@@ -22,7 +22,7 @@ class Demo:
         self.root_dir = self.parameters["directory"]["root_dir"]
         self.dataset_directory_name = self.parameters["directory"][
             "dataset_directory_name"
-        ]
+            ]
 
         # Saving all directory names
         self.dataset_dir = self.root_dir + f"/datasets/{self.dataset_directory_name}"
@@ -33,27 +33,27 @@ class Demo:
         self.demo_dataset_dir = self.demo_dir + f"/{self.dataset_directory_name}"
         self.visualization_dir = self.demo_dataset_dir + "/visualization"
         self.mask_dir = self.demo_dataset_dir + "/masks"
-
+    
     def make_new_dirs(self):
         try:
             os.mkdir(self.demo_dir)
-        except:
+        except FileExistsError:
             print("Demo directory already exists!")
         try:
             os.mkdir(self.demo_dataset_dir)
-        except:
+        except FileExistsError:
             print("Demo dataset directory already exists!")
         try:
             os.mkdir(self.visualization_dir)
-        except:
+        except FileExistsError:
             print("Visualization directory already exists!")
         try:
             os.mkdir(self.mask_dir)
-        except:
+        except FileExistsError:
             print("Masks directory already exists!")
 
     def demo(self):
-
+        
         if self.parameters["dataset_verification"]["which_dataset"] == "train":
             register_coco_instances(
                 "train", {}, f"{self.train}/train.json", f"{self.train}/"
@@ -61,13 +61,13 @@ class Demo:
             dicts = DatasetCatalog.get("train")
             metadata = MetadataCatalog.get("train")
         elif self.parameters["dataset_verification"]["which_dataset"] == "val":
-            register_coco_instances("val", {}, f"{self.val}/val.json", f"{self.val}/")
+            register_coco_instances(
+                "val", {}, f"{self.val}/val.json", f"{self.val}/"
+            )
             dicts = DatasetCatalog.get("val")
             metadata = MetadataCatalog.get("val")
 
-        for i, d in enumerate(
-            dicts[: self.parameters["dataset_verification"]["number_of_images"] - 1]
-        ):
+        for i, d in enumerate(dicts[:self.parameters["dataset_verification"]["number_of_images"]-1]):
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
             mask_list = []
@@ -76,14 +76,12 @@ class Demo:
                 instance_annotation = pycocomask.decode(encoded) * 255
                 instance_img = cv2.cvtColor(instance_annotation, cv2.COLOR_GRAY2BGR)
                 x, y, w, h = anno["bbox"]
-                mask = cv2.rectangle(
-                    instance_img, (x, y), (x + w, y + h), (255, 255, 255), 2
-                )
+                mask = cv2.rectangle(instance_img, (x,y), (x+w, y+h), (255,255,255), 2)
                 mask_list.append(mask)
 
             # horizontally concatenate visualization of object instance segmentation masks
             concatenated_masks = cv2.hconcat(mask_list)
-
+            
             # visualize object instance segmentation on cocopen-generated data
             visualizer = Visualizer(
                 img, metadata=metadata, scale=0.5, instance_mode=ColorMode.IMAGE
@@ -91,9 +89,5 @@ class Demo:
             out = visualizer.draw_dataset_dict(d)
 
             # save masks and visualizations
-            cv2.imwrite(
-                os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image()
-            )
-            cv2.imwrite(
-                os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks
-            )
+            cv2.imwrite(os.path.join(self.visualization_dir, str(i) + ".png"), out.get_image())
+            cv2.imwrite(os.path.join(self.mask_dir, str(i) + ".png"), concatenated_masks)

@@ -1,5 +1,5 @@
-# **Getting Started**
-This notebook contains all basic information to run COCOpen.
+# **Dataset Configuration**
+This notebook contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters.
 
 Once you have completed the [installation / setup](./INSTALLATION.md) follow the below instructions.
 

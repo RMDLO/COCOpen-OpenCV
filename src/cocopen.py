@@ -2,29 +2,32 @@
 import os
 import shutil
 import json
-from tqdm import tqdm
-import random
-import numpy as np
 import copy
+import random
+import itertools
+from tqdm import tqdm
+import numpy as np
 import cv2
 from pycocotools import mask as pycocomask
 from azure.storage.blob import BlobServiceClient
 
-# Class for the cocopen object
+
 class COCOpen:
-    # Constructor
+    """
+    The COCOpen class provides all functions necessary for automatically annotating
+    and augmenting a dataset of images stored on Azure.
+    """
+
     def __init__(
         self,
-        parameters: dict,
+        param: dict,
     ) -> None:
         # Initializing parameters
-        self.parameters = parameters
+        self.param = param
 
         # Initializing root and destination directory
-        self.root_dir = self.parameters["directory"]["root_dir"]
-        self.dataset_directory_name = self.parameters["directory"][
-            "dataset_directory_name"
-        ]
+        self.root_dir = self.param["directory"]["root_dir"]
+        self.dataset_directory_name = self.param["directory"]["dataset_directory_name"]
 
         # Initializing supercategories dictionary
         self.categories = []
@@ -35,75 +38,73 @@ class COCOpen:
         self.val = self.dataset_dir + "/val"
 
         # Initialize height and width
-        self.height = parameters["shape"]["height"]
-        self.width = parameters["shape"]["width"]
+        self.height = param["shape"]["height"]
+        self.width = param["shape"]["width"]
+        self.rgb_shape = (self.height, self.width, 3)
 
-        # Initialize scale jittering parameters
-        self.apply_scale_jittering = self.parameters["scale_jittering"][
+        # Initialize scale jittering param
+        self.apply_scale_jittering = self.param["scale_jittering"][
             "apply_scale_jittering"
         ]
-        self.individual_scale_jittering = self.parameters["scale_jittering"][
+        self.individual_scale_jittering = self.param["scale_jittering"][
             "individual_scale_jittering"
         ]
-        self.scale_factor_min = self.parameters["scale_jittering"]["scale_factor_min"]
-        self.scale_factor_max = self.parameters["scale_jittering"]["scale_factor_max"]
+        self.scale_factor_min = self.param["scale_jittering"]["scale_factor_min"]
+        self.scale_factor_max = self.param["scale_jittering"]["scale_factor_max"]
 
-        # Initialize color augmentation parameters
-        self.apply_color_augmentation = self.parameters["color_augmentation"][
+        # Initialize color augmentation param
+        self.apply_color_augmentation = self.param["color_augmentation"][
             "apply_color_augmentation"
         ]
-        self.individual_color_augmentation = self.parameters["color_augmentation"][
+        self.individual_color_augmentation = self.param["color_augmentation"][
             "individual_color_augmentation"
         ]
-        self.change_saturation = self.parameters["color_augmentation"][
-            "change_saturation"
+        self.saturation = self.param["color_augmentation"]["saturation"]
+        self.brightness = self.param["color_augmentation"]["brightness"]
+        self.contrast = self.param["color_augmentation"]["contrast"]
+        self.hue = self.param["color_augmentation"]["hue"]
+        self.enhancer_min = self.param["color_augmentation"]["enhancer_min"]
+        self.enhancer_max = self.param["color_augmentation"]["enhancer_max"]
+        self.color_agument_combined = self.param["color_augmentation"][
+            "color_augment_combined"
         ]
-        self.change_brightness = self.parameters["color_augmentation"][
-            "change_brightness"
-        ]
-        self.change_contrast = self.parameters["color_augmentation"]["change_contrast"]
-        self.change_hue = self.parameters["color_augmentation"]["change_hue"]
-        self.enhancer_min = self.parameters["color_augmentation"]["enhancer_min"]
-        self.enhancer_max = self.parameters["color_augmentation"]["enhancer_max"]
-        self.color_augmentation_on_combined_image = self.parameters[
-            "color_augmentation"
-        ]["color_augmentation_on_combined_image"]
 
-    # Making new directories
+        self.category_to_container_client = {}
+        self.category_to_train_list = {}
+        self.category_to_val_list = {}
+
     def make_new_dirs(self) -> None:
         """
         Making new directories for the COCOpen dataset
         """
         try:
             os.mkdir("./datasets")
-        except:
+        except FileExistsError:
             print("datasets directory already exists!")
         try:
             os.mkdir(self.dataset_dir)
-        except:
+        except FileExistsError:
             print(f"{self.dataset_dir} already exists!")
         try:
             os.mkdir(self.train)
-        except:
+        except FileExistsError:
             print(f"{self.train} directory already exists!")
         try:
             os.mkdir(self.val)
-        except:
+        except FileExistsError:
             print(f"{self.val} directory already exists!")
         print("Created Directories")
 
-    # Generating segmentation annotations in object semantics format
     def object_semantics(
         self,
         coco,
         ann_id,
         img_id,
-        file_name=None,
         mask=None,
         category_id=None,
     ):
         """
-        This function generates segmentation annotations with the object semantics format.
+        Generates segmentation annotations with the object semantics format.
         """
         mask = np.asfortranarray(mask)
         bitmask = mask.astype(np.uint8)
@@ -129,7 +130,6 @@ class COCOpen:
 
         return coco, ann_id
 
-    # Initializing Azure connection for for accessing blob storage
     def init_azure(
         self,
     ) -> None:
@@ -137,45 +137,39 @@ class COCOpen:
         Initializing Azure connection for for accessing blob storage
         """
         # Initializing connection with Azure storage account
-        connection_string = self.parameters["directory"][
-            "AZURE_STORAGE_CONNECTION_STRING"
-        ]
+        connection_string = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
         blob_service_client = BlobServiceClient.from_connection_string(
             conn_str=connection_string
         )
-        # Creating a dictionary mapping category names to blob_service_client of that category
-        self.category_to_container_client = {}
+        # Map category names to blob_service_client of that category
         for category in self.categories:
             self.category_to_container_client[
                 category["name"]
             ] = blob_service_client.get_container_client(category["name"])
 
-    # Creating foreground image list
     def create_image_list(self) -> None:
         """
-        Creating foreground image list from images on Azure and splitting the list into 'train' and 'val' sets
+        Creates foreground image list from images on Azure and
+        splits the list into 'train' and 'val' sets
         """
-        # Create a dictionary mapping category names to list of foreground images of that category
-        self.category_to_train_image_list = {}
-        self.category_to_val_image_list = {}
+        # Map category names to list of object images of that category
         for category in self.categories:
             # Creating list of all foreground images of that category
-            azure_category_all_image_list = self.category_to_container_client[
+            azure_category_all_list = self.category_to_container_client[
                 category["name"]
             ].list_blobs()
             # Splitting foreground images into 'train' and 'val' sets
-            train_image_list = []
-            val_image_list = []
-            for blob in azure_category_all_image_list:
+            train_list = []
+            val_list = []
+            for blob in azure_category_all_list:
                 rand = random.random()
-                if 0 <= rand < self.parameters["dataset_params"]["train_split"]:
-                    train_image_list.append(blob.name)
+                if 0 <= rand < self.param["dataset_params"]["train_split"]:
+                    train_list.append(blob.name)
                 else:
-                    val_image_list.append(blob.name)
-            self.category_to_train_image_list[category["name"]] = train_image_list
-            self.category_to_val_image_list[category["name"]] = val_image_list
+                    val_list.append(blob.name)
+            self.category_to_train_list[category["name"]] = train_list
+            self.category_to_val_list[category["name"]] = val_list
 
-    # Downloading image from Azure
     def download_image_from_azure(self, img, category):
         """
         Downloads image from Azure blob storage
@@ -190,7 +184,6 @@ class COCOpen:
 
         return src
 
-    # Getting contour filters
     def contour_filter(self, frame, contour_max_area=2075000):
         """
         Perform contour filtering
@@ -199,7 +192,7 @@ class COCOpen:
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
             c_area = cv2.contourArea(contour)
-            if self.parameters["contour_threshold"] <= c_area <= contour_max_area:
+            if self.param["contour_threshold"] <= c_area <= contour_max_area:
                 mask = np.zeros(frame.shape, np.uint8)
                 cv2.drawContours(mask, contours, i, 255, cv2.FILLED)
                 mask = cv2.bitwise_and(frame, mask)
@@ -208,21 +201,21 @@ class COCOpen:
 
         return frame
 
-    # Generate super categories, used when an object super category (like "wire") may contain subcategories (like "ethernet")
     def generate_supercategories(self):
         """
-        Generate dictionary for super categories based on parameters .yaml file
+        Generate dictionary for super categories based on param .yaml file.
+        Super categories are used when an object category, like "wire", may
+        contain subcategories, like "ethernet" or "power."
         """
-        for key in self.parameters["categories"]:
+        for key in self.param["categories"]:
             supercategory_dict = {
                 "supercategory": key,
-                "id": self.parameters["categories"][key],
+                "id": self.param["categories"][key],
                 "name": key,
             }
             self.categories.append(supercategory_dict)
-        print("Generated Categories Dictionary from Parameters")
+        print("Generated Categories Dictionary from param")
 
-    # Returning wire information
     def get_object_info(self, img, category):
         """
         This function returns the image array and the mask array
@@ -232,8 +225,10 @@ class COCOpen:
         median = cv2.medianBlur(src, 9)  # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
         _, mask = cv2.threshold(
-            gray, self.parameters["color_threshold"][category], 255, cv2.THRESH_BINARY
-        )  # Color threshold step
+            gray, self.param["color_threshold"][category], 255, cv2.THRESH_BINARY
+        )
+
+        # Color threshold step
         new_mask = self.contour_filter(mask)  # blob filtering step
 
         # fill holes in the binary mask
@@ -254,10 +249,10 @@ class COCOpen:
 
         return src, mask_array
 
-    # Scaling image
     def scale_image(self, img_arr, masks, scale):
         """
-        This function scales the input image and outputs the updated image array and mask array
+        This function scales the input image and outputs
+        the updated image array and mask array
         """
         # resize image and mask
         new_img_arr = cv2.resize(
@@ -269,76 +264,71 @@ class COCOpen:
                 cv2.resize(mask, (int(self.width * scale), int(self.height * scale)))
             )
 
-        # depend on if the image is smaller or larger than width x height, perform different actions
-        # images directly gotten from labelbox has 4 channels
-        if len(img_arr[0][0]) == 4:
-            final_img_arr = np.zeros((self.height, self.width, 4)).astype("uint8")
-        else:
-            final_img_arr = np.zeros((self.height, self.width, 3)).astype("uint8")
+        # Scales image based on image size
+        final_img_arr = np.zeros(self.rgb_shape).astype("uint8")
 
         final_masks = []
-        for i in range(0, len(new_masks)):
+        for _ in itertools.repeat(None, len(new_masks)):
             final_masks.append(np.zeros((self.height, self.width)).astype("uint8"))
 
-        # if the scaled image is smaller than original
+        # Scaled image is smaller than original:
         if (
             int(self.width * scale) < self.width
             or int(self.height * scale) < self.height
         ):
-            # fisr detemrine the range the upper left corner can take
+            # first detemrine the range the upper left corner (x,y) can take
             max_h_offset = self.width - int(self.width * scale)
             max_v_offset = self.height - int(self.height * scale)
-            upper_left_x = int(random.random() * max_h_offset)
-            upper_left_y = int(random.random() * max_v_offset)
+            x = int(random.random() * max_h_offset)
+            y = int(random.random() * max_v_offset)
 
             # concat arrays
             for i in range(0, len(final_masks)):
                 for j in range(0, int(self.height * scale)):
                     final_img_arr[
-                        j + upper_left_y,
-                        upper_left_x : (upper_left_x + int(self.width * scale)),
+                        j + y, x : (x + int(self.width * scale))
                     ] = new_img_arr[j]
-                    final_masks[i][j + upper_left_y][
-                        upper_left_x : (upper_left_x + int(self.width * scale))
+                    final_masks[i][j + y][
+                        x : (x + int(self.width * scale))
                     ] = new_masks[i][j]
 
-        # if the scaled image is larget than original
+        # Scaled image is larger than original:
         else:
-            # fisr detemrine the range the upper left corner can take
+            # first detemrine the range the upper left corner can take
             max_h_offset = len(new_img_arr[0]) - self.width
             max_v_offset = len(new_img_arr) - self.height
-            upper_left_x = int(random.random() * max_h_offset)
-            upper_left_y = int(random.random() * max_v_offset)
+            x = int(random.random() * max_h_offset)
+            y = int(random.random() * max_v_offset)
 
-            # concat arrays
+            # concatenate arrays
             final_img_arr = new_img_arr[
-                upper_left_y : (upper_left_y + self.height),
-                upper_left_x : (upper_left_x + self.width),
+                y : (y + self.height),
+                x : (x + self.width),
             ]
             for i in range(0, len(final_masks)):
                 final_masks[i] = new_masks[i][
-                    upper_left_y : (upper_left_y + self.height),
-                    upper_left_x : (upper_left_x + self.width),
+                    y : (y + self.height),
+                    x : (x + self.width),
                 ]
 
         return final_img_arr, final_masks
 
-    # Color augmentation
     def color_augmentation(
         self,
         img_arr,
         enhancer_range,
-        change_brightness,
-        change_contrast,
-        change_saturation,
-        change_hue,
+        brightness,
+        contrast,
+        saturation,
+        hue,
     ):
         """
-        This function takes np.ndarray as input, performs color augmentation, then output the new np.ndarray
+        This function takes np.ndarray as input, performs color augmentation,
+        and outputs the new np.ndarray.
         """
 
         # this step is extremely slow
-        if change_hue == True:
+        if hue:
             hsv_img = cv2.cvtColor(img_arr, cv2.COLOR_BGR2HSV)
 
             # randomly change hue
@@ -352,29 +342,31 @@ class COCOpen:
             # convert back to BGR
             img_arr = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2BGR)
 
-        if change_brightness == True:
+        if brightness:
             factor = enhancer_range[0] + random.random() * (
                 enhancer_range[1] - enhancer_range[0]
             )
             img_arr = cv2.addWeighted(
                 img_arr, factor, np.zeros_like(img_arr), 1 - factor, 0.0
             )
-        if change_contrast == True:
+
+        if contrast:
             factor = enhancer_range[0] + random.random() * (
                 enhancer_range[1] - enhancer_range[0]
             )
+
             mean = np.uint8(cv2.mean(cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY))[0])
             img_arr = cv2.addWeighted(
                 img_arr, factor, np.ones_like(img_arr) * mean, 1 - factor, 0.0
             )
-        if change_saturation == True:
+
+        if saturation:
             factor = enhancer_range[0] + random.random() * (
                 enhancer_range[1] - enhancer_range[0]
             )
-            # Convert BGR to grayscale, then represent grayscale image back in 3-channel BGR
-            gray = cv2.cvtColor(
-                cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2BGR
-            )
+            # Convert BGR image to grayscale, then represent grayscale image back in 3-channel BGR
+            gray_1D = cv2.cvtColor(img_arr, cv2.COLOR_BGR2GRAY)
+            gray = np.stack((gray_1D,) * 3, axis=-1)
             img_arr = cv2.addWeighted(img_arr, factor, gray, 1 - factor, 0.0)
 
         return img_arr
@@ -393,6 +385,7 @@ class COCOpen:
             / (self.height * self.width / np.sqrt(self.width**2 + self.height**2)),
         )
         img_new = cv2.warpAffine(img, rot_mat, img.shape[1::-1], flags=cv2.INTER_LINEAR)
+
         # flip
         if flip_h:
             # horizontal flip
@@ -400,14 +393,12 @@ class COCOpen:
         if flip_v:
             # vertical flip
             img_new = np.flip(img_new, 0)
-        # if fx_scale and fy_scale:
-        #     img_new = cv2.resize(img_new, dsize = (self.width, self.height), fx=fx_scale, fy=fy_scale)
+
         return img_new
 
-    # Get mask info for each category
     def get_mask_info(
         self,
-        category_to_num_instances,
+        cat_to_max_inst,
         img_list,
         image,
         scale_range,
@@ -421,30 +412,29 @@ class COCOpen:
         """
         This function gets the mask info for each category
         """
-        for category in self.categories:
-            if category["name"] != "background":
+        for cat in self.categories:
+            if cat["name"] != "background":
                 # get category info
-                for j in range(0, category_to_num_instances[category["name"]]):
+                for _ in itertools.repeat(None, cat_to_max_inst[cat["name"]]):
                     total_num_instances += 1
-                    index = int(len(img_list[category["name"]]) * random.random())
+                    index = int(len(img_list[cat["name"]]) * random.random())
 
                     # Record source image path (category + filename)
                     image["source"].append(
-                        os.path.join(
-                            category["name"], img_list[category["name"]][index]
-                        )
+                        os.path.join(cat["name"], img_list[cat["name"]][index])
                     )
 
                     img, mask = self.get_object_info(
-                        img_list[category["name"]][index], category["name"]
+                        img_list[cat["name"]][index], cat["name"]
                     )
-                    # Raise exception if object image height and width do not match image shape parameter
+                    # Exception: object image dimensions!=image shape parameter
                     if img.shape[0:2] != (self.height, self.width):
                         raise Exception(
                             f"""Object image height and width do not match image shape parameter
-                                            ({img.shape[0]},{img.shape[1]}) ({self.height},{self.width})"""
+                                            ({img.shape[0]},{img.shape[1]})
+                                            ({self.height},{self.width})"""
                         )
-                    img_list[category["name"]].pop(index)
+                    img_list[cat["name"]].pop(index)
 
                     mask = mask / 255
                     mask = mask.astype("uint8")
@@ -468,20 +458,19 @@ class COCOpen:
                             img = self.color_augmentation(
                                 img,
                                 enhancer_range,
-                                self.change_brightness,
-                                self.change_contrast,
-                                self.change_saturation,
-                                self.change_hue,
+                                self.brightness,
+                                self.contrast,
+                                self.saturation,
+                                self.hue,
                             )
 
                     # Add the image and mask to the array
                     all_img_arr.append(img)
                     binary_mask_arr.append(msk)
-                    all_category_ids.append(category["id"])
+                    all_category_ids.append(cat["id"])
 
         return total_num_instances, scale
 
-    # Perform random flips
     def random_flip(self, total_num_instances, all_img_arr, binary_mask_arr):
         """
         Random flips
@@ -501,21 +490,22 @@ class COCOpen:
                 for n in range(0, len(binary_mask_arr[m])):
                     binary_mask_arr[m][n] = np.flip(binary_mask_arr[m][n], 0)
 
-    # Add random background
     def add_random_background(self, image_list, mask_array_1):
         """
         Add random background
         """
         randbg = int(random.random() * len(image_list["background"]))
-        bg = image_list["background"][randbg]
+        bg_img = image_list["background"][randbg]
         # Download background image from azure
-        src = self.download_image_from_azure(img=bg, category="background")
+        src = self.download_image_from_azure(img=bg_img, category="background")
         bg_arr = src.astype("uint8")
-        # Raise exception if background image height and width do not match image shape parameter
+
+        # Exception: background image dimensions!=image shape parameter
         if bg_arr.shape[0:2] != (self.height, self.width):
             raise Exception(
                 f"""Background image height and width do not match image shape parameter
-                            ({bg_arr.shape[0]},{bg_arr.shape[1]}) ({self.height},{self.width})"""
+                            ({bg_arr.shape[0]},{bg_arr.shape[1]})
+                            ({self.height},{self.width})"""
             )
 
         # background random operations
@@ -536,7 +526,6 @@ class COCOpen:
 
         return masked_bg
 
-    # Perform combine operations
     def combine_operations(
         self,
         num_images,
@@ -563,16 +552,12 @@ class COCOpen:
                 "source": [],  # list of source images used
             }
 
-            # create mapping of category name to max_instances for each category
-            category_to_num_instances = {}
-            for category in self.categories:
-                if category["name"] != "background":
-                    category_to_num_instances[category["name"]] = (
-                        int(
-                            random.random()
-                            * self.parameters["max_instances"][category["name"]]
-                        )
-                        + 1
+            # create mapping of category name to max_inst for each category
+            cat_to_max_inst = {}
+            for cat in self.categories:
+                if cat["name"] != "background":
+                    cat_to_max_inst[cat["name"]] = (
+                        int(random.random() * self.param["max_inst"][cat["name"]]) + 1
                     )
 
             img_list = copy.deepcopy(image_list)
@@ -587,7 +572,7 @@ class COCOpen:
 
             # get mask info for each category
             total_num_instances, scale = self.get_mask_info(
-                category_to_num_instances=category_to_num_instances,
+                cat_to_max_inst=cat_to_max_inst,
                 img_list=img_list,
                 image=image,
                 scale_range=scale_range,
@@ -606,17 +591,16 @@ class COCOpen:
                 binary_mask_arr=binary_mask_arr,
             )
 
-            # Now have a complete list of image arrays and masks, can start combining
-            # choose a random element from the img list
-            final_img = []
-
-            # choose the first image
+            # Now we have a complete list of image arrays and masks,
+            # so we can start combining images. Choose a random element
+            # from the img_list:
             randint = int(random.random() * len(all_img_arr))
 
             # only ethernet and device
             category_id = all_category_ids[randint]
 
             img_id = i
+            final_img = []
             mask_array_1 = []
 
             # update coco info
@@ -636,7 +620,6 @@ class COCOpen:
                     coco=coco_sem,
                     ann_id=ann_id_sem,
                     img_id=img_id,
-                    file_name=None,
                     mask=mask1,
                     category_id=category_id,
                 )
@@ -651,8 +634,8 @@ class COCOpen:
             all_category_ids.pop(randint)
 
             # combine the rest
+            # for _ in itertools.repeat(None, total_num_instances):
             for j in range(1, total_num_instances):
-
                 # choose the second image
                 randint2 = int(random.random() * len(all_img_arr))
                 msk2 = np.zeros((self.height, self.width, 3)).astype("uint8")
@@ -665,7 +648,7 @@ class COCOpen:
                     mask2 = mask2 & (~mask_array_1)
                     mask_array_2.append(mask2)
 
-                    msk2 = np.zeros((self.height, self.width, 3)).astype("uint8")
+                    msk2 = np.zeros(self.rgb_shape).astype("uint8")
                     msk2[:, :, 0] = mask2
                     msk2[:, :, 1] = mask2
                     msk2[:, :, 2] = mask2
@@ -703,15 +686,15 @@ class COCOpen:
             # color augmentation
             if (
                 self.individual_color_augmentation
-                and self.color_augmentation_on_combined_image
+                and self.color_agument_combined
                 and self.apply_color_augmentation
             ):
                 final_img = self.color_augmentation(
                     final_img,
                     enhancer_range,
-                    self.change_brightness,
-                    self.change_contrast,
-                    self.change_saturation,
+                    self.brightness,
+                    self.contrast,
+                    self.saturation,
                     False,
                 )
             elif self.apply_color_augmentation and (
@@ -720,16 +703,15 @@ class COCOpen:
                 final_img = self.color_augmentation(
                     final_img,
                     enhancer_range,
-                    self.change_brightness,
-                    self.change_contrast,
-                    self.change_saturation,
+                    self.brightness,
+                    self.contrast,
+                    self.saturation,
                     False,
                 )
 
             cv2.imwrite(os.path.join(target_dir, str(i) + ".png"), final_img)
             coco_sem["images"].append(image)
 
-    # Combining foreground and background images
     def combine(
         self,
         dataset_type: str,
@@ -745,18 +727,20 @@ class COCOpen:
             "categories": self.categories,
         }
 
-        # Creating a copy of category_to_train_img_list and category_to_val_img_list based on dataset_type
+        # Creating a copy of category_to_train_img_list and
+        # category_to_val_img_list based on dataset_type
         image_list = {}
         if dataset_type == "train":
-            image_list = copy.deepcopy(self.category_to_train_image_list)
+            image_list = copy.deepcopy(self.category_to_train_list)
         else:
-            image_list = copy.deepcopy(self.category_to_val_image_list)
+            image_list = copy.deepcopy(self.category_to_val_list)
 
         # this sets the lower/upper limit of color augmentation
         enhancer_range = [self.enhancer_min, self.enhancer_max]
         scale_range = [self.scale_factor_min, self.scale_factor_max]
 
-        # this needs to be tracked at all time - annotation id must be unique across all instances in the entire dataset
+        # this needs to be tracked at all time - annotation id must be
+        # unique across all instances in the entire dataset
         ann_id_sem = 0
 
         # Perform combine operations for num_images
@@ -772,7 +756,6 @@ class COCOpen:
 
         return coco_sem
 
-    # Generating training dataset
     def generate_train_data(self) -> None:
         """
         Generating training dataset
@@ -782,13 +765,12 @@ class COCOpen:
         coco_sem = self.combine(
             dataset_type="train",
             target_dir=self.train,
-            num_images=self.parameters["dataset_params"]["train_images"],
+            num_images=self.param["dataset_params"]["train_images"],
         )
-        f = open(self.train + "/train.json", "w")
-        json.dump(coco_sem, f, sort_keys=True, indent=4)
-        f.close()
+        with open(self.train + "/train.json", "w") as file:
+            json.dump(coco_sem, file, sort_keys=True, indent=4)
+            file.close()
 
-    # Generating val dataset
     def generate_val_data(self) -> None:
         """
         Generating val dataset
@@ -797,13 +779,12 @@ class COCOpen:
         coco_sem = self.combine(
             dataset_type="val",
             target_dir=self.val,
-            num_images=self.parameters["dataset_params"]["val_images"],
+            num_images=self.param["dataset_params"]["val_images"],
         )
-        f = open(self.val + "/val.json", "w")
-        json.dump(coco_sem, f, sort_keys=True, indent=4)
-        f.close()
+        with open(self.val + "/val.json", "w") as file:
+            json.dump(coco_sem, file, sort_keys=True, indent=4)
+            file.close()
 
-    # Creating zip file of the dataset
     def zip(self, base_name: str, root_dir: str, format="zip") -> None:
         """
         Function which zips all files in a directory
