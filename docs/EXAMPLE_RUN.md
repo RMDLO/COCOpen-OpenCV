@@ -1,5 +1,5 @@
 # **Example Demo**
-Provided below is a demo of generating data from the UIUC wires dataset. Once you're done with the [installation](./INSTALLATION.md), you will be able to replicate this demo and generate sample data to get a taste of how the API works.
+Provided below is a demo of generating data from the UIUC wires dataset. Once you're done with the [installation](./docs/INSTALLATION.md), you will be able to replicate this demo and generate sample data to get a taste of how the API works.
 
 ## **1. Open COCOpen**
 Start off by navigating into the COCOpen repository.
