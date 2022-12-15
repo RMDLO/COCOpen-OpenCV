@@ -1,6 +1,6 @@
-__pycache__
 .pytest_cache/
 src/__init__.py
+src/__pycache__
 
 # Ignore unused file extensions
 .vscode/
