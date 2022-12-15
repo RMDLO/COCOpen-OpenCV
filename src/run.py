@@ -8,8 +8,7 @@ import random
 import yaml
 from cocopen import COCOpen
 from demo import Demo
-from train import Train
-from predict import Predict
+from train import Train, Predict
 
 
 def main(params):
@@ -74,7 +73,6 @@ def main(params):
 
     if params["predict"]:
         predictor = Predict(parameters=params)
-        predictor.register_dataset()
         predictor.make_new_dirs()
         predictor.predict()
 

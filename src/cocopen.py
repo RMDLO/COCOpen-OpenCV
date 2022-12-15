@@ -93,11 +93,11 @@ class COCOpen:
         try:
             os.mkdir(self.train)
         except FileExistsError:
-            print(f"train directory already exists!")
+            print("train directory already exists!")
         try:
             os.mkdir(self.val)
         except FileExistsError:
-            print(f"val directory already exists!")
+            print("val directory already exists!")
         print("created directories.")
 
     def object_semantics(

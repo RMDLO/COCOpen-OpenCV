@@ -1,10 +1,8 @@
 # **Dataset Configuration**
-This notebook contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters.
-
-Once you have completed the [installation / setup](./INSTALLATION.md) follow the below instructions.
+This document contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. After completing [installation / setup](./INSTALLATION.md), follow the below instructions.
 
 ## **Open COCOpen**
-Start off by navigating into the COCOpen repository.
+Navigate into the COCOpen directory:
 
 ```bash
 # Navigate into the COCOpen directory
@@ -36,8 +34,24 @@ To execute the API, run the following:
 
 ```bash
 # Run the run.py file
-(cocopen-env) COCOpen-OpenCV$ bash run.sh
+$ bash run.sh
 ```
 
-### **Result**
-You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. Example annotations are provided in the images below.
+## **Result**
+You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. An example annotation is visualized with the detectron2 visualizer below.
+
+<p align="center">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/33508f34add96075eed5fcb7780c8ef0c3d55cce/demo/cocopen-dataset-review/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
+</p>
+
+## **Using UIUCWires Data**
+
+The UIUCWires dataset includes images of single wires and single devices against a black background. It also includes a folder of background images which are applied to generate background noise in the dataset as a form of data augmentation. The color contrast between the objects in each image and the background allows for using color thresholding to automatically annotate these original images. These images were captured with an Intel RealSense d435 camera and every image has dimensions 1920x1080. The table below shows the number of images by category.
+
+<div align="center">
+
+|            	| Category 	|               |
+|:----------:	|:--------:	|:-------------:|
+| **device** 	| **wire** 	| **background**|
+|     440    	|   5717   	|       90      |
+</div>
