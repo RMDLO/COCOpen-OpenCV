@@ -67,6 +67,8 @@ def main(params):
     # Train a new detectron2 model
     if params["train_detectron2"]:
         trainer = Train(parameters=params)
+        trainer.make_new_dirs()
+        trainer.download_models()
         trainer.register_dataset()
         trainer.train()
 

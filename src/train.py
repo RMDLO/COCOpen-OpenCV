@@ -30,6 +30,9 @@ class Train:
     make_new_dirs():
         Make new directories where model configuration and checkpoint
         files are saved based on the name of the dataset
+    download_models():
+        Downloads training configurations and pre-trained backbones
+        from the detectron2 model zoo.
     register_dataset():
         Register the dataset given a folder of images and their
         corresponding annotations in COCO format
@@ -45,7 +48,7 @@ class Train:
         # Initializing parameters
         self.parameters = parameters
         self.train_detectron2 = True
-        self.resume_training = True
+        self.resume_training = False
         self.unzip = False
 
         # COCO Dataset Loading
@@ -67,9 +70,33 @@ class Train:
         """
         try:
             os.mkdir(self.train_dir)
+        except FileExistsError:
+            print("Train directory already exists!")
+        try:
             os.mkdir(self.config_dir)
+        except FileExistsError:
+            print("Training config directory already exists!")
+        try: 
             os.mkdir(self.events_dir)
+        except FileExistsError:
+            print("Training events directory already exists!")
+        try:
             os.mkdir(self.model_dir)
+        except FileExistsError:
+            print("Training models directory already exists!")
+        if self.train_detectron2:
+            try:
+                os.mkdir(self.trained_models_dir)
+            except FileExistsError:
+                print("Trained models directory already exists!")
+                pass
+    
+    def download_models(self):
+        '''
+        Downloads training configurations and pre-trained backbones
+        from the detectron2 model zoo.
+        '''
+        try:
             url_config = f"https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{self.model}.yaml?raw=true"
             base_config = "https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true"
             url_model = f"https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{self.model}/164955410/model_final_edd263.pkl?raw=true"
@@ -80,34 +107,24 @@ class Train:
                 base_config, f"{self.config_dir}/Base-PointRend-RCNN-FPN.yaml"
             )
         except FileExistsError:
-            print("Train directory already exists!")
-
-        if self.train_detectron2:
-            try:
-                os.mkdir(self.trained_models_dir)
-            except FileExistsError:
-                print("Trained models directory already exists!")
+            print("Model configuration files already exist!")
 
     def register_dataset(self):
         """
         Register the dataset given a folder of images and their
         corresponding annotations in COCO format
         """
-        try:
-            register_coco_instances(
-                "train",
-                {},
-                f"./datasets/{self.name}/train/train.json",
-                f"./datasets/{self.name}/train/",
-            )
-            register_coco_instances(
-                "val",
-                {},
-                f"./datasets/{self.name}/val/val.json",
-                f"./datasets/{self.name}/val/",
-            )
-        except KeyError:
-            print("train and val datasets already registered!")
+        for data in ["train", "val"]:
+            print(f"./datasets/{self.name}/{data}/{data}.json")
+            try:
+                register_coco_instances(
+                    data,
+                    {},
+                    f"./datasets/{self.name}/{data}/{data}.json",
+                    f"./datasets/{self.name}/{data}/",
+                )
+            except KeyError:
+                print(f"{data} dataset is already registered!")
 
     def train(self):
         """
@@ -142,7 +159,7 @@ class Train:
             # Initialize training from model zoo:
             cfg.MODEL.WEIGHTS = weights_dir
             cfg.SOLVER.BASE_LR = 0.00025
-            cfg.SOLVER.MAX_ITER = 100000
+            cfg.SOLVER.MAX_ITER = 1000
             cfg.SOLVER.CHECKPOINT_PERIOD = 5000
             # cfg.SOLVER.STEPS = (20,100,500)
             # cfg.SOLVER.STEPS = (20, 10000, 20000)
