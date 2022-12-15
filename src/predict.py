@@ -22,16 +22,15 @@ class Predict:
     ----------
     parameters : dict
         contains all parameters used to generate the dataset
-        and train a model for the dataset
 
     Methods
     -------
-    register_dataset():
-        Register the dataset given a folder of images and their
-        corresponding annotations in COCO format
     make_new_dirs():
         Make new directories where inference images are saved
         based on the name of the dataset
+    register_dataset():
+        Register the dataset given a folder of images and their
+        corresponding annotations in COCO format
     predict():
         Perform inference on the registered dataset given a
         trained model
@@ -45,10 +44,26 @@ class Predict:
         self.parameters = parameters
 
         # COCO Dataset Loading
-        self.name = parameters["directory"]["dataset_directory_name"]
+        self.name = parameters["directory"]["dataset_dir_name"]
         self.model = "pointrend_rcnn_R_50_FPN_3x_coco"
         self.class_dict = {1: "device", 2: "wire"}
         self.weights = f"./train/trained-models/{self.name}_{self.model}.pth"
+
+    def make_new_dirs(self):
+        """
+        Make new directories where inference images are saved
+        based on the name of the dataset
+        """
+        try:
+            test_directory = "./train/opencv/"
+            os.mkdir(test_directory)
+        except FileExistsError:
+            print("Test directory already exists!")
+        try:
+            prediction_directory = f"./train/opencv/{self.name}_{self.model}"
+            os.mkdir(prediction_directory)
+        except FileExistsError:
+            print("Prediction directory already exists!")
 
     def register_dataset(self):
         """
@@ -70,22 +85,6 @@ class Predict:
             )
         except FileExistsError:
             print("train and val datasets already registered!")
-
-    def make_new_dirs(self):
-        """
-        Make new directories where inference images are saved
-        based on the name of the dataset
-        """
-        try:
-            test_directory = "./train/opencv/"
-            os.mkdir(test_directory)
-        except FileExistsError:
-            print("Test directory already exists!")
-        try:
-            prediction_directory = f"./train/opencv/{self.name}_{self.model}"
-            os.mkdir(prediction_directory)
-        except FileExistsError:
-            print("Prediction directory already exists!")
 
     def predict(self):
         """

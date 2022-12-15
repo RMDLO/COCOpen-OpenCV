@@ -10,6 +10,6 @@ __pycache__
 datasets/
 
 # Ignore generated models
-train/trained-models
-train/events
-train/config
+train/trained-models/
+train/events/
+train/config/
