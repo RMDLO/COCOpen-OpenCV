@@ -1,5 +1,5 @@
 # **Dataset Configuration**
-This document contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. After completing [installation / setup](https://github.com/RMDLO/COCOpen-OpenCV/blob/aef83df099dd30d6ac6b097582baa5851ebad6e3/docs/INSTALLATION.md), follow the below instructions.
+This document contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. After completing [installation / setup](./INSTALLATION.md), follow the below instructions.
 
 ## **Open COCOpen**
 Navigate into the COCOpen directory:
