@@ -1,3 +1,8 @@
+"""
+This script includes the Predict class for performing inference on the
+generated dataset using a trained model produced by the Train class.
+"""
+
 import os
 import cv2
 
