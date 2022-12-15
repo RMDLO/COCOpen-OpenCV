@@ -52,7 +52,7 @@ class Train:
         self.unzip = False
 
         # COCO Dataset Loading
-        self.name = parameters["directory"]["dataset_directory_name"]
+        self.name = parameters["directory"]["dataset_dir_name"]
         self.model = "pointrend_rcnn_R_50_FPN_3x_coco"
         self.class_dict = {1: "device", 2: "wire"}
 
@@ -61,7 +61,7 @@ class Train:
         self.config_dir = "./train/config"
         self.events_dir = "./train/events/"
         self.model_dir = f"./train/events/{self.name}_{self.model}"
-        self.trained_models_dir = "./train/trained-models"
+        self.trained_models = "./train/trained-models"
 
     def make_new_dirs(self):
         """
@@ -76,7 +76,7 @@ class Train:
             os.mkdir(self.config_dir)
         except FileExistsError:
             print("Training config directory already exists!")
-        try: 
+        try:
             os.mkdir(self.events_dir)
         except FileExistsError:
             print("Training events directory already exists!")
@@ -86,16 +86,16 @@ class Train:
             print("Training models directory already exists!")
         if self.train_detectron2:
             try:
-                os.mkdir(self.trained_models_dir)
+                os.mkdir(self.trained_models)
             except FileExistsError:
                 print("Trained models directory already exists!")
                 pass
-    
+
     def download_models(self):
-        '''
+        """
         Downloads training configurations and pre-trained backbones
         from the detectron2 model zoo.
-        '''
+        """
         try:
             url_config = f"https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{self.model}.yaml?raw=true"
             base_config = "https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true"
@@ -123,8 +123,8 @@ class Train:
                     f"./datasets/{self.name}/{data}/{data}.json",
                     f"./datasets/{self.name}/{data}/",
                 )
-            except KeyError:
-                print(f"{data} dataset is already registered!")
+            except:
+                pass
 
     def train(self):
         """
@@ -181,6 +181,5 @@ class Train:
                 self.events_dir + f"{self.name}_{self.model}/model_final.pth",
                 f"./train/trained-models/{self.name}_{self.model}.pth",
             )
-            print(
-                f"Training complete! Model saved in ./train/trained-models/{self.name}_{self.model}.pth!"
-            )
+            print("Model saved! Model path:\n")
+            print(f"{self.trained_models}/{self.name}_{self.model}.pth!")

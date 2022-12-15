@@ -27,13 +27,13 @@ class COCOpen:
 
         # Initializing root and destination directory
         self.root_dir = self.param["directory"]["root_dir"]
-        self.dataset_directory_name = self.param["directory"]["dataset_directory_name"]
+        self.dataset_dir_name = self.param["directory"]["dataset_dir_name"]
 
         # Initializing supercategories dictionary
         self.categories = []
 
         # Saving all directory names
-        self.dataset_dir = self.root_dir + f"/datasets/{self.dataset_directory_name}"
+        self.dataset_dir = self.root_dir + f"/datasets/{self.dataset_dir_name}"
         self.train = self.dataset_dir + "/train"
         self.val = self.dataset_dir + "/val"
 
@@ -790,4 +790,4 @@ class COCOpen:
         Function which zips all files in a directory
         """
         shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir)
-        print(self.dataset_directory_name + ".zip file successfully created!")
+        print(self.dataset_dir_name + ".zip file successfully created!")

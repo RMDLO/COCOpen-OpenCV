@@ -53,9 +53,9 @@ def main(params):
 
         # Zip all files
         cocopen.zip(
-            base_name=f"./datasets/zip/{cocopen.dataset_directory_name}",
+            base_name=f"./datasets/zip/{cocopen.dataset_dir_name}",
             format="zip",
-            root_dir=f"./datasets/{cocopen.dataset_directory_name}",
+            root_dir=f"./datasets/{cocopen.dataset_dir_name}",
         )
 
     # Run the demo

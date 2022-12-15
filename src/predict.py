@@ -44,7 +44,7 @@ class Predict:
         self.parameters = parameters
 
         # COCO Dataset Loading
-        self.name = parameters["directory"]["dataset_directory_name"]
+        self.name = parameters["directory"]["dataset_dir_name"]
         self.model = "pointrend_rcnn_R_50_FPN_3x_coco"
         self.class_dict = {1: "device", 2: "wire"}
         self.weights = f"./train/trained-models/{self.name}_{self.model}.pth"
