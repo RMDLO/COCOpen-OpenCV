@@ -17,5 +17,5 @@ COCOpen performs the following tasks to automatically generate labeled object in
 6. Save all image names and annotations to a dictionary file which can be used to load the data to train object detection, localization, and instance segmentation models.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/1ce7c5c82115dcc193adae881033d168e462caba/docs/images/COCOpen.png?raw=true" width="500" title="COCOpen Workflow">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/5bf76be7e518e8b4fd5e6bc1b9c05afb558dd64e/docs/images/COCOpen.png?raw=true" width="500" title="COCOpen Workflow">
 </p>
