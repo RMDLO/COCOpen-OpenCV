@@ -78,6 +78,23 @@ class COCOpen:
         self.category_to_train_list = {}
         self.category_to_val_list = {}
 
+    def init_azure(
+        self,
+    ) -> None:
+        """
+        Initializing Azure connection for for accessing blob storage
+        """
+        # Initializing connection with Azure storage account
+        connection_string = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
+        blob_service_client = BlobServiceClient.from_connection_string(
+            conn_str=connection_string
+        )
+        # Map category names to blob_service_client of that category
+        for category in self.categories:
+            self.category_to_container_client[
+                category["name"]
+            ] = blob_service_client.get_container_client(category["name"])
+
     def make_new_dirs(self) -> None:
         """
         Making new directories for the COCOpen dataset
@@ -86,10 +103,6 @@ class COCOpen:
             os.mkdir("./datasets")
         except FileExistsError:
             print("datasets directory already exists!")
-        try:
-            os.mkdir("./datasets/zip")
-        except FileExistsError:
-            print("datasets/zip directory already exists!")
         try:
             os.mkdir(self.dataset_dir)
         except FileExistsError:
@@ -138,23 +151,6 @@ class COCOpen:
         ann_id += 1
 
         return coco, ann_id
-
-    def init_azure(
-        self,
-    ) -> None:
-        """
-        Initializing Azure connection for for accessing blob storage
-        """
-        # Initializing connection with Azure storage account
-        connection_string = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
-        blob_service_client = BlobServiceClient.from_connection_string(
-            conn_str=connection_string
-        )
-        # Map category names to blob_service_client of that category
-        for category in self.categories:
-            self.category_to_container_client[
-                category["name"]
-            ] = blob_service_client.get_container_client(category["name"])
 
     def create_image_list(self) -> None:
         """
@@ -794,10 +790,3 @@ class COCOpen:
         with open(self.val + "/val.json", "w") as file:
             json.dump(coco_sem, file, sort_keys=True, indent=4)
             file.close()
-
-    def zip(self, base_name: str, root_dir: str, format="zip") -> None:
-        """
-        Function which zips all files in a directory
-        """
-        shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir)
-        print(f"created {self.dataset_dir_name}.zip!")

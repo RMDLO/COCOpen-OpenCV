@@ -34,12 +34,12 @@ def main(params):
 
         # Create categories dictionary from parameters
         cocopen.generate_supercategories()
+        
+        # Initializing Azure connection
+        cocopen.init_azure()
 
         # Make new directories
         cocopen.make_new_dirs()
-
-        # Initializing Azure connection
-        cocopen.init_azure()
 
         # Creating foreground and background image list
         cocopen.create_image_list()
@@ -49,13 +49,6 @@ def main(params):
 
         # Generate val data
         cocopen.generate_val_data()
-
-        # Zip all files
-        cocopen.zip(
-            base_name=f"./datasets/zip/{cocopen.dataset_dir_name}",
-            format="zip",
-            root_dir=f"./datasets/{cocopen.dataset_dir_name}",
-        )
 
     # Run the demo
     if params["demo_dataset"]:
@@ -71,7 +64,8 @@ def main(params):
         trainer.register_dataset()
         trainer.train()
 
-    if params["predict"]:
+    # Perform inference using a trained model
+    if params["predict_dataset"]:
         predictor = Predict(parameters=params)
         predictor.make_new_dirs()
         predictor.predict()

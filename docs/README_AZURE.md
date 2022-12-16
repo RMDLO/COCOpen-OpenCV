@@ -6,7 +6,7 @@ If you do not already have an account with Azure, [create one](https://azure.mic
 
 ## **2. Create a Storage Account**
 
-The Azure storage account houses individual storage containers which act like file folders on the cloud. Each individual storage container contains the images for the project's dataset. Azure provides [instructions on how to create a storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json).
+The Azure storage account houses individual storage containers which act like file folders on the cloud. Each individual storage container contains the images for the project's dataset. Azure provides [instructions on how to create a storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json). 
 
 ## **3. Create and Manage Storage Containers**
 
@@ -14,7 +14,7 @@ Each individual storage container will store its own unique object category. Exa
 
 ## **4. Upload Images to Storage Container**
 
-Use the Azure Portal to upload images to a storage container.
+Select 'Store, back up, or archive data' in the QuickStart menu of the Azure portal. Then select 'Get Started with Azure Blob Storage'. Use the Azure Portal to upload images to a storage container.
 
 1. First, click on the storage container you would like to upload images to. Our storage containers are shown below as an example.
 
