@@ -87,6 +87,10 @@ class COCOpen:
         except FileExistsError:
             print("datasets directory already exists!")
         try:
+            os.mkdir("./datasets/zip")
+        except FileExistsError:
+            print("datasets/zip directory already exists!")
+        try:
             os.mkdir(self.dataset_dir)
         except FileExistsError:
             print(f"{self.dataset_dir_name} already exists!")
