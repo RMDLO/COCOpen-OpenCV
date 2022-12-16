@@ -1,31 +1,31 @@
 # **Example Demo**
-Provided below is a demo of generating data from the UIUC wires dataset. Once you're done with the [installation](./INSTALLATION.md), you will be able to replicate this demo and generate sample data to get a taste of how the API works.
+This document provides a demonstration of automatically generating labeled using COCOpen and the UIUC wires dataset. After reading the [installation instructions](./docs/INSTALLATION.md), replicate this demo and generate sample data!
 
 ## **1. Open COCOpen**
-Start off by navigating into the COCOpen repository.
+Navigate into the COCOpen repository.
 
 ```bash
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
 ```
 
-## **2. User configurations**
-a. The provided `config/parameters.yml` file already contains an Azure connection string that's ready to generate data from the UIUC wires dataset.
+## **2. Configure Data **
+a. The provided `config/parameters.yml` file already contains an Azure connection string that is ready to generate data using the UIUCWires dataset
 
 ```yaml
 # Pointer to raw input imagery and directory structuring
 user_defined:
   root_dir: "." # ignore
-  dataset_directory_name: "cocopen-dataset-4" # ignore
+  dataset_directory_name: "cocopen-dataset" # ignore
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net' # UIUC's Azure connection string
 ```
 
-## **3. Adjusting parameters**
+## **3. Adjust Parameters**
 Open the `config/parameters.yml` file.
 
-Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
+Tweak parameters such as `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the UIUCWires data), and `max_instances` (the maximum number of objects of a particular category per image).
 
-Set it to these default values:
+These are some of the default values we use:
 ```yaml
 # Dataset Size and Split Parameters
 dataset_params:
