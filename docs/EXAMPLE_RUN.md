@@ -120,8 +120,8 @@ directory:
 To execute the API, run the following:
 
 ```bash
-# Run the run.py file
-$ bash run.sh
+# Run COCOpen
+$ ./run.sh
 ```
 
 ## **5. Result**
