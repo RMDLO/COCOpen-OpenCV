@@ -5,7 +5,6 @@ segmentation applications.
 """
 
 import os
-import shutil
 import json
 import copy
 import random
@@ -19,8 +18,8 @@ from azure.storage.blob import BlobServiceClient
 
 class COCOpen:
     """
-    The COCOpen class provides all functions necessary for automatically annotating
-    and augmenting a dataset of images stored on Azure.
+    The COCOpen class provides all functions necessary for automatically
+    annotating and augmenting a dataset of images stored on Azure.
     """
 
     def __init__(
@@ -85,9 +84,9 @@ class COCOpen:
         Initializing Azure connection for for accessing blob storage
         """
         # Initializing connection with Azure storage account
-        connection_string = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
+        conn_str = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
         blob_service_client = BlobServiceClient.from_connection_string(
-            conn_str=connection_string
+            conn_str=conn_str
         )
         # Map category names to blob_service_client of that category
         for category in self.categories:
@@ -194,7 +193,9 @@ class COCOpen:
         Perform contour filtering
         """
         contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        outer_contour, _ = cv2.findContours(frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        outer_contour, _ = cv2.findContours(
+            frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
             c_area = cv2.contourArea(contour)
@@ -292,10 +293,10 @@ class COCOpen:
             for i in range(0, len(final_masks)):
                 for j in range(0, int(self.height * scale)):
                     final_img_arr[
-                        j + y, x: (x + int(self.width * scale))
+                        j + y, x : (x + int(self.width * scale))
                     ] = new_img_arr[j]
                     final_masks[i][j + y][
-                        x: (x + int(self.width * scale))
+                        x : (x + int(self.width * scale))
                     ] = new_masks[i][j]
 
         # Scaled image is larger than original:
@@ -308,13 +309,13 @@ class COCOpen:
 
             # concatenate arrays
             final_img_arr = new_img_arr[
-                y: (y + self.height),
-                x: (x + self.width),
+                y : (y + self.height),
+                x : (x + self.width),
             ]
             for i in range(0, len(final_masks)):
                 final_masks[i] = new_masks[i][
-                    y: (y + self.height),
-                    x: (x + self.width),
+                    y : (y + self.height),
+                    x : (x + self.width),
                 ]
 
         return final_img_arr, final_masks
@@ -641,7 +642,7 @@ class COCOpen:
 
             # combine the rest
             # for _ in itertools.repeat(None, total_num_instances):
-            for j in range(1, total_num_instances):
+            for _ in range(1, total_num_instances):
                 # choose the second image
                 randint2 = int(random.random() * len(all_img_arr))
                 msk2 = np.zeros((self.height, self.width, 3)).astype("uint8")
@@ -773,7 +774,7 @@ class COCOpen:
             target_dir=self.train,
             num_images=self.param["dataset_params"]["train_images"],
         )
-        with open(self.train + "/train.json", "w") as file:
+        with open(self.train + "/train.json", mode="w", encoding="utf-8") as file:
             json.dump(coco_sem, file, sort_keys=True, indent=4)
             file.close()
 
@@ -787,6 +788,6 @@ class COCOpen:
             target_dir=self.val,
             num_images=self.param["dataset_params"]["val_images"],
         )
-        with open(self.val + "/val.json", "w") as file:
+        with open(self.val + "/val.json", mode="w", encoding="utf-8") as file:
             json.dump(coco_sem, file, sort_keys=True, indent=4)
             file.close()

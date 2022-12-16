@@ -1,6 +1,11 @@
-import pycocotools.mask as pycocomask
-import cv2
+"""
+This script includes the Demo class to perform the object instance
+segmentation demo.
+"""
+
 import os
+import cv2
+import pycocotools.mask as pycocomask
 
 from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import Visualizer
@@ -9,6 +14,24 @@ from detectron2.utils.visualizer import ColorMode
 
 
 class Demo:
+    """
+    The Demo class provides functions to demonstrate object instance
+    segmentation on a COCOpen-generated datset.
+    ...
+
+    Attributes
+    ----------
+    parameters : dict
+        contains all parameters used to generate the demo dataset
+
+    Methods
+    -------
+    make_new_dirs():
+        Make new directories where the demo files are saved
+    demo():
+        Runs the demo to visualize object instance segmentation
+    """
+
     # Constructor
     def __init__(
         self,
@@ -29,6 +52,9 @@ class Demo:
         self.mask_dir = self.demo_dataset_dir + "/masks"
 
     def make_new_dirs(self):
+        """
+        Make new directories where the demo files are saved
+        """
         try:
             os.mkdir(self.demo_dir)
         except FileExistsError:
@@ -47,7 +73,9 @@ class Demo:
             print("masks directory already exists!")
 
     def demo(self):
-
+        """
+        Runs the demo to visualize object instance segmentation
+        """
         data = self.parameters["dataset_verification"]["which_dataset"]
         register_coco_instances(
             data,
@@ -58,9 +86,8 @@ class Demo:
         dicts = DatasetCatalog.get(f"{data}")
         metadata = MetadataCatalog.get(f"{data}")
 
-        for i, d in enumerate(
-            dicts[: self.parameters["dataset_verification"]["number_of_images"] - 1]
-        ):
+        count = self.parameters["dataset_verification"]["number_of_images"] - 1
+        for i, d in enumerate(dicts[:count]):
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
             mask_list = []
