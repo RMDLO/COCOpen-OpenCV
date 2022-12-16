@@ -71,7 +71,7 @@ To connect your storage container, perform the steps below.
 
 1. Copy `connection string` from Azure Storage Account. Click [here](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=azure-portal#view-account-access-keys) to learn how to access it.
 
-2. Paste the connection string in the `config/parameters.yml` file:
+2. Paste the connection string in the `config/parameters.yaml` file:
 
 ```bash
 # Pointer to raw input imagery and directory structuring
@@ -83,7 +83,7 @@ user_defined:
 
 ## **Running COCOpen**
 
-Open the `config/parameters.yml` file. Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
+Open the `config/parameters.yaml` file. Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
 
 To execute the API, run the following:
 
