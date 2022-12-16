@@ -9,7 +9,7 @@ Installation and execution of COCOpen was verified with the below environment.
 - Architecture: x86-64
 - Python: 3.9.15
 
-For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/config/environment.yaml#L7).
+For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/config/environment.yaml).
 
 ## **Clone COCOpen-OpenCV Repository**
 Clone this repository in your desired location by running the following command in a terminal:
@@ -48,13 +48,12 @@ $ python -m pip install detectron2 -f \ https://dl.fbaipublicfiles.com/detectron
 ```
 
 ## **Configure Azure Storage Container**
-
-To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md).
+To learn how to set up your dataset on Azure, read [our configuration instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md).
 
 ## **Configure a New Dataset**
-This section contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. 
 
-## **User Configurations**
+To configure a new dataset, perform the steps below.
+
 1. Copy `connection string` from Azure Storage Account. Click [here](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=azure-portal#view-account-access-keys) to learn how to access it.
 
 2. Paste the connection string in the `config/parameters.yml` file:
@@ -75,7 +74,7 @@ To execute the API, run the following:
 
 ```bash
 # Run the run.py file
-$ bash run.sh
+$ ./run.sh
 ```
 
 ## **Result**
