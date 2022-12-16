@@ -1,25 +1,27 @@
-# **Azure Storage Container Setup**
-## **1. Azure Sign up**
-If you do not already have an account with Azure, create one [here](https://azure.microsoft.com/en-us/).
-## **2. Create a Storage account**
-> Note: This is your storage account in which individual storage containers (which contain your dataset images) will reside.
+# **Configure Azure Storage Container**
 
-To learn how to create a storage account, click [here](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json).
-## **3. Create and manage Storage Containers**
-> Note: These each individual storage container will store its own unique object category. Ex: If you have images of cats, dogs and background, you will need to create a container for cats, dogs and backgrounds.
+## **1. Register for an Azure Account**
 
-> Make sure also to set the container's access level by choosing `Container (anonymous read access for containers and blobs)`
+If you do not already have an account with Azure, [create one](https://azure.microsoft.com/en-us/).
 
-To learn how to create and manage storage containers, click [here](https://learn.microsoft.com/en-us/azure/storage/blobs/blob-containers-portal).
-## **4. Uploading images to container**
-Our recommended method would be to simply use the Azure Portal for this task.
+## **2. Create a Storage Account**
 
-1. First, click on the container you'd like to upload images to.
+The Azure storage account houses individual storage containers which act like file folders on the cloud. Each individual storage container contains the images for the project's dataset. Azure provides [instructions on how to create a storage account](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=/azure/storage/blobs/toc.json&bc=/azure/storage/blobs/breadcrumb/toc.json).
+
+## **3. Create and Manage Storage Containers**
+
+Each individual storage container will store its own unique object category. Example categories for a dataset may include "cats," "dogs," and "background." Each of these categories requires its own storage container to store the single-object images of that category. To open-source our data, we also set the access level for our container to `Container (anonymous public read access for containers and blobs)`. This enables anonymous connection to our container.  To learn more about creating and managing storage containers, read [Manage Blob Containers Using the Azure Portal](https://learn.microsoft.com/en-us/azure/storage/blobs/blob-containers-portal).
+
+## **4. Upload Images to Storage Container**
+
+Use the Azure Portal to upload images to a storage container.
+
+1. First, click on the storage container you would like to upload images to. Our storage containers are shown below as an example.
 
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/storage_containers_image.png" width="700" height="200" title="Storage Containers Image">
 </p>
 
-2. Next click 'Upload'.
+2. Next, click 'Upload'.
 
-3. Select all image files you want to upload from your local computer and begin the upload process.
+3. Select all image files you want to upload from local storage and begin the upload process.
