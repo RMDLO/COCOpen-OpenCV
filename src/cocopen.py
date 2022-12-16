@@ -78,6 +78,23 @@ class COCOpen:
         self.category_to_train_list = {}
         self.category_to_val_list = {}
 
+    def init_azure(
+        self,
+    ) -> None:
+        """
+        Initializing Azure connection for for accessing blob storage
+        """
+        # Initializing connection with Azure storage account
+        connection_string = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
+        blob_service_client = BlobServiceClient.from_connection_string(
+            conn_str=connection_string
+        )
+        # Map category names to blob_service_client of that category
+        for category in self.categories:
+            self.category_to_container_client[
+                category["name"]
+            ] = blob_service_client.get_container_client(category["name"])
+
     def make_new_dirs(self) -> None:
         """
         Making new directories for the COCOpen dataset
@@ -134,23 +151,6 @@ class COCOpen:
         ann_id += 1
 
         return coco, ann_id
-
-    def init_azure(
-        self,
-    ) -> None:
-        """
-        Initializing Azure connection for for accessing blob storage
-        """
-        # Initializing connection with Azure storage account
-        connection_string = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
-        blob_service_client = BlobServiceClient.from_connection_string(
-            conn_str=connection_string
-        )
-        # Map category names to blob_service_client of that category
-        for category in self.categories:
-            self.category_to_container_client[
-                category["name"]
-            ] = blob_service_client.get_container_client(category["name"])
 
     def create_image_list(self) -> None:
         """
