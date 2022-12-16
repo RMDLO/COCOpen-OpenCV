@@ -9,7 +9,7 @@ Installation and execution of COCOpen was verified with the below environment.
 - Architecture: x86-64
 - Python: 3.9.15
 
-For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/config/environment.yaml).
+For detailed versions of package dependencies, please see [`config/data_environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/config/data_environment.yaml).
 
 ## **Clone COCOpen-OpenCV Repository**
 Clone this repository in your desired location by running the following command in a terminal:
@@ -21,20 +21,20 @@ $ git clone https://github.com/RMDLO/COCOpen-OpenCV.git
 ## **Use Anaconda**
 COCOpen-OpenCV uses an anaconda environment to manage versions of all dependencies. To get started with installing `conda` please follow [these instructions](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
 
-For ease of creating a conda environment, COCOpen provides an `environment.yaml` file in the `config/` directory of this repository. The first line of the `environment.yaml` file defines the name of the new environment. This environment is used to generate a synthetic dataset using `src/cocopen.py`. To visualize the generated dataset, we include dependencies for the object detection library we use, [detectron2](https://github.com/facebookresearch/detectron2). The conda environment includes a cpu-only installation of PyTorch 1.10 on which detectron2 visualization depends. The detectron2 library cannot be installed with `conda` because it will not build properly with PyTorch. To use COCOpen to generate and visualize a dataset, please run:
+For ease of creating a conda environment, COCOpen provides an `data_environment.yaml` file in the `config/` directory of this repository. The first line of the `data_environment.yaml` file defines the name of the new environment. This environment is used to generate a synthetic dataset using `src/cocopen.py`. To visualize the generated dataset, we include dependencies for the object detection library we use, [detectron2](https://github.com/facebookresearch/detectron2). The conda environment includes a cpu-only installation of PyTorch 1.10 on which detectron2 visualization depends. The detectron2 library cannot be installed with `conda` because it will not build properly with PyTorch. To use COCOpen to generate and visualize a dataset, please run:
 
 ```bash
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
 # Clone the conda environment
-$ conda env create -f config/environment.yaml
+$ conda env create -f config/data_environment.yaml
 # Activate the conda environment
-$ conda activate cocopen
+$ conda activate cocopen-data
 # Install the prebuilt detectron2 library
 $ python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
 ```
 
-To train an object detection model, we provide a `train_environment.yml` file which contains an installation of PyTorch 1.10 with CUDA 11.3. We also use the detectron2 library to train detection models. To set up a conda enviornment to use the `src/train.py` file to train and predict on a dataset, please run:
+To train an object detection model, we provide a `train_environment.yaml` file which contains an installation of PyTorch 1.10 with CUDA 11.3. We also use the detectron2 library to train detection models. To set up a conda enviornment to use the `src/train.py` file to train and predict on a dataset, please run:
 
 ```bash
 # Navigate into the COCOpen directory
