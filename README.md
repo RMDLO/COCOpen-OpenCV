@@ -1,13 +1,18 @@
+# **UIUC COCOpen**
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/logo.png?raw=true" height=240 width=240 title="COCOpen Logo">
 </p>
 
-The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1]. This repository uses the UIUC COCOpen Library to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices, for training wire object instance segmentation models [2].
+The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1]. For the aforementioned tasks the library needs foreground images (stored in seperate storage containers by category) and background images (in their own storage container) hosted on Azure. 
+
+The COCOpen-OpenCV repository uses the UIUC COCOpen Library to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices, for training wire object instance segmentation models [2].
 
 
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation" width="600px"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>
+
+Before getting started, get the code [here](https://github.com/RMDLO/COCOpen-OpenCV).
 
 ## **Get Started**
 See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md) to learn about configuring a dataset and installing dependencies.
