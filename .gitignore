@@ -8,17 +8,14 @@ src/__pycache__
 *.swp
 *.pyc
 
-# Ignore generated datasets folder
+# Ignore the datasets folder
 datasets/
-
-# Ignore generated models
-train/trained-models/
-train/events/
-train/config/
-train/opencv/
-
-# Ignore run file which includes black and flake8-black calls before run.py
-test.sh
 
 # Ignore the demo folder
 demo/
+
+# Ignore the train folder
+train/
+
+# Ignore run file which includes black and flake8-black calls before run.py
+test.sh

@@ -73,7 +73,7 @@ Open the `config/parameters.yml` file. Here you can tweak parameters like `datas
 To execute the API, run the following:
 
 ```bash
-# Run the run.py file
+# Run COCOpen
 $ ./run.sh
 ```
 
