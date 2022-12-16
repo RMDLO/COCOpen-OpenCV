@@ -1,7 +1,7 @@
 # **Installation**
 This notebook contains all installation and setup related information.
 
-### **Environment**
+### **Environment Information**
 
 Installation and execution of COCOpen was verified with the below environment.
 - Operating System: Ubuntu 20.04.5 LTS
@@ -11,17 +11,16 @@ Installation and execution of COCOpen was verified with the below environment.
 
 For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/3dec8c36087c0ba8033d62a987ae7738475e161f/config/environment.yaml).
 
-## **Cloning COCOpen-OpenCV repository**
+## **Clone COCOpen-OpenCV Repository**
 Clone this repository in your desired location by running the following command in a terminal:
 ```bash
 # Clone the repository
 $ git clone https://github.com/RMDLO/COCOpen-OpenCV.git
 ```
 
-## **Installing Anaconda**
+## **Use Anaconda**
 COCOpen-OpenCV uses an anaconda environment to manage versions of all dependencies. To get started with installing `conda` please follow [these instructions](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
 
-## **Creating Anaconda Environments**
 For ease of creating a conda environment, COCOpen provides an `environment.yaml` file in the `config/` directory of this repository. The first line of the `environment.yaml` file defines the name of the new environment. This environment is used to generate a synthetic dataset using `src/cocopen.py`.
 
 To create the `conda` environment from the `environment.yaml` file, run:
@@ -63,5 +62,40 @@ $ python -m pip install detectron2 -f \
   https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
 ```
 
-## **Setting up Azure Storage Container**
+## **Configure Azure Storage Container**
 To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/3dec8c36087c0ba8033d62a987ae7738475e161f/docs/README_AZURE.md).
+
+## **Configure a New Dataset**
+This section contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. 
+
+
+## **User Configurations**
+1. Copy `connection string` from Azure Storage Account. Click [here](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=azure-portal#view-account-access-keys) to learn how to access it.
+
+2. Paste the connection string in the `config/parameters.yml` file:
+
+```bash
+# Pointer to raw input imagery and directory structuring
+user_defined:
+  root_dir: "." # ignore
+  dataset_directory_name: "cocopen-dataset" # ignore
+  AZURE_STORAGE_CONNECTION_STRING: '<paste here within single quotes>'
+```
+
+## **Run the COCOpen Example**
+
+Open the `config/parameters.yml` file. Here you can tweak parameters like `dataset_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values - we recommend keeping the default values for the provided wire and device images), and `max_instances` (the maximum number of objects of a particular category per image).
+
+To execute the API, run the following:
+
+```bash
+# Run the run.py file
+$ bash run.sh
+```
+
+## **Result**
+You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. An example annotation is visualized with the detectron2 visualizer below.
+
+<p align="center">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/1ce7c5c82115dcc193adae881033d168e462caba/demo/cocopen-dataset-review/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
+</p>
