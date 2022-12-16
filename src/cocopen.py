@@ -194,12 +194,14 @@ class COCOpen:
         Perform contour filtering
         """
         contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        outer_contour, _ = cv2.findContours(frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         new_frame = np.zeros(frame.shape, np.uint8)
         for i, contour in enumerate(contours):
             c_area = cv2.contourArea(contour)
             if self.param["contour_threshold"] <= c_area <= contour_max_area:
                 mask = np.zeros(frame.shape, np.uint8)
                 cv2.drawContours(mask, contours, i, 255, cv2.FILLED)
+                cv2.drawContours(mask, outer_contour, -1, (0, 0, 0), 2)
                 mask = cv2.bitwise_and(frame, mask)
                 new_frame = cv2.bitwise_or(new_frame, mask)
         frame = new_frame
