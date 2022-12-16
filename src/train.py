@@ -105,7 +105,8 @@ class Train:
         Downloads training configurations and pre-trained backbones
         from the detectron2 model zoo.
         """
-        try:
+        base_dir = os.listdir(self.config_dir)
+        if len(base_dir) == 0:
             url_config = f"https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{self.model}.yaml?raw=true"
             base_config = "https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true"
             url_model = f"https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{self.model}/164955410/model_final_edd263.pkl?raw=true"
@@ -115,7 +116,7 @@ class Train:
             wget.download(
                 base_config, f"{self.config_dir}/Base-PointRend-RCNN-FPN.yaml"
             )
-        except FileExistsError:
+        else:
             print("Model configuration files already exist!")
 
     def register_dataset(self):
@@ -166,8 +167,8 @@ class Train:
             cfg.DATALOADER.NUM_WORKERS = 1
             # Initialize training from model zoo:
             cfg.MODEL.WEIGHTS = weights_dir
-            cfg.SOLVER.BASE_LR = 0.00025
-            cfg.SOLVER.MAX_ITER = 1000
+            cfg.SOLVER.BASE_LR = 0.025
+            cfg.SOLVER.MAX_ITER = 50000
             cfg.SOLVER.CHECKPOINT_PERIOD = 5000
             # cfg.SOLVER.STEPS = (20,100,500)
             # cfg.SOLVER.STEPS = (20, 10000, 20000)
@@ -258,7 +259,7 @@ class Predict:
         cfg.merge_from_file(f"./train/config/{self.model}.yaml")
 
         cfg.MODEL.WEIGHTS = self.weights
-        cfg.MODEL.DEVICE = "cuda:0"
+        cfg.MODEL.DEVICE = "cuda"
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2
         cfg.MODEL.POINT_HEAD.NUM_CLASSES = 2
         cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7

@@ -17,7 +17,7 @@ Our recommended method would be to simply use the Azure Portal for this task.
 1. First, click on the container you'd like to upload images to.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/1ce7c5c82115dcc193adae881033d168e462caba/docs/images/storage_containers_image.png?raw=true" width="700" height="200" title="Storage Containers Image">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/docs/images/storage_containers_image.png?raw=true" width="700" height="200" title="Storage Containers Image">
 </p>
 
 2. Next click 'Upload'.
