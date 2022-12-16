@@ -9,7 +9,7 @@ Installation and execution of COCOpen was verified with the below environment.
 - Architecture: x86-64
 - Python: 3.9.15
 
-For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/3dec8c36087c0ba8033d62a987ae7738475e161f/config/environment.yaml).
+For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/config/environment.yaml).
 
 ## **Clone COCOpen-OpenCV Repository**
 Clone this repository in your desired location by running the following command in a terminal:
@@ -48,7 +48,7 @@ $ python -m pip install detectron2 -f \ https://dl.fbaipublicfiles.com/detectron
 ```
 
 ## **Configure Azure Storage Container**
-To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/3dec8c36087c0ba8033d62a987ae7738475e161f/docs/README_AZURE.md).
+To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/docs/README_AZURE.md).
 
 ## **Configure a New Dataset**
 This section contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. 
@@ -81,5 +81,5 @@ $ bash run.sh
 You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. An example annotation is visualized with the detectron2 visualizer below.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/1ce7c5c82115dcc193adae881033d168e462caba/demo/cocopen-dataset-review/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/demo/cocopen-dataset-review/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
 </p>

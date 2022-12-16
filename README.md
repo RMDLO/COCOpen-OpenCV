@@ -10,13 +10,13 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
 </p>
 
 ## **Learn More**
-To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/5bf76be7e518e8b4fd5e6bc1b9c05afb558dd64e/docs/LEARN_MORE.md).
+To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/docs/LEARN_MORE.md).
 
 ## **Get Started**
-See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/5bf76be7e518e8b4fd5e6bc1b9c05afb558dd64e/docs/INSTALLATION.md) to learn about configuring a dataset and installing dependencies.
+See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/docs/INSTALLATION.md) to learn about configuring a dataset and installing dependencies.
 
 ## **Run an Example**
-See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/5bf76be7e518e8b4fd5e6bc1b9c05afb558dd64e/docs/EXAMPLE_RUN.md) to see a demo automatically generating a simple dataset of ethernet cables and ethernet devices with category, bounding box, and instance segmentation mask annotations in the COCO format.
+See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/docs/EXAMPLE_RUN.md) to see a demo automatically generating a simple dataset of ethernet cables and ethernet devices with category, bounding box, and instance segmentation mask annotations in the COCO format.
 
 ## **References**
 <a id="1">[1]</a> 
