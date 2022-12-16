@@ -50,13 +50,6 @@ def main(params):
         # Generate val data
         cocopen.generate_val_data()
 
-        # Zip all files
-        cocopen.zip(
-            base_name=f"./datasets/zip/{cocopen.dataset_dir_name}",
-            format="zip",
-            root_dir=f"./datasets/{cocopen.dataset_dir_name}",
-        )
-
     # Run the demo
     if params["demo_dataset"]:
         example = Demo(parameters=params)
@@ -71,6 +64,7 @@ def main(params):
         trainer.register_dataset()
         trainer.train()
 
+    # Perform inference using a trained model
     if params["predict"]:
         predictor = Predict(parameters=params)
         predictor.make_new_dirs()

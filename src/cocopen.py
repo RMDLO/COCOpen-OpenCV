@@ -87,10 +87,6 @@ class COCOpen:
         except FileExistsError:
             print("datasets directory already exists!")
         try:
-            os.mkdir("./datasets/zip")
-        except FileExistsError:
-            print("datasets/zip directory already exists!")
-        try:
             os.mkdir(self.dataset_dir)
         except FileExistsError:
             print(f"{self.dataset_dir_name} already exists!")
@@ -794,10 +790,3 @@ class COCOpen:
         with open(self.val + "/val.json", "w") as file:
             json.dump(coco_sem, file, sort_keys=True, indent=4)
             file.close()
-
-    def zip(self, base_name: str, root_dir: str, format="zip") -> None:
-        """
-        Function which zips all files in a directory
-        """
-        shutil.make_archive(format=format, base_name=base_name, root_dir=root_dir)
-        print(f"created {self.dataset_dir_name}.zip!")
