@@ -31,7 +31,7 @@ $ conda env create -f config/environment.yaml
 # Activate the conda environment
 $ conda activate cocopen
 # Install the prebuilt detectron2 library
-$ python -m pip install detectron2 -f \ https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
+$ python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
 ```
 
 To train an object detection model, we provide a `train_environment.yml` file which contains an installation of PyTorch 1.10 with CUDA 11.3. We also use the detectron2 library to train detection models. To set up a conda enviornment to use the `src/train.py` file to train and predict on a dataset, please run:
@@ -44,7 +44,7 @@ $ conda env create -f config/train_environment.yaml
 # Activate the conda environment
 $ conda activate cocopen-train
 # Install the prebuilt detectron2 library
-$ python -m pip install detectron2 -f \ https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
+$ python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
 ```
 
 ## **Configure Azure Storage Container**
