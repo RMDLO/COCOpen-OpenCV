@@ -224,4 +224,3 @@ dependencies:
   - zstd=1.5.2=h6239696_4
   - pip:
     - setuptools==59.5.0
-prefix: /home/hollydinkel/miniconda3/envs/cocopen-train
