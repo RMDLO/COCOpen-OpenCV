@@ -50,6 +50,9 @@ class Train:
         save model checkpoints
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # Number of instance attributes is appropriate.
+
     def __init__(
         self,
         parameters: dict,
@@ -98,18 +101,21 @@ class Train:
                 os.mkdir(self.trained_models)
             except FileExistsError:
                 print("trained models directory already exists!")
-                pass
 
     def download_models(self):
         """
         Downloads training configurations and pre-trained backbones
         from the detectron2 model zoo.
         """
+
+        # pylint: disable=line-too-long
+        # URL length cannot be reduced.
+
         base_dir = os.listdir(self.config_dir)
         if len(base_dir) == 0:
-            url_config = f"https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{self.model}.yaml?raw=true"
-            base_config = "https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true"
-            url_model = f"https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{self.model}/164955410/model_final_edd263.pkl?raw=true"
+            url_config = f"https://github.com/facebookresearch/detectron2/blob/main/projects/PointRend/configs/InstanceSegmentation/{self.model}.yaml?raw=true"  # noqa
+            base_config = "https://github.com/facebookresearch/detectron2/blob/main/configs/Base-RCNN-FPN.yaml?raw=true"  # noqa
+            url_model = f"https://dl.fbaipublicfiles.com/detectron2/PointRend/InstanceSegmentation/{self.model}/164955410/model_final_edd263.pkl?raw=true"  # noqa
 
             wget.download(url_config, f"{self.config_dir}/{self.model}.yaml")
             wget.download(url_model, f"{self.config_dir}/{self.model}.pkl")
@@ -132,7 +138,7 @@ class Train:
                     f"./datasets/{self.name}/{data}/{data}.json",
                     f"./datasets/{self.name}/{data}/",
                 )
-            except Exception:
+            except AssertionError:
                 pass
 
     def train(self):

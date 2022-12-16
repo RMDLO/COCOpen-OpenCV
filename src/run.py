@@ -34,7 +34,7 @@ def main(params):
 
         # Create categories dictionary from parameters
         cocopen.generate_supercategories()
-        
+
         # Initializing Azure connection
         cocopen.init_azure()
 
@@ -73,6 +73,6 @@ def main(params):
 
 if __name__ == "__main__":
     # Load cocopen parameters
-    with open("./config/parameters.yaml", "r") as file:
+    with open("./config/parameters.yaml", mode="r", encoding="utf-8") as file:
         parameters = yaml.safe_load(file)
     main(params=parameters)
