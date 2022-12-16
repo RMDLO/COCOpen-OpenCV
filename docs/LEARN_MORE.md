@@ -17,7 +17,5 @@ COCOpen performs the following tasks to automatically generate labeled object in
 6. Save all image names and annotations to a dictionary file which can be used to load the data to train object detection, localization, and instance segmentation models.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/.github/images/COCOpen-working-flowchart.png" title="API workflow chart">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/COCOpen.png?raw=true" title="COCOpen Workflow" width="700px"> 
 </p>
-
-> Click [here](https://lucid.app/lucidchart/0a4a27fb-8f8a-474d-a976-541deb310a02/edit?viewport_loc=167%2C1568%2C2219%2C1041%2C0_0&invitationId=inv_83183c78-2c16-47fc-9b46-14bd97aa2f5f) to visualize the workflow chart
