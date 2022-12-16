@@ -1,5 +1,5 @@
 # **Example Demo**
-This document provides a demonstration of automatically generating labeled using COCOpen and the UIUC wires dataset. After reading the [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md), replicate this demo and generate sample data!
+This document provides a demonstration of automatically generating labeled data using COCOpen and the UIUC wires dataset. After reading the [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md), replicate this demo and generate sample data!
 
 ## **1. Open COCOpen**
 Navigate into the COCOpen repository.
@@ -8,9 +8,8 @@ Navigate into the COCOpen repository.
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
 ```
-
-## **2. Configure Data **
-a. The provided `config/parameters.yml` file already contains an Azure connection string that is ready to generate data using the UIUCWires dataset
+## **2. Configure Data**
+a. The provided `config/parameters.yml` file already contains an Azure connection string that is ready to generate data using the UIUCWires dataset.
 
 ```yaml
 # Pointer to raw input imagery and directory structuring
