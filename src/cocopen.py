@@ -292,10 +292,10 @@ class COCOpen:
             for i in range(0, len(final_masks)):
                 for j in range(0, int(self.height * scale)):
                     final_img_arr[
-                        j + y, x : (x + int(self.width * scale))
+                        j + y, x: (x + int(self.width * scale))
                     ] = new_img_arr[j]
                     final_masks[i][j + y][
-                        x : (x + int(self.width * scale))
+                        x: (x + int(self.width * scale))
                     ] = new_masks[i][j]
 
         # Scaled image is larger than original:
@@ -308,13 +308,13 @@ class COCOpen:
 
             # concatenate arrays
             final_img_arr = new_img_arr[
-                y : (y + self.height),
-                x : (x + self.width),
+                y: (y + self.height),
+                x: (x + self.width),
             ]
             for i in range(0, len(final_masks)):
                 final_masks[i] = new_masks[i][
-                    y : (y + self.height),
-                    x : (x + self.width),
+                    y: (y + self.height),
+                    x: (x + self.width),
                 ]
 
         return final_img_arr, final_masks
