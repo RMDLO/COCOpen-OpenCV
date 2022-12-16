@@ -48,7 +48,8 @@ $ python -m pip install detectron2 -f \ https://dl.fbaipublicfiles.com/detectron
 ```
 
 ## **Configure Azure Storage Container**
-To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/docs/README_AZURE.md).
+
+To learn how to set up your dataset on Azure, read [this](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md).
 
 ## **Configure a New Dataset**
 This section contains basic information on how to configure a new dataset, including information about interfacing with Microsoft Azure and modifying dataset generation parameters. 
@@ -81,5 +82,5 @@ $ bash run.sh
 You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. An example annotation is visualized with the detectron2 visualizer below.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/.github/images/0.png" title="Visualization of COCOpen Automatic Instance Segmentation">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
 </p>
