@@ -1,5 +1,5 @@
 # **Example Demo**
-This document provides a demonstration of automatically generating labeled using COCOpen and the UIUC wires dataset. After reading the [installation instructions](./docs/INSTALLATION.md), replicate this demo and generate sample data!
+This document provides a demonstration of automatically generating labeled using COCOpen and the UIUC wires dataset. After reading the [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md), replicate this demo and generate sample data!
 
 ## **1. Open COCOpen**
 Navigate into the COCOpen repository.
