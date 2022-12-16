@@ -9,7 +9,7 @@ Installation and execution of COCOpen was verified with the below environment.
 - Architecture: x86-64
 - Python: 3.9.15
 
-For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/config/environment.yaml).
+For detailed versions of package dependencies, please see [`config/environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/config/environment.yaml#L7).
 
 ## **Clone COCOpen-OpenCV Repository**
 Clone this repository in your desired location by running the following command in a terminal:
