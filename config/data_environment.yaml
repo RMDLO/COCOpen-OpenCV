@@ -1,4 +1,4 @@
-name: cocopen
+name: cocopen-data
 channels:
   - pytorch
   - anaconda
