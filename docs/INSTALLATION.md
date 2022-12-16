@@ -81,5 +81,5 @@ $ bash run.sh
 You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. An example annotation is visualized with the detectron2 visualizer below.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/976083972a07d0fecb5fe4c5c0e6d16d73c7df46/demo/cocopen-dataset-review/visualization/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/.github/images/0.png" title="Visualization of COCOpen Automatic Instance Segmentation">
 </p>
