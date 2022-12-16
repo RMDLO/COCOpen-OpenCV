@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/logo.png?" title="COCOpen Logo">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/logo.png?raw=true" title="COCOpen Logo">
 </p>
 
 The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1]. This repository uses the UIUC COCOpen Library to generate the UIUC wires dataset, a dataset of images comprising instances of wires and networking devices, for training wire object instance segmentation models [2].
@@ -9,14 +9,14 @@ The UIUC COCOpen library is a scalable and open source method of generating a la
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/.github/images/0.png" title="Visualization of COCOpen Automatic Instance Segmentation"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>
 
-## **Learn More**
-To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/LEARN_MORE.md).
-
 ## **Get Started**
 See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md) to learn about configuring a dataset and installing dependencies.
 
 ## **Run an Example**
 See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/EXAMPLE_RUN.md) to see a demo automatically generating a simple dataset of ethernet cables and ethernet devices with category, bounding box, and instance segmentation mask annotations in the COCO format.
+
+## **Learn More**
+To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/LEARN_MORE.md).
 
 ## **References**
 <a id="1">[1]</a> 
