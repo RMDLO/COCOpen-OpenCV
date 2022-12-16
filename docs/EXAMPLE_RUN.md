@@ -29,8 +29,8 @@ These are some of the default values we use:
 ```yaml
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 25
-  val_images: 10
+  train_images: 20
+  val_images: 8
   train_split: 0.8
 
 # Image Shape
@@ -55,7 +55,7 @@ color_threshold:
 contour_threshold: 1000
   
 # Maximum Number of Instances Per Image for Each Object Category
-max_instances:
+max_inst:
   device: 2
   wire: 4
 
@@ -75,27 +75,45 @@ color_augmentation:
   apply_color_augmentation: True
 
   # if True, different objects use different values
-  individual_color_augmentation: t
-  change_saturation: True
-  change_brightness: True
-  change_contrast: True
-  change_hue: True
+  individual_color_augmentation: True
+  saturation: True
+  brightness: True
+  contrast: True
+  hue: False
 
   # Lower/Upper Limit of Color Augmentation
   enhancer_min: 0.75
   enhancer_max: 1.25
 
   # if True, apply color augmentation again to the combined image
-  color_augmentation_on_combined_image: True
+  color_augment_combined: True
+
+# Flag to designate whether to generate a new dataset
+generate_dataset: True
 
 # Flag to designate whether the demo is performed
-run_demo: True
+demo_dataset: False
+
+# Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
+train_detectron2: False
+
+# Flag to designate whether to perform prediction using a trained model
+predict: False
 
 # Parameters for which dataset to visualize and how many annotated images from the dataset to visualize.
 # Options: "train" and "val"
 dataset_verification:
   which_dataset: "val"
   number_of_images: 2
+
+dataset_prediction:
+  number_of_images: 5
+
+# Pointer to raw input imagery and directory structuring
+directory:
+  root_dir: "."
+  dataset_dir_name: "cocopen-dataset-review"
+  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
 ```
 
 ## **4. Running the script**
