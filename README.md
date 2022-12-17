@@ -1,9 +1,9 @@
-# **UIUC COCOpen**
+# **COCOpen**
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/logo.png?raw=true" height=240 width=240 title="COCOpen Logo">
 </p>
 
-The UIUC COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. This dataset can be used for training object instance segmentation models for a wide range of applications like manufacturing, logistics, autonomous driving, and domestic services. COCOpen uses foreground images of single objects against blank backgrounds and background images similar to backgrounds found in the target deployment environment as input. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1,2]. The COCOpen-OpenCV repository uses COCOpen to generate a dataset of images comprising instances of wires and networking devices, visualizes the annotations for these images, trains an instance segmentation model, and demonstrates inference with the trained model [3,4].
+The COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. This dataset can be used for training object instance segmentation models for a wide range of applications like manufacturing, logistics, autonomous driving, and domestic services. COCOpen uses foreground images of single objects against blank backgrounds and background images similar to backgrounds found in the target deployment environment as input. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1,2]. The COCOpen-OpenCV repository uses COCOpen to generate a dataset of images comprising instances of wires and networking devices, visualizes the annotations for these images, trains an instance segmentation model, and demonstrates inference with the trained model [3,4].
 
 
 <p align="center">
@@ -23,7 +23,7 @@ To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenC
 
 ## **References**
 <a id="1">[1]</a> 
-OpenCV, "Open Source Computer Vision Library," (2015).
+OpenCV, "Open Source Computer Vision Library," (2015). [[website]](https://opencv.org/)
 
 <a id="2">[2]</a> 
 T. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollár, and C. Lawrence Zitnick, "Microsoft COCO: Common Objects in Context," in Eur. Conf. Comput. Vis. (ECCV), Sep. 2014, pp. 740-755. [[paper]](https://link.springer.com/chapter/10.1007/978-3-319-10602-1_48)
