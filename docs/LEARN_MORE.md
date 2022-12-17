@@ -1,6 +1,6 @@
 # **COCOpen**
 
-COCOpen is a scalable method of generating a dataset of colored images of any object category automatically labelled with unique object instance segmentation masks in the Microsoft Common Objects in Context (COCO) format [1]. It uses the OpenCV library to perform rotations, flips, hue jittering, and brightness jittering augmentations [2]. It uses contour (blob) filtering and color thresholding on images of single objects against black backgrounds to obtain clean image annotations automatically. It masks the individual object images and performs a "copy-paste" image combination operation whereby individual object and background images are combined to create a labeled dataset with occlusion. This technique enables users to generate an instance segmentation dataset
+COCOpen is a scalable method of generating a dataset of colored images of any object category automatically labelled with unique object instance segmentation masks in the Microsoft Common Objects in Context (COCO) format [1]. It uses the OpenCV library to perform rotations, flips, hue jittering, and brightness jittering augmentations [2]. It uses contour (blob) filtering and color thresholding on images of single objects against black backgrounds to obtain clean image annotations automatically. It masks the individual object images and performs a "copy-paste" image combination operation whereby individual object and background images are combined to create a labeled dataset with occlusion [3]. This technique enables users to generate an instance segmentation dataset
 
 * With a total number of unique synthetic images combinatorial in the number of unique input images.
 * With automatically-generated object instance segmentation, bounding box, and category labels.
@@ -21,7 +21,7 @@ COCOpen performs the following tasks to automatically generate labeled object in
 This workflow is shown in the figure below.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/COCOpen.png?raw=true" title="COCOpen Workflow" width="700px"> 
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/COCOpen.png?raw=true" title="COCOpen Workflow"> 
 </p>
 
 ## **Custom Data**
@@ -46,4 +46,7 @@ After users generate their own dataset of single-object RGB images, the images s
 T. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollár, and C. Lawrence Zitnick, "Microsoft COCO: Common Objects in Context," in Eur. Conf. Comput. Vis. (ECCV), Sep. 2014, pp. 740-755. [[paper]](https://link.springer.com/chapter/10.1007/978-3-319-10602-1_48)
 
 <a id="2">[2]</a> 
-OpenCV, "Open Source Computer Vision Library," (2015).
+OpenCV, "Open Source Computer Vision Library," (2015). [[website]](https://opencv.org/)
+
+<a id="4">[4]</a> 
+G. Ghiasi, Y. Cui, A. Srinivas, R. Qian, T. Lin, E. Cubuk, Q. Le, and B. Zoph, "Simple Copy-Paste is a Strong Data Augmentation Method for Instance Segmentation," in IEEE Int. Conf. Comput. Vis. Pattern Recognit. (CVPR), June 2020, pp. 9796-9805. [[paper]](https://openaccess.thecvf.com/content/CVPR2021/papers/Ghiasi_Simple_Copy-Paste_Is_a_Strong_Data_Augmentation_Method_for_Instance_CVPR_2021_paper.pdf)
