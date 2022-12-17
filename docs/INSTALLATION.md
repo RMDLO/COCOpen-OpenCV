@@ -10,7 +10,7 @@ Installation and execution of COCOpen was verified with the below environment.
 - Python: 3.9.15
 - Conda: 22.9.0
 
-We expect this to work in other UNIX based systems and WSL, with python 3. However, furthermore extensive testing needs to be performed to confirm all the environments this will work in.
+All dependencies work on every combination of [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04] x [python-3.7, python-3.8, python-3.9, python-3.10]. This has been tested using github CI/CD.
 
 For detailed versions of package dependencies, please see [`config/data_environment.yaml`](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/config/data_environment.yaml).
 
