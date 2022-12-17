@@ -1,6 +1,6 @@
 # **COCOpen**
 
-COCOpen is a scalable method of generating a dataset of colored images of any object category automatically labelled with unique object instance segmentation masks in the Microsoft Common Objects in Context (COCO) format [1]. It uses the OpenCV library to perform rotations, flips, hue jittering, and brightness jittering augmentations. It uses contour (blob) filtering and color thresholding on images of single objects against black backgrounds to obtain clean image annotations automatically. It masks the individual object images and performs a "copy-paste" image combination operation whereby individual object and background images are combined to create a labeled dataset with occlusion. This technique enables users to generate an instance segmentation dataset
+COCOpen is a scalable method of generating a dataset of colored images of any object category automatically labelled with unique object instance segmentation masks in the Microsoft Common Objects in Context (COCO) format [1]. It uses the OpenCV library to perform rotations, flips, hue jittering, and brightness jittering augmentations [2]. It uses contour (blob) filtering and color thresholding on images of single objects against black backgrounds to obtain clean image annotations automatically. It masks the individual object images and performs a "copy-paste" image combination operation whereby individual object and background images are combined to create a labeled dataset with occlusion. This technique enables users to generate an instance segmentation dataset
 
 * With a total number of unique synthetic images combinatorial in the number of unique input images.
 * With automatically-generated object instance segmentation, bounding box, and category labels.
@@ -40,5 +40,10 @@ The color contrast between the objects in each image and the background allows f
 
 After users generate their own dataset of single-object RGB images, the images should be uploaded to individual storage containers on Azure. The container should contain only folders of images, and the title of each container of images should correspond to the object category label (all lower-case). See our [Configure Azure Storage Container](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md) documentation for more details and to see the directory structure for our container.
 
+## **References**
+
 <a id="1">[1]</a> 
 T. Lin, M. Maire, S. Belongie, J. Hays, P. Perona, D. Ramanan, P. Dollár, and C. Lawrence Zitnick, "Microsoft COCO: Common Objects in Context," in Eur. Conf. Comput. Vis. (ECCV), Sep. 2014, pp. 740-755. [[paper]](https://link.springer.com/chapter/10.1007/978-3-319-10602-1_48)
+
+<a id="2">[2]</a> 
+OpenCV, "Open Source Computer Vision Library," (2015).
