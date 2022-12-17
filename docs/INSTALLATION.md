@@ -71,7 +71,7 @@ Please also set the `train_dataset` value in `config/parameters.yaml` to `True` 
 
 ## **Create an Azure Storage Container**
 
-Follow [these instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md) to create an Azure storage container to store input data.
+Follow [these instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md) to create an Azure storage container to store input data. These instructions are only necessary if you are providing your own input image dataset. To use the default UIUC Wires dataset comprising wire, device, and background images, skip this step.
 
 ## **Connect to Azure Storage Container**
 
@@ -88,6 +88,8 @@ user_defined:
   dataset_directory_name: "cocopen-dataset" # ignore
   AZURE_STORAGE_CONNECTION_STRING: '<paste here within single quotes>'
 ```
+
+This step must be performed for users providing their own input data. The connection string used to access UIUC Wires data is provided by default. 
 
 ## **Running COCOpen**
 
