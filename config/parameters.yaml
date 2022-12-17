@@ -1,7 +1,7 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 1
-  val_images: 1
+  train_images: 20
+  val_images: 8
   train_split: 0.8
 
 # Image Shape
@@ -62,8 +62,8 @@ color_augmentation:
 # Flag to designate whether to generate a new dataset
 generate_dataset: True
 
-# Flag to designate whether the demo is performed
-demo_dataset: True
+# Flag to designate whether the demo is performed and the dataset is visualized
+demo_dataset: False
 
 # Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
 train_detectron2: False
@@ -83,5 +83,5 @@ dataset_prediction:
 # Pointer to raw input imagery and directory structuring
 directory:
   root_dir: "."
-  dataset_dir_name: "cocopen-dataset-review"
+  dataset_dir_name: "cocopen-dataset"
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
