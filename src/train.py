@@ -174,7 +174,7 @@ class Train:
             # Initialize training from model zoo:
             cfg.MODEL.WEIGHTS = weights_dir
             cfg.SOLVER.BASE_LR = 0.025
-            cfg.SOLVER.MAX_ITER = 50000
+            cfg.SOLVER.MAX_ITER = 1
             cfg.SOLVER.CHECKPOINT_PERIOD = 5000
             # cfg.SOLVER.STEPS = (20,100,500)
             # cfg.SOLVER.STEPS = (20, 10000, 20000)
