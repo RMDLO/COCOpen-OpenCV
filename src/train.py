@@ -273,6 +273,9 @@ class Predict:
 
         dicts = DatasetCatalog.get("val")
         metadata = MetadataCatalog.get("val")
+        print(metadata)
+        print("-------")
+        print(dicts)
         print(f"./train/opencv/{self.name}_{self.model}")
         for _, ann in enumerate(
             dicts[: self.parameters["dataset_prediction"]["number_of_images"]]
