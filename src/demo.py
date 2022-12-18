@@ -86,7 +86,7 @@ class Demo:
         dicts = DatasetCatalog.get(f"{data}")
         metadata = MetadataCatalog.get(f"{data}")
 
-        count = self.parameters["dataset_verification"]["number_of_images"] - 1
+        count = self.parameters["dataset_verification"]["number_of_images"]
         for i, d in enumerate(dicts[:count]):
             img = cv2.imread(d["file_name"])
             annos = d["annotations"]
