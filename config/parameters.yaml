@@ -66,10 +66,10 @@ generate_dataset: True
 demo_dataset: True
 
 # Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
-train_detectron2: False
+train_detectron2: True
 
 # Flag to designate whether to perform prediction using a trained model
-predict_dataset: False
+predict_dataset: True
 
 # Parameters for which dataset to visualize and how many annotated images from the dataset to visualize.
 # Options: "train" and "val"
@@ -83,5 +83,5 @@ dataset_prediction:
 # Pointer to raw input imagery and directory structuring
 directory:
   root_dir: "."
-  dataset_dir_name: "cocopen-dataset-review"
+  dataset_dir_name: "cocopen-dataset-test-4"
   AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
