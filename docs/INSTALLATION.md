@@ -52,7 +52,7 @@ To train an object detection model, we provide a `train_environment.yaml` file w
 
 ```bash
 # Navigate into the COCOpen directory
-$ cd COCOCpen-OpenCV
+$ cd COCOpen-OpenCV
 ```
 ```bash
 # Clone the conda environment
