@@ -1,16 +1,20 @@
-# **Example Demo**
+# **Example Demonstration**
+
 This document provides a demonstration of automatically generating labeled data using COCOpen and the UIUC wires dataset. After reading the [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md), replicate this demo and generate sample data!
 
-For this example demo we will be using foreground (wire & device) and background images from the [UIUC wires dataset](https://uofi.box.com/s/b8llku4yrvq44ijedw0lol1oz5sx7rja). This dataset has been provided to you to test the API on by default.
+For this example demo we will be using foreground (wire and device) and background images from the [UIUC wires dataset](https://uofi.box.com/s/b8llku4yrvq44ijedw0lol1oz5sx7rja). This dataset is provided to test COCOpen by default.
 
 ## **1. Open COCOpen**
+
 Navigate into the COCOpen repository.
 
 ```bash
 # Navigate into the COCOpen directory
 $ cd COCOCpen-OpenCV
 ```
+
 ## **2. Configure Data**
+
 a. The provided `config/parameters.yaml` file already contains an Azure connection string that is ready to generate data using the UIUC wires dataset.
 
 ```yaml
@@ -22,20 +26,11 @@ user_defined:
 ```
 
 ## **3. Adjust Parameters**
+
 Open the `config/parameters.yaml` file.
 
-Tweak parameters such as `dataset_dir_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values), and `max_instances` (the maximum number of objects of a particular category per image).
+Tweak parameters such as `dataset_dir_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values), and `max_instances` (the maximum number of objects of a particular category per image). We recommend keeping the [default](config/parameters.yaml) values provided for this example run. Below are some of the tunable parameters defining a new dataset:
 
-**We recommend keeping the [default](config/parameters.yaml) values provided to you for this example run.**
-
-However, these are some of the values you can tweak to observe the differences in generated images:
-```yaml
-# Change dataset_dir_name under directory
-directory:
-  root_dir: "." # ignore
-  dataset_dir_name: "<name of dataset here within double quotes>"
-  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net' #ignore
-```
 ```yaml
 # Dataset Size and Split Parameters
 dataset_params:
@@ -59,18 +54,17 @@ max_inst:
   device: <max number of devices in each image>
   wire: <max number of wires in each image>
 ```
-## **4. Run the script**
-To execute the COCOpen library, run the `run.py` script by executing:
+## **4. Run COCOpen**
+
+To execute COCOpen, run:
 
 ```bash
 # Run COCOpen
 $ ./run.sh
 ```
 
-## **5. Look at the Result**
-You can now find the generated dataset in the `datasets` folder. The `datasets/zip/` folder provides a compressed .zip file of the generated dataset. 
-
-Example annotations are provided in the image below.
+## **5. Result**
+You can now find the generated dataset in the `datasets` folder. Example annotations are provided in the image below.
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation" width="600px"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>
