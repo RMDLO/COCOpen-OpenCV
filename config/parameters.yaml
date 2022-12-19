@@ -63,7 +63,7 @@ color_augmentation:
 generate_dataset: True
 
 # Flag to designate whether the demo is performed and the dataset is visualized
-demo_dataset: True
+demo_dataset: False
 
 # Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
 train_detectron2: False
