@@ -1,4 +1,3 @@
-# **COCOpen**
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/logo.png?raw=true" title="COCOpen Logo">
 </p>
