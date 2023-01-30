@@ -173,7 +173,7 @@ class Train:
             cfg.DATALOADER.NUM_WORKERS = 1
             # Initialize training from model zoo:
             cfg.MODEL.WEIGHTS = weights_dir
-            cfg.SOLVER.BASE_LR = 0.025
+            cfg.SOLVER.BASE_LR = 0.00025
             cfg.SOLVER.MAX_ITER = 50000
             cfg.SOLVER.CHECKPOINT_PERIOD = 5000
             # cfg.SOLVER.STEPS = (20,100,500)
@@ -189,7 +189,19 @@ class Train:
             trainer = DefaultTrainer(cfg)
             # Load from last iteration
             trainer.resume_or_load(resume=self.resume_training)
-            trainer.train()
+            # Telling model to use how many ever GPUs available for training
+            num_gpus = torch.cuda.device_count()
+            if num_gpus > 0:
+                cfg.MODEL.DEVICE = "cuda"
+                print("GPUs available, training on GPU")
+                trainer = DefaultTrainer(cfg)
+                model = torch.nn.DataParallel(trainer.model)
+                trainer.model = model
+                trainer.train()
+            else:
+                print("No GPUs available, training on CPU")
+                trainer = DefaultTrainer(cfg)
+                trainer.train()
 
         if self.train_detectron2:
             shutil.move(
