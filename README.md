@@ -9,13 +9,13 @@ The COCOpen library is a scalable and open source method of generating a labelle
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation" width="600px"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>
 
-[**Get the code**](https://github.com/RMDLO/COCOpen-OpenCV)!
+[[**Get the code**](https://github.com/RMDLO/COCOpen-OpenCV)] [[**Watch Our Demonstration Video**](https://youtu.be/H16CpeIdEHY)]
 
 ## **Get Started**
 See [installation instructions](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/INSTALLATION.md) to learn about configuring a dataset and installing dependencies.
 
 ## **Run an Example**
-See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/EXAMPLE_RUN.md) to see a demo automatically generating a simple dataset of ethernet cables and ethernet devices with category, bounding box, and instance segmentation mask annotations in the COCO format.
+See [example run](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/EXAMPLE_RUN.md) to see a demonstration automatically generating a simple dataset of ethernet cables and ethernet devices with category, bounding box, and instance segmentation mask annotations in the COCO format.
 
 ## **Learn More**
 To learn more about COCOpen, click [here](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/LEARN_MORE.md).
