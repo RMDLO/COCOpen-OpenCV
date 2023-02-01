@@ -192,8 +192,8 @@ class COCOpen:
         """
         Perform contour filtering
         """
-        _, contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        _, outer_contour, _ = cv2.findContours(
+        contours, _ = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        outer_contour, _ = cv2.findContours(
             frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
         new_frame = np.zeros(frame.shape, np.uint8)

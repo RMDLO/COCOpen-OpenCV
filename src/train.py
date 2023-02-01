@@ -165,6 +165,7 @@ class Train:
             pass
 
         if self.train_detectron2:
+            num_gpus = torch.cuda.device_count()
             cfg.DATASETS.TRAIN = ("train",)
             cfg.MODEL.MASK_ON = True
             cfg.DATASETS.TEST = ("val",)
@@ -174,7 +175,7 @@ class Train:
             # Initialize training from model zoo:
             cfg.MODEL.WEIGHTS = weights_dir
             cfg.SOLVER.BASE_LR = 0.00025
-            cfg.SOLVER.MAX_ITER = 50000
+            cfg.SOLVER.MAX_ITER = 10000
             cfg.SOLVER.CHECKPOINT_PERIOD = 5000
             # cfg.SOLVER.STEPS = (20,100,500)
             # cfg.SOLVER.STEPS = (20, 10000, 20000)
@@ -186,21 +187,23 @@ class Train:
             cfg.SOLVER.STEPS = []
             cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512
             # cfg.TEST.DETECTIONS_PER_IMAGE = 20
-            trainer = DefaultTrainer(cfg)
-            # Load from last iteration
-            trainer.resume_or_load(resume=self.resume_training)
             # Telling model to use how many ever GPUs available for training
-            num_gpus = torch.cuda.device_count()
             if num_gpus > 0:
                 cfg.MODEL.DEVICE = "cuda"
-                print("GPUs available, training on GPU")
+                print("GPUs available, training on GPU", num_gpus)
                 trainer = DefaultTrainer(cfg)
-                model = torch.nn.DataParallel(trainer.model)
+                # Load from last iteration
+                trainer.resume_or_load(resume=self.resume_training)
+                # Initialize the process group
+                torch.distributed.init_process_group(backend="nccl", init_method="env://")
+                model = torch.nn.parallel.DistributedDataParallel(trainer.model)
                 trainer.model = model
                 trainer.train()
             else:
                 print("No GPUs available, training on CPU")
                 trainer = DefaultTrainer(cfg)
+                # Load from last iteration
+                trainer.resume_or_load(resume=self.resume_training)
                 trainer.train()
 
         if self.train_detectron2:

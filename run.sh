@@ -1,1 +1,1 @@
-python ./src/run.py
+torchrun ./src/run.py
