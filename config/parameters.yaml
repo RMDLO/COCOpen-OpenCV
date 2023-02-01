@@ -60,10 +60,10 @@ color_augmentation:
   color_augment_combined: True
 
 # Flag to designate whether to generate a new dataset
-generate_dataset: True
+generate_dataset: False
 
 # Flag to designate whether the demo is performed and the dataset is visualized
-demo_dataset: True
+demo_dataset: False
 
 # Flag to designate whether to train a model from the detectron2 model zoo on the generated dataset
 train_detectron2: True

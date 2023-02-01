@@ -180,7 +180,7 @@ class Train:
             # cfg.SOLVER.STEPS = (20,100,500)
             # cfg.SOLVER.STEPS = (20, 10000, 20000)
             # cfg.SOLVER.gamma = 0.5
-            cfg.SOLVER.IMS_PER_BATCH = 8
+            cfg.SOLVER.IMS_PER_BATCH = 2
             # No. of iterations after which the Validation Set is evaluated:
             # cfg.TEST.EVAL_PERIOD = 1000
             cfg.TEST.EVAL_PERIOD = 100
