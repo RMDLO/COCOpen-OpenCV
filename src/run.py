@@ -56,7 +56,7 @@ def main(params):
         example.make_new_dirs()
         example.demo()
 
-    # Train new detectron2 model
+    # Train a new detectron2 model
     if params["train_detectron2"]:
         trainer = Train(parameters=params)
         trainer.make_new_dirs()
