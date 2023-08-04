@@ -21,12 +21,12 @@ COCOpen performs the following tasks to automatically generate labeled object in
 This workflow is shown in the figure below.
 
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/COCOpen.png?raw=true" title="COCOpen Workflow"> 
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/COCOpen.png?raw=true" title="COCOpen Workflow"> 
 </p>
 
 ## **Custom Data**
 
-The UIUCWires dataset stored on Azure is provided to demonstrate COCOpen by default. The dataset includes images of single wire and single devices against a black background. It also includes a folder of background images which are applied to generate background noise in the dataset as a form of data augmentation. Each image type (wire, device, and background) is stored in its own Azure storage container labeled with the object's category. All single-object images were captured with an Intel RealSense d435 camera with 1920x1080 resolution. The table below shows the number of images by object category.
+The UIUCWires dataset stored on Box is provided to demonstrate COCOpen by default. The dataset includes images of single wire and single devices against a black background. It also includes a folder of background images which are applied to generate background noise in the dataset as a form of data augmentation. Each image type (wire, device, and background) is stored in its own folder labeled with the object's category. All single-object images were captured with an Intel RealSense d435 camera with 1920x1080 resolution. The table below shows the number of images by object category.
 
 <div align="center">
 
@@ -38,7 +38,7 @@ The UIUCWires dataset stored on Azure is provided to demonstrate COCOpen by defa
 
 The color contrast between the objects in each image and the background allows for using color thresholding to automatically annotate the original images. A user who wishes to use COCOpen to perform copy-paste augmentation on their own dataset will need to ensure the scene images only contain a single object. The scene for the images fed into COCOpen must also minimize shadowing. In our experience, the scene object can generate a shadow onto itself and the camera apparatus can generate a shadow onto the scene. For best results, we recommend checking lighting conditions before collecting data.
 
-After users generate their own dataset of single-object RGB images, the images should be uploaded to individual storage containers on Azure. The container should contain only folders of images, and the title of each container of images should correspond to the object category label (all lower-case). See our [Configure Azure Storage Container](https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/README_AZURE.md) documentation for more details and to see the directory structure for our container.
+After users generate their own dataset of single-object RGB images, the images should be uploaded to individual folders on Box. The container should contain only folders of images, and the title of each container of images should correspond to the object category label (all lower-case).
 
 ## **References**
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/review/docs/images/logo.png?raw=true" title="COCOpen Logo">
+  <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/logo.png?raw=true" title="COCOpen Logo">
 </p>
 
 The COCOpen library is a scalable and open source method of generating a labelled dataset of colored images of any object category automatically. This dataset can be used for training object instance segmentation models for a wide range of applications like manufacturing, logistics, autonomous driving, and domestic services. COCOpen uses foreground images of single objects against blank backgrounds and background images similar to backgrounds found in the target deployment environment as input. The library annotates each object with its unique category identification number, bounding box, and instance segmentation mask in the Microsoft Common Objects in Context (COCO) format [1,2]. The COCOpen-OpenCV repository uses COCOpen to generate a dataset of images comprising instances of wires and networking devices, visualizes the annotations for these images, trains an instance segmentation model, and demonstrates inference with the trained model [3,4].

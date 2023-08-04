@@ -1,6 +1,6 @@
 # Dataset Size and Split Parameters
 dataset_params:
-  train_images: 20
+  train_images: 25
   val_images: 8
   train_split: 0.8
 
@@ -14,13 +14,13 @@ shape:
 # The value num_categories is reserved to represent the “background” category, if applicable.
 categories:
   device: 1
-  wire: 2
+  single-wire: 2
   background: 3
 
 # Color Thresholding Values for Each Object Category
 color_threshold:
   device: 50
-  wire: 30
+  single-wire: 30
 
 # Contur Minimum Area (in pixels) Threshold Value
 contour_threshold: 1000
@@ -28,7 +28,7 @@ contour_threshold: 1000
 # Maximum Number of Instances Per Image for Each Object Category
 max_inst:
   device: 2
-  wire: 4
+  single-wire: 4
 
 # Parameters for Scale Jittering
 scale_jittering:
@@ -75,7 +75,7 @@ predict_dataset: False
 # Options: "train" and "val"
 dataset_verification:
   which_dataset: "val"
-  number_of_images: 2
+  number_of_images: 10
 
 dataset_prediction:
   number_of_images: 5
@@ -84,4 +84,4 @@ dataset_prediction:
 directory:
   root_dir: "."
   dataset_dir_name: "cocopen-dataset"
-  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net'
+  BOX_CONFIG_FILE_PATH: './config/config.json'

@@ -13,13 +13,13 @@ from tqdm import tqdm
 import numpy as np
 import cv2
 from pycocotools import mask as pycocomask
-from azure.storage.blob import BlobServiceClient
+from boxsdk import JWTAuth, Client
 
 
 class COCOpen:
     """
     The COCOpen class provides all functions necessary for automatically
-    annotating and augmenting a dataset of images stored on Azure.
+    annotating and augmenting a dataset of images stored on Box.
     """
 
     def __init__(
@@ -74,25 +74,26 @@ class COCOpen:
         ]
 
         self.category_to_container_client = {}
+        self.category_to_box_folder = {}
         self.category_to_train_list = {}
         self.category_to_val_list = {}
 
-    def init_azure(
+    def init_box(
         self,
     ) -> None:
         """
-        Initializing Azure connection for for accessing blob storage
+        Initialize Box connection for accessing image data
         """
-        # Initializing connection with Azure storage account
-        conn_str = self.param["directory"]["AZURE_STORAGE_CONNECTION_STRING"]
-        blob_service_client = BlobServiceClient.from_connection_string(
-            conn_str=conn_str
-        )
-        # Map category names to blob_service_client of that category
+        # Initialize connection with Box client
+        config_file_path = self.param["directory"]["BOX_CONFIG_FILE_PATH"]
+        self.box_client = Client(JWTAuth.from_settings_file(config_file_path))
+        root_folder = self.box_client.folder("0")
+        # Map category names to box folder object of that category
         for category in self.categories:
-            self.category_to_container_client[
-                category["name"]
-            ] = blob_service_client.get_container_client(category["name"])
+            for item in root_folder.get_items():
+                if item.name == category["name"] and item.type == "folder":
+                    self.category_to_box_folder[category["name"]] = item
+                    break
 
     def make_new_dirs(self) -> None:
         """
@@ -153,38 +154,36 @@ class COCOpen:
 
     def create_image_list(self) -> None:
         """
-        Creates foreground image list from images on Azure and
+        Creates foreground image list from images on Box and
         splits the list into 'train' and 'val' sets
         """
         # Map category names to list of object images of that category
         for category in self.categories:
             # Creating list of all foreground images of that category
-            azure_category_all_list = self.category_to_container_client[
+            box_category_all_list = self.category_to_box_folder[
                 category["name"]
-            ].list_blobs()
+            ].get_items()
             # Splitting foreground images into 'train' and 'val' sets
             train_list = []
             val_list = []
-            for blob in azure_category_all_list:
+            for box_image in box_category_all_list:
                 rand = random.random()
                 if 0 <= rand < self.param["dataset_params"]["train_split"]:
-                    train_list.append(blob.name)
+                    train_list.append(box_image.id)
                 else:
-                    val_list.append(blob.name)
+                    val_list.append(box_image.id)
             self.category_to_train_list[category["name"]] = train_list
             self.category_to_val_list[category["name"]] = val_list
 
-    def download_image_from_azure(self, img, category):
+    def download_image_from_box(self, img_id):
         """
-        Downloads image from Azure blob storage
+        Downloads image from Box storage
         """
-        # Get blob and read image data into memory cache
-        blob = self.category_to_container_client[category].get_blob_client(img)
-        img_data = blob.download_blob().readall()
-        # Convert image data to numpy array
-        img_array = np.asarray(bytearray(img_data), dtype=np.uint8)
+        # Get file and read image data into memory cache
+        file = self.box_client.file(img_id)
+        file_data = file.content()
         # Decode image
-        src = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+        src = cv2.imdecode(np.frombuffer(file_data, np.uint8), cv2.IMREAD_COLOR)
 
         return src
 
@@ -212,7 +211,7 @@ class COCOpen:
     def generate_supercategories(self):
         """
         Generate dictionary for super categories based on param .yaml file.
-        Super categories are used when an object category, like "wire", may
+        Super categories are used when an object category, like "single-wire", may
         contain subcategories, like "ethernet" or "power."
         """
         for key in self.param["categories"]:
@@ -223,12 +222,12 @@ class COCOpen:
             }
             self.categories.append(supercategory_dict)
 
-    def get_object_info(self, img, category):
+    def get_object_info(self, img_id, category):
         """
         This function returns the image array and the mask array
         """
         # Get mask
-        src = self.download_image_from_azure(img=img, category=category)
+        src = self.download_image_from_box(img_id=img_id)
         median = cv2.medianBlur(src, 9)  # Blur image
         gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)  # Convert to grayscale
         _, mask = cv2.threshold(
@@ -483,7 +482,6 @@ class COCOpen:
         Random flips
         """
         for m in range(0, total_num_instances):
-
             horizontal = int(2 * random.random())
             vertical = int(2 * random.random())
 
@@ -502,9 +500,9 @@ class COCOpen:
         Add random background
         """
         randbg = int(random.random() * len(image_list["background"]))
-        bg_img = image_list["background"][randbg]
-        # Download background image from azure
-        src = self.download_image_from_azure(img=bg_img, category="background")
+        bg_img_id = image_list["background"][randbg]
+        # Download background image from box
+        src = self.download_image_from_box(img_id=bg_img_id)
         bg_arr = src.astype("uint8")
 
         # Exception: background image dimensions!=image shape parameter
@@ -547,7 +545,6 @@ class COCOpen:
         Perform combine operations
         """
         for i in tqdm(range(num_images)):
-
             # scale factor for this image
             scale = scale_range[0] + random.random() * (scale_range[1] - scale_range[0])
 
@@ -612,7 +609,6 @@ class COCOpen:
 
             # update coco info
             for mask1 in binary_mask_arr[randint]:
-
                 mask_array_1.append(mask1)
 
                 msk1 = np.zeros((self.height, self.width, 3)).astype("uint8")

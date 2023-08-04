@@ -6,30 +6,21 @@ For this example demo we will be using foreground (wire and device) and backgrou
 
 ## **1. Open COCOpen**
 
-Navigate into the COCOpen repository.
+Navigate into the COCOpen directory
 
 ```bash
-# Navigate into the COCOpen directory
-$ cd COCOCpen-OpenCV
+cd COCOCpen-OpenCV
 ```
 
 ## **2. Configure Data**
 
-a. The provided `config/parameters.yaml` file already contains an Azure connection string that is ready to generate data using the UIUC wires dataset.
-
-```yaml
-# Pointer to raw input imagery and directory structuring
-user_defined:
-  root_dir: "." # ignore
-  dataset_directory_name: "cocopen-dataset" # ignore
-  AZURE_STORAGE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=uiucwiresdataset;AccountKey=VkJ1HT3LkDuiLTFK8yd+eAFLvhLKJNqLDIealTPY9Lv6Dp7VDFVWKIvhnNXqC+GCQYjh7NQVuH1r+ASt/tVk7g==;EndpointSuffix=core.windows.net' # UIUC's Azure connection string
-```
+The provided `config/config.json` file already contains the Box application settings that are ready to generate data using the UIUC wires dataset. To connect to your own Box application that stores your own dataset, follow [these instructions](http://opensource.box.com/box-python-sdk/).
 
 ## **3. Adjust Parameters**
 
 Open the `config/parameters.yaml` file.
 
-Tweak parameters such as `dataset_dir_name` (the name of the generated dataset directory), `train_images` (the number of images in the generated training set), `threshold` (color thresholding values), and `max_instances` (the maximum number of objects of a particular category per image). We recommend keeping the [default](config/parameters.yaml) values provided for this example run. Below are some of the tunable parameters defining a new dataset:
+Modify parameters such as the name of the generated dataset directory, `dataset_dir_name`, the number of images in the training data set, `train_images`, the threshold for color-based segmentation, `threshold`, and the maximum number of objects of a particular category per image, `max_instances`. We recommend keeping the [default](../config/parameters.yaml) values provided for this example run. Below are some of the tunable parameters defining a new dataset:
 
 ```yaml
 # Dataset Size and Split Parameters
@@ -56,15 +47,14 @@ max_inst:
 ```
 ## **4. Run COCOpen**
 
-To execute COCOpen, run:
-
+To execute COCOpen, run
 ```bash
-# Run COCOpen
-$ ./run.sh
+./run.sh
 ```
 
 ## **5. Result**
-You can now find the generated dataset in the `datasets` folder. Example annotations are provided in the image below.
+
+The generated dataset will appear in the `datasets` folder. Example annotations are provided in the image below.
 <p align="center">
   <img src="https://github.com/RMDLO/COCOpen-OpenCV/blob/main/docs/images/0.png?raw=true" title="Visualization of COCOpen Automatic Instance Segmentation" width="600px"> <figcaption>This is an example COCOpen-produced synthetic image containing multiple objects of interest superimposed on a randomly selected background. It visualizes ground truth instance segmentation mask, object category, and bounding box labels.</figcaption>
 </p>

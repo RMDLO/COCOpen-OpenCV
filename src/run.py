@@ -26,7 +26,6 @@ def main(params):
 
     # Generate a new COCO-formatted dataset
     if parameters["generate_dataset"]:
-
         # initialize cocopen object
         cocopen = COCOpen(
             param=params,
@@ -35,8 +34,8 @@ def main(params):
         # Create categories dictionary from parameters
         cocopen.generate_supercategories()
 
-        # Initializing Azure connection
-        cocopen.init_azure()
+        # Initializing Box connection
+        cocopen.init_box()
 
         # Make new directories
         cocopen.make_new_dirs()

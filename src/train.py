@@ -225,7 +225,6 @@ class Predict:
         self,
         parameters: dict,
     ) -> None:
-
         self.parameters = parameters
 
         # COCO Dataset Loading
